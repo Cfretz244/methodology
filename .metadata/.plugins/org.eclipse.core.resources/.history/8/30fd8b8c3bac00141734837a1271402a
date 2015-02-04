@@ -1,0 +1,44 @@
+package songlib;
+
+public class Song {
+	
+	private String name, artist, album, year;
+	
+	public Song(String name, String artist, String album, String year) {
+		this.name = name;
+		this.artist = artist;
+		this.album = album;
+		this.year = year;
+	}
+	
+	public String toString() {
+		return name + " - " + artist;
+	}
+	
+	public boolean equals(Object other) {
+		if (other == null) {
+			return false;
+		} else if (!(other instanceof Song)) {
+			return false;
+		} else {
+			Song another = (Song) other;
+			boolean first = this.name == another.name && this.artist == another.artist;
+		}
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getArtist() {
+		return artist;
+	}
+	
+	public String getAlbum() {
+		return album;
+	}
+	
+	public String getYear() {
+		return year;
+	}
+}

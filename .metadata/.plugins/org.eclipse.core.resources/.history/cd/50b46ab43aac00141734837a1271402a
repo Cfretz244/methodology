@@ -1,0 +1,7 @@
+package songlib;
+
+public class Song {
+	
+	private String name, artist, album, year;
+	
+}
