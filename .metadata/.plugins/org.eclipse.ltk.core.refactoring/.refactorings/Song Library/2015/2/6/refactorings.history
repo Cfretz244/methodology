@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;songlib.ConfigWriter&apos; to &apos;ConfigHandler&apos;&#x0A;- Original project: &apos;Song Library&apos;&#x0A;- Original element: &apos;songlib.ConfigWriter&apos;&#x0A;- Renamed element: &apos;songlib.ConfigHandler&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;ConfigWriter&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;songlib{ConfigWriter.java[ConfigWriter" matchStrategy="1" name="ConfigHandler" qualified="false" references="true" similarDeclarations="false" stamp="1423033847379" textual="false" version="1.0"/>
+</session>

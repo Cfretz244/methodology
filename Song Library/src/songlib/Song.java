@@ -1,3 +1,7 @@
+/*
+ * Chris Fretz and Karan Kadaru
+ */
+
 package songlib;
 
 public class Song {
@@ -13,7 +17,7 @@ public class Song {
 	
 	@Override
 	public String toString() {
-		return name + " - " + artist;
+		return name + "|" + artist + "|" + album + "|" + year;
 	}
 	
 	@Override

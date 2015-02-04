@@ -1,0 +1,9 @@
+package songlib;
+
+public class ConfigHandler {
+	
+	public static ArrayList<Song> loadConfig() {
+		
+	}
+	
+}
