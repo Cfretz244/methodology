@@ -1,0 +1,7 @@
+package songlib;
+
+import javax.swing.JPanel;
+
+public class SPanel extends JPanel {
+
+}

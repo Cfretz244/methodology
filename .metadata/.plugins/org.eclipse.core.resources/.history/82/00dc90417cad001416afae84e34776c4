@@ -1,0 +1,11 @@
+package songlib;
+
+import javax.swing.JFrame;
+
+public class SFrame extends JFrame {
+	
+	public SFrame() {
+		super(new GridLayout(1, 2));
+	}
+
+}

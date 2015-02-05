@@ -1,0 +1,9 @@
+package songlib;
+
+public class SongLib {
+	
+	public static void main(String[] args) {
+		SFrame frame = new SFrame();
+	}
+
+}
