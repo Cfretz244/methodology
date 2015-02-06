@@ -30,13 +30,13 @@ public class SongList extends ArrayList<Song> {
 			if (song.compareTo(current) == 0) {
 				return mid;
 			} else if (song.compareTo(current) > 0) {
-				low = mid + 1;
-				if (low > high) {
+				high = mid - 1;
+				if (low >= high) {
 					return mid + 1;
 				}
 			} else {
-				high = mid - 1;
-				if (low > high) {
+				low = mid + 1;
+				if (low >= high) {
 					return mid;
 				}
 			}

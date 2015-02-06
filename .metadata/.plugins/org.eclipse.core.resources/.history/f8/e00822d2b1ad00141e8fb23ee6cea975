@@ -6,7 +6,6 @@ import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class SongFrame extends JFrame {
 	
@@ -17,8 +16,7 @@ public class SongFrame extends JFrame {
 		JList<Song> list = new JList<Song>(model);
 		list.setPreferredSize(new Dimension(200, 200));
 		list.setSelectedIndex(0);
-		JScrollPane scroll = new JScrollPane(list);
-		add(scroll);
+		add(list);
 		add(new JPanel());
 		pack();
 		setLocationRelativeTo(null);

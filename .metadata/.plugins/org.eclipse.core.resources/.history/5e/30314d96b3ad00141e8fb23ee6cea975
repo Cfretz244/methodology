@@ -27,15 +27,15 @@ public class SongList extends ArrayList<Song> {
 		while (true) {
 			int mid = (low + high) / 2;
 			Song current = get(mid);
-			if (song.compareTo(current) == 0) {
+			if (current.compareTo(current) == 0) {
 				return mid;
-			} else if (song.compareTo(current) > 0) {
-				low = mid + 1;
+			} else if (current.compareTo(song) > 0) {
+				high = mid - 1;
 				if (low > high) {
 					return mid + 1;
 				}
 			} else {
-				high = mid - 1;
+				low = mid + 1;
 				if (low > high) {
 					return mid;
 				}
