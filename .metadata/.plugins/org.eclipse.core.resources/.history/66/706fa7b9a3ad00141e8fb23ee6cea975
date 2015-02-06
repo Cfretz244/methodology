@@ -1,0 +1,15 @@
+package songlib;
+
+import java.awt.GridLayout;
+
+import javax.swing.JFrame;
+
+public class SongFrame extends JFrame {
+	
+	private static final long serialVersionUID = 1
+	
+	public SongFrame() {
+		this.setLayout(new GridLayout(1, 2));
+	}
+
+}

@@ -1,0 +1,11 @@
+package songlib;
+
+public class SongLib {
+	
+	public static void main(String[] args) {
+		SongFrame frame = new SongFrame();
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(SongFrame.EXIT_ON_CLOSE);
+	}
+
+}

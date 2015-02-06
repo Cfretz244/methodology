@@ -1,0 +1,24 @@
+package songlib;
+
+import java.util.ArrayList;
+
+public class SongList extends ArrayList<Song> {
+	
+	private static final long serialVersionUID = 1;
+	
+	public boolean add(Song song) {
+		if (this.size() > 0) {
+			int index = 0, low = 0, high = size() - 1;
+			while (true) {
+				int mid = (low + high) / 2;
+			}
+			
+			super.add(index, song);
+		} else {
+			super.add(song);
+		}
+		
+		return true;
+	}
+	
+}

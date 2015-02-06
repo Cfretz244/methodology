@@ -1,0 +1,28 @@
+package songlib;
+
+import java.util.ArrayList;
+
+import javax.swing.AbstractListModel;
+
+public class SongListModel extends AbstractListModel<Song> {
+	
+	private static final long serialVersionUID = 1;
+	private ArrayList<Song> songs;
+	
+	public SongListModel(ArrayList<Song> songs) {
+		this.songs = songs;
+	}
+	
+	public void addSong(Song song) {
+		
+	}
+	
+	public Song getElementAt(int index) {
+		return songs.get(index);
+	}
+	
+	public int getSize() {
+		return songs.size();
+	}
+
+}

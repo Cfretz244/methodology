@@ -1,0 +1,20 @@
+package songlib;
+
+import java.awt.GridLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+
+public class SongFrame extends JFrame {
+	
+	private static final long serialVersionUID = 1;
+	
+	public SongFrame(SongListModel model) {
+		setLocationRelativeTo(null);
+		setLayout(new GridLayout(1, 2));
+		add(new JList<Song>(model));
+		add(new JPanel());
+	}
+
+}

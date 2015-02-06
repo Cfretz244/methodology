@@ -1,0 +1,30 @@
+package songlib;
+
+import java.io.IOException;
+
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
+public class SongLib {
+	
+	public static void main(String[] args) throws IOException {
+		SongListModel model = ConfigHandler.loadConfig();
+		model.addListDataListener(new ListDataListener() {
+			public void contentsChanged(ListDataEvent e) {
+				
+			}
+			
+			public void intervalAdded(ListDataEvent e) {
+				
+			}
+			
+			public void intervalRemoved(ListDataEvent e) {
+				
+			}
+		});
+		SongFrame frame = new SongFrame(model);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(SongFrame.EXIT_ON_CLOSE);
+	}
+
+}

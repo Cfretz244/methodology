@@ -1,0 +1,9 @@
+package songlib;
+
+import java.util.ArrayList;
+
+public class SongList extends ArrayList<Song> {
+	
+	private static final long serialVersionUID = 1;
+
+}

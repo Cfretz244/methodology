@@ -4,7 +4,7 @@
 
 package songlib;
 
-public class Song {
+public class Song implements Comparable<Song> {
 	
 	private String name, artist, album, year;
 	
@@ -17,16 +17,19 @@ public class Song {
 	
 	@Override
 	public String toString() {
-		return name + "|" + artist + "|" + album + "|" + year;
+		return name;
+	}
+	
+	@Override
+	public int compareTo(Song other) {
+		return name.concat(artist).compareTo(other.getName().concat(other.getArtist()));
 	}
 	
 	@Override
 	public boolean equals(Object other) {
 		if (other != null && other instanceof Song) {
 			Song another = (Song) other;
-			boolean first = name == another.name && artist == another.artist;
-			boolean rest = album == another.album && year == another.year;
-			return first && rest;
+			return name == another.name && artist == another.artist;
 		} else {
 			return false;
 		}

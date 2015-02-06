@@ -1,0 +1,13 @@
+package songlib;
+
+import javax.swing.AbstractListModel;
+
+public class SongListModel extends AbstractListModel {
+	
+	public SongListModel(ArrayList<Song> songs) {
+		
+	}
+	
+	
+
+}
