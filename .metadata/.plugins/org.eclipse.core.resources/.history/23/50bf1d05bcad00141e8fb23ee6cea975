@@ -33,7 +33,7 @@ public class SongFrame extends JFrame {
 					} else {
 						index = e.getFirstIndex();
 					}
-					previousIndex = index;
+					previousIndex = e.getFirstIndex();
 					Song song = list.getModel().getElementAt(index);
 					Component[] views = getContentPane().getComponents();
 					remove(getContentPane().getComponent(1));

@@ -25,16 +25,13 @@ public class SongFrame extends JFrame {
 			
 			public void valueChanged(ListSelectionEvent e) {
 				Object changed = e.getSource();
-				if (changed instanceof JList<?> && !e.getValueIsAdjusting()) {
+				if (changed instanceof JList<?>) {
 					JList<Song> list = (JList<Song>) changed;
-					int index;
+					Song song;
 					if (previousIndex == e.getFirstIndex()) {
-						index = e.getLastIndex();
-					} else {
-						index = e.getFirstIndex();
+						song = list.getModel().getElementAt(e.getLastIndex());
 					}
-					previousIndex = index;
-					Song song = list.getModel().getElementAt(index);
+					Song song = list.getModel().getElementAt(e.getFirstIndex());
 					Component[] views = getContentPane().getComponents();
 					remove(getContentPane().getComponent(1));
 					JPanel details = new JPanel(new GridLayout(4, 1));
