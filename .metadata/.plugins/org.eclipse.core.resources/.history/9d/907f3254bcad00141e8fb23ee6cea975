@@ -26,7 +26,6 @@ public class SongFrame extends JFrame {
 			public void valueChanged(ListSelectionEvent e) {
 				Object changed = e.getSource();
 				if (changed instanceof JList<?> && !e.getValueIsAdjusting()) {
-					@SuppressWarnings("unchecked")
 					JList<Song> list = (JList<Song>) changed;
 					int index;
 					if (previousIndex == e.getFirstIndex()) {

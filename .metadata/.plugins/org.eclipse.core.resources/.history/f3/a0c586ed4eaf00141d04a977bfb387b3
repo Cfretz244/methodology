@@ -31,7 +31,6 @@ public class Song implements Comparable<Song> {
 			Song another = (Song) other;
 			boolean nameStatus = name.toLowerCase() == another.name.toLowerCase();
 			boolean artistStatus = artist.toLowerCase() == another.artist.toLowerCase();
-			return nameStatus && artistStatus;
 		} else {
 			return false;
 		}

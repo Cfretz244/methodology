@@ -29,9 +29,7 @@ public class Song implements Comparable<Song> {
 	public boolean equals(Object other) {
 		if (other != null && other instanceof Song) {
 			Song another = (Song) other;
-			boolean nameStatus = name.toLowerCase() == another.name.toLowerCase();
-			boolean artistStatus = artist.toLowerCase() == another.artist.toLowerCase();
-			return nameStatus && artistStatus;
+			return name.toLowerCase() == another.name.toLowerCase() && artist.toLowerCase() == another.artist.toLowerCase();
 		} else {
 			return false;
 		}
