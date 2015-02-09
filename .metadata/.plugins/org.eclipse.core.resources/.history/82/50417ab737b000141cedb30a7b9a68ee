@@ -1,0 +1,86 @@
+package songlib;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+public class SongFrame extends JFrame {
+	
+	private static final long serialVersionUID = 1;
+	private JPanel details, centerPanel, northPanel;
+	private JList<Song> list;
+	
+	public SongFrame(SongListModel model) {
+		centerPanel = new JPanel(new GridLayout(1, 2));
+		list = new JList<Song>(model);
+		details = new JPanel();
+		JScrollPane scroll = new JScrollPane(list);
+		list.setPreferredSize(new Dimension(200, 200));
+		centerPanel.add(scroll);
+		centerPanel.add(details);
+		add(centerPanel, BorderLayout.CENTER);
+		
+		setupNorth();
+		attachListListener();
+		
+		
+		pack();
+		setLocationRelativeTo(null);
+		list.setSelectedIndex(0);
+	}
+	
+	public void setupNorth() {
+		northPanel = new JPanel(new GridLayout(1, 4));
+		ActionListener handler = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		};
+		JButton addButton = new JButton("Add");
+		JButton editButton = new JButton("Edit");
+		JButton removeButton = new JButton("Remove");
+		northPanel.add(addButton);
+		northPanel.add(editButton);
+		northPanel.add(removeButton);
+	}
+	
+	public void attachListListener() {
+		list.addListSelectionListener(new ListSelectionListener() {
+
+			public void valueChanged(ListSelectionEvent e) {
+				Object changed = e.getSource();
+				if (changed instanceof JList<?> && !e.getValueIsAdjusting()) {
+					@SuppressWarnings("unchecked")
+					JList<Song> list = (JList<Song>) changed;
+					int index = list.getSelectedIndex();
+					Song song = list.getModel().getElementAt(index);
+					centerPanel.remove(centerPanel.getComponent(1));
+					JLabel name = new JLabel("Name: " + song.getName());
+					JLabel artist = new JLabel("Artist: " + song.getArtist());
+					JLabel album = new JLabel("Album: " + song.getAlbum());
+					JLabel year = new JLabel("Year: " + song.getYear());
+					details.removeAll();
+					details.add(name);
+					details.add(artist);
+					details.add(album);
+					details.add(year);
+					centerPanel.add(details);
+					pack();
+				}
+			}
+			
+		});
+	}
+
+}

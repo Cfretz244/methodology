@@ -17,10 +17,16 @@ public class SongListModel extends AbstractListModel<Song> {
 		fireIntervalAdded(this, index, index);
 	}
 	
-	public void removeSong(String name, String artist) {
-		Song temp = new Song(name, artist, "", "");
-		int index = songs.indexOf(temp);
-		songs.remove(temp);
+	public void updateSong(Song orig, Song update) {
+		int index = songs.indexOf(orig);
+		songs.remove(orig);
+		songs.add(update);
+		fireContentsChanged(this, index, index);
+	}
+	
+	public void removeSong(Song song) {
+		int index = songs.indexOf(song);
+		songs.remove(song);
 		fireIntervalRemoved(this, index, index);
 	}
 	
