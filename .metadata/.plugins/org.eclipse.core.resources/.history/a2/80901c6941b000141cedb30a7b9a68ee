@@ -46,18 +46,10 @@ public class Song implements Comparable<Song> {
 	}
 	
 	public String getAlbum() {
-		if (album.equals("")) {
-			return " ";
-		} else {
-			return album;
-		}
+		return album;
 	}
 	
 	public String getYear() {
-		if (year.equals("")) {
-			return " ";
-		} else {
-			return year;
-		}
+		return year;
 	}
 }

@@ -54,10 +54,6 @@ public class Song implements Comparable<Song> {
 	}
 	
 	public String getYear() {
-		if (year.equals("")) {
-			return " ";
-		} else {
-			return year;
-		}
+		return year;
 	}
 }
