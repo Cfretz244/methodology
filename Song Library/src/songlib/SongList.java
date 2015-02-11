@@ -1,7 +1,14 @@
+/*
+ * Chris Fretz and Karan Kadaru
+ */
+
 package songlib;
 
 import java.util.ArrayList;
 
+// Subclass of ArrayList that maintains alphabetical order
+// through binary insertion and search. Uses ArrayList's original
+// add and remove methods to do the actual insertions and removals.
 public class SongList extends ArrayList<Song> {
 
 	private static final long serialVersionUID = 1;
