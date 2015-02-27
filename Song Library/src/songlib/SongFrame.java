@@ -5,7 +5,7 @@
 package songlib;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,13 +23,14 @@ import javax.swing.event.ListSelectionListener;
 // Class represents the base frame of the program, and unfortunately
 // also does almost all of the work. It's ugly code, but it works.
 public class SongFrame extends JFrame {
-	
+
 	private static final long serialVersionUID = 1;
 	private JPanel details, centerPanel, northPanel;
+	private JButton addButton, removeButton, editButton, doneButton;
 	private JList<Song> list;
 	private SongListModel model;
 	private boolean isAdding = false;
-	
+
 	// Creates a new SongFrame, keeping the default BorderLayout
 	// and displaying whatever songs were in the config file.
 	public SongFrame(SongListModel model) {
@@ -44,12 +45,12 @@ public class SongFrame extends JFrame {
 		JScrollPane scroll = new JScrollPane(list);
 		centerPanel.add(scroll);
 		centerPanel.add(details);
-		
+
 		// Add the add, edit, and remove buttonsm and attach the listener to update the
 		// details panel.
 		setupNorth();
 		attachListListener();
-		
+
 		// Add the panels we've created to the SongFrame.
 		add(centerPanel, BorderLayout.CENTER);
 		add(northPanel, BorderLayout.NORTH);
@@ -57,16 +58,16 @@ public class SongFrame extends JFrame {
 		setLocationRelativeTo(null);
 		list.setSelectedIndex(0);
 	}
-	
+
 	// Function is responsible for setting up the Add, Edit, and Remove buttons, and also defines
 	// handlers for their click events.
 	public void setupNorth() {
 		northPanel = new JPanel(new GridLayout(1, 4));
-		JButton addButton = new JButton("Add");
-		JButton editButton = new JButton("Edit");
-		JButton removeButton = new JButton("Remove");
-		JButton doneButton = new JButton("Done");
-		
+		addButton = new JButton("Add");
+		editButton = new JButton("Edit");
+		removeButton = new JButton("Remove");
+		doneButton = new JButton("Done");
+
 		// This is ugly, and I wouldn't do it if this were a larger scale project, but this anonymous
 		// ActionListener class handles all necessary updates when the add, edit, or remove buttons
 		// are clicked.
@@ -77,16 +78,15 @@ public class SongFrame extends JFrame {
 				if (source instanceof JButton) {
 					// Get the button that was clicked, and all the necessary info about it.
 					JButton clicked = (JButton) source;
-					String text = clicked.getText();
 					int index = list.getSelectedIndex();
 					Song current = model.getElementAt(index);
 
-					if (text.equals("Add") || text.equals("Edit")) {
+					if (clicked == addButton ||clicked == editButton) {
 						// Putting both the add and edit buttons in the same clause avoids code
 						// duplication.
-						boolean editing = text.equals("Edit");
+						boolean editing = clicked == editButton;
 						isAdding = !editing;
-
+						
 						// Ternary operator, returns the first clause if the condition is true
 						// and the second clause otherwise. Essentially its an inline if else.
 						String nameStr = editing ? current.getName() : "";
@@ -100,7 +100,7 @@ public class SongFrame extends JFrame {
 						JTextField artist = new JTextField(artistStr);
 						JTextField album = new JTextField(albumStr);
 						JTextField year = new JTextField(yearStr);
-						
+
 						// Remove the previous components, and add our labels and textfields.
 						details.removeAll();
 						details.setLayout(new GridLayout(4, 2));
@@ -114,30 +114,46 @@ public class SongFrame extends JFrame {
 						details.add(year);
 						details.revalidate();
 						details.repaint();
-						
+
 						// Remove the add, edit, and remove buttons and replace them with the done button.
 						northPanel.removeAll();
 						northPanel.add(doneButton);
 						northPanel.revalidate();
 						northPanel.repaint();
-					} else if (text.equals("Remove")) {
+					} else if (clicked == removeButton) {
 						// Just remove the currently selected song. The JList automatically redraws because the model
 						// calls the fireIntervalRemoved method.
 						model.removeSong(current);
-					} else if (text.equals("Done")) {
+					} else if (clicked == doneButton) {
 						// Get the entered details, and either call add or update depending on what was being done.
 						String name = ((JTextField) details.getComponent(1)).getText();
-						String author = ((JTextField) details.getComponent(3)).getText();
+						String artist = ((JTextField) details.getComponent(3)).getText();
 						String album = ((JTextField) details.getComponent(5)).getText();
 						String year = ((JTextField) details.getComponent(7)).getText();
+
+						if(model.contains(name, artist)){
+							doneButton.setForeground(Color.RED);
+							doneButton.setText("Please enter a nonexisting song! Then try again.");
+							return;
+							}
+						if(name.equals("") || artist.equals("")){
+							doneButton.setForeground(Color.RED);
+							doneButton.setText("You must enter a song name and artist at the very least.");
+							return;
+						}
+						doneButton.setForeground(Color.black);
+						doneButton.setText("Done");
+
+
+
 						if (isAdding) {
-							Song added = new Song(name, author, album, year);
+							Song added = new Song(name, artist, album, year);
 							model.addSong(added);
 						} else {
-							Song update = new Song(name, author, album, year);
+							Song update = new Song(name, artist, album, year);
 							model.updateSong(current, update);
 						}
-						
+
 						// Remove the textfields and replace them with labels updated with the new information.
 						details.removeAll();
 						details.setLayout(new GridLayout(4, 1));
@@ -148,7 +164,7 @@ public class SongFrame extends JFrame {
 						details.add(new JLabel("Year: " + current.getYear()));
 						details.revalidate();
 						details.repaint();
-						
+
 						northPanel.removeAll();
 						northPanel.add(addButton);
 						northPanel.add(editButton);
@@ -160,19 +176,19 @@ public class SongFrame extends JFrame {
 			}
 
 		};
-		
+
 		// Attach that big ugly ActionListener we just defined.
 		addButton.addActionListener(handler);
 		editButton.addActionListener(handler);
 		removeButton.addActionListener(handler);
 		doneButton.addActionListener(handler);
-		
+
 		// Add the buttons to the panel.
 		northPanel.add(addButton);
 		northPanel.add(editButton);
 		northPanel.add(removeButton);
 	}
-	
+
 	public void attachListListener() {
 		list.addListSelectionListener(new ListSelectionListener() {
 
@@ -184,7 +200,7 @@ public class SongFrame extends JFrame {
 						list.setSelectedIndex(0);
 						index = 0;
 					}
-					
+
 					// Get the selected list, and update the details panel with its information.
 					Song song = list.getModel().getElementAt(index);
 					centerPanel.remove(centerPanel.getComponent(1));
@@ -193,6 +209,11 @@ public class SongFrame extends JFrame {
 					JLabel album = new JLabel("Album: " + song.getAlbum());
 					JLabel year = new JLabel("Year: " + song.getYear());
 					
+					northPanel.removeAll();
+					northPanel.add(addButton);
+					northPanel.add(editButton);
+					northPanel.add(removeButton);
+
 					// Remove the old labels and add the new ones, and resize the window.
 					details.removeAll();
 					details.add(name);
@@ -203,7 +224,7 @@ public class SongFrame extends JFrame {
 					pack();
 				}
 			}
-			
+
 		});
 	}
 

@@ -1,7 +1,0 @@
-package songlib;
-
-import java.util.ArrayList;
-
-public class SongList extends ArrayList<Song> {
-
-}

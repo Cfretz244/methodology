@@ -1,0 +1,233 @@
+package cs213.photoAlbum.model;
+
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * This class describes what a Photo is, and provides a protected interface for mutation, and a public
+ * interface for viewing.
+ * 
+ * @author Chris Fretz
+ */
+public class Photo implements Serializable, Comparable<Photo> {
+
+	private String name, caption;
+	private Calendar date;
+	private Map<String, Set<String>> tags;
+	private Set<Album> containingAlbums;
+	private static final long serialVersionUID = 1;
+	
+	/*----- Constructors -----*/
+
+	/**
+	 * Public constructor taking the album name, photo name, and date.
+	 * 
+	 * @param album The name of the album.
+	 * @param name The name of the photo.
+	 * @param date The date this photo was taken as a Unix timestamp.
+	 */
+	public Photo(Album containing, String name, long date) {
+		setup();
+		this.name = name;
+		this.date.setTimeInMillis(date);
+		containingAlbums.add(containing);
+	}
+	
+	/**
+	 * Public constructor taking the album name, photo name, caption, and date.
+	 * 
+	 * @param album The name of the album.
+	 * @param name The name of the photo.
+	 * @param caption A caption for the photo.
+	 * @param date The date the photo was taken as a Unix timestamp.
+	 */
+	public Photo(Album containing, String name, String caption, long date) {
+		setup();
+		this.name = name;
+		this.caption = caption;
+		this.date.setTimeInMillis(date);
+		containingAlbums.add(containing);
+	}
+	
+	/*----- Private Helpers -----*/
+	
+	private void setup() {
+		this.date = new GregorianCalendar();
+		tags = new HashMap<String, Set<String>>();
+		containingAlbums = new HashSet<Album>();
+	}
+	
+	/*----- Protected Setters/Mutators -----*/
+
+	/**
+	 * Method sets the caption for a photo.
+	 * @param caption Desired caption.
+	 */
+	protected void setCaption(String caption) {
+		this.caption = caption;
+	}
+
+	/**
+	 * Method adds a tag to the photo.
+	 * 
+	 * @param type Type of tag, used to index into the tag map.
+	 * @param value Value of tag.
+	 * @return Whether or not the operation succeeded.
+	 */
+	protected boolean addTag(String type, String value) {
+		Set<String> category = tags.get(type);
+		if (category != null && !category.contains(value)) {
+			
+		} else if (category != null) {
+			category = new HashSet<String>();
+			category.add(value);
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Method removes all tags of a given type.
+	 * 
+	 * @param type Type of tag to be removed
+	 * @return Whether or not the operation succeeded.
+	 */
+	protected boolean removeTag(String type) {
+		// Implementation...
+		return false;
+	}
+	
+	/**
+	 * Method removes a specific tag.
+	 * 
+	 * @param type Type of the tag to be removed.
+	 * @param value Value of tag to be removed.
+	 * @return Whether or not the operation succeeded.
+	 */
+	protected boolean removeTag(String type, String value) {
+		// Implementation...
+		return false;
+	}
+
+	/**
+	 * Method adds the current photo to album.
+	 * @param album Name of album
+	 * @return Whether or not the operation succeeded.
+	 */
+	protected boolean addToAlbum(Album album) {
+		// Implementation...
+		return false;
+	}
+
+	/**
+	 * Method removes current photo from album.
+	 * @param album Name of album
+	 * @return Whether or not the operation succeeded.
+	 */
+	protected boolean removeFromAlbum(Album album) {
+		// Implementation...
+		return false;
+	}
+	
+	/*----- Public Getters -----*/
+
+	/**
+	 * Method returns the name of the photo.
+	 * 
+	 * @return The name of the photo.
+	 */
+	public String getName() {
+		// Implementation...
+		return null;
+	}
+
+	/**
+	 * Method returns the caption of the photo.
+	 * 
+	 * @return The caption of the photo
+	 */
+	public String getCaption() {
+		// Implementation...
+		return null;
+	}
+
+	/** 
+	 * Method returns the date the photo was taken.
+	 * 
+	 * @return Date the photo was taken.
+	 */
+	public long getDate() {
+		// Implementation...
+		return 0;
+	}
+
+	/**
+	 * Method returns the albums this photo is contained in.
+	 * 
+	 * @return Array of the albums this photo is contained in.
+	 */
+	public Album[] getContainingAlbums() {
+		// Implementation...
+		return null;
+	}
+
+	/**
+	 * Method returns all tags for the current photo.
+	 * 
+	 * @return Array of tags in the form "<type>:<value>"
+	 */
+	public String[] getTags() {
+		// Implementation...
+		return null;
+	}
+	
+	/**
+	 * Method returns all tags for the current photo with the given type.
+	 * 
+	 * @param type The type of the tag you're looking for.
+	 * @return An array of tags with the given type in the form "<type>:<value>"
+	 */
+	public String[] getTags(String type) {
+		// Implementation...
+		return null;
+	}
+
+	/**
+	 * Checks to see if photo has tags of the given type.
+	 * 
+	 * @param type The type of the tag you're looking for.
+	 * @return Whether or not the photo has tags of the given type.
+	 */
+	public boolean hasTag(String type) {
+		// Implementation...
+		return false;
+	}
+	
+	/**
+	 * Checks to see if photo has a specific tag.
+	 * 
+	 * @param type Type of the tag you're looking for.
+	 * @param value Value of the tag you're looking for.
+	 * @return Whether or not the photo has the tag you're looking for.
+	 */
+	public boolean hasTag(String type, String value) {
+		// Implementation...
+		return false;
+	}
+
+	public int compareTo(Photo other) {
+		// Implementation...
+		return 0;
+	}
+
+	public boolean equals(Object other) {
+		// Implementation...
+		return false;
+	}
+	
+}

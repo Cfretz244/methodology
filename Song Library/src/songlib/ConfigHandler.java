@@ -62,7 +62,7 @@ public class ConfigHandler {
 	public static boolean writeConfig(Song[] songs) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter("config.txt"));
 		
-		// Iterate over the songs and write a line for each.
+		// Iterate over the songs and write a line *for each.
 		try {
 			for (Song song : songs) {
 				String line = song.getName() + "|" + song.getArtist() + "|";

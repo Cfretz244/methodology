@@ -1,7 +1,0 @@
-package songlib;
-
-import javax.swing.AbstractListModel;
-
-public class SongListModel extends AbstractListModel<E> {
-
-}
