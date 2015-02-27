@@ -1,9 +1,13 @@
 package cs213.photoAlbum.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Class represents an individual photo album for a user. It keeps track of all of its photos, and 
@@ -27,7 +31,11 @@ public class Album implements Serializable {
 	 * @param name The name of the album.
 	 */
 	public Album(String name) {
-		// Implementation...
+		this.name = name;
+		
+		photos = new HashMap<String, Photo>();
+		tags = new HashMap<String, Set<Photo>>();
+		dates = new TreeSet<Photo>();
 	}
 	
 	/*----- Protected Setters/Mutators -----*/
@@ -39,8 +47,23 @@ public class Album implements Serializable {
 	 * @return Status of operation.
 	 */
 	protected boolean addPhoto(Photo photo) {
-		// Implementation...
-		return false;
+		if (photos.containsKey(photo.getName())) return false;
+		
+		photos.put(photo.getName(), photo);
+		dates.add(photo);
+		
+		String[] allTags = photo.getTags();
+		for (String tag : allTags) {
+			String type = tag.substring(0, tag.indexOf(":"));
+			Set<Photo> category = tags.get(type);
+			if (category == null) {
+				category = new HashSet<Photo>();
+				tags.put(type, category);
+			}
+			category.add(photo);
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -49,9 +72,18 @@ public class Album implements Serializable {
 	 * @param photo Name of photo to be removed.
 	 * @return The photo that was removed.
 	 */
-	protected Photo removePhoto(String photo) {
-		// Implementation...
-		return null;
+	protected Photo removePhoto(String name) {
+		Photo photo = photos.remove(name);
+		if (photo == null) return null;
+		
+		dates.remove(photo);
+		String[] allTags = photo.getTags();
+		for (String tag: allTags) {
+			String type = tag.substring(0, tag.indexOf(":"));
+			tags.get(type).remove(photo);
+		}
+		
+		return photo;
 	}
 	
 	/**
@@ -61,7 +93,32 @@ public class Album implements Serializable {
 	 * @param photo The photo object whose tags have changed.
 	 */
 	protected void tagsChanged(Photo photo) {
-		// Implementation...
+		Set<String> update = new HashSet<String>();
+		
+		String[] allTags = photo.getTags();
+		for(String tag : allTags) {
+			String type = tag.substring(0,  tag.indexOf(":"));
+			update.add(type);
+		}
+		
+		Iterator<String> iterate = tags.keySet().iterator();
+		while (iterate.hasNext()) {
+			String type = iterate.next();
+			if (update.contains(type)) {
+				tags.get(type).add(photo);
+			} else {
+				tags.get(type).remove(photo);
+			}
+			update.remove(type);
+		}
+		
+		iterate = update.iterator();
+		while (iterate.hasNext()) {
+			String type = iterate.next();
+			Set<Photo> category = new HashSet<Photo>();
+			category.add(photo);
+			tags.put(type, category);
+		}
 	}
 	
 	/*----- Public Getters -----*/
@@ -72,8 +129,7 @@ public class Album implements Serializable {
 	 * @return The name.
 	 */
 	public String getName() {
-		// Implementation...
-		return null;
+		return name;
 	}
 	
 	/**
@@ -82,8 +138,9 @@ public class Album implements Serializable {
 	 * @return An array of the photos.
 	 */
 	public Photo[] getPhotos() {
-		// Implementation...
-		return null;
+		Photo[] allPhotos = new Photo[photos.size()];
+		photos.values().toArray(allPhotos);
+		return allPhotos;
 	}
 	
 	/**
@@ -93,9 +150,18 @@ public class Album implements Serializable {
 	 * @param tagValue The value of the tag.
 	 * @return An array of photos that have the given tag.
 	 */
-	public Photo[] getPhotos(String tagType, String tagValue) {
-		// Implementation...
-		return null;
+	public Photo[] getPhotos(String type, String value) {
+		Set<Photo> category = tags.get(type), temp = new HashSet<Photo>();
+
+		Iterator<Photo> iterate = category.iterator();
+		while (iterate.hasNext()) {
+			Photo photo = iterate.next();
+			if (photo.hasTag(type, value)) temp.add(photo);
+		}
+		
+		Photo[] results = new Photo[temp.size()];
+		temp.toArray(results);
+		return results;
 	}
 	
 	/**
@@ -106,8 +172,11 @@ public class Album implements Serializable {
 	 * @return An array of photos within the given dates.
 	 */
 	public Photo[] getPhotos(long startDate, long endDate) {
-		// Implementation...
-		return null;
+		Photo start = new Photo(this, "", "", startDate), end = new Photo(this, "", "", endDate);
+		SortedSet<Photo> subset = dates.subSet(start, end);
+		Photo[] results = new Photo[subset.size()];
+		subset.toArray(results);
+		return results;
 	}
 
 }
