@@ -1,6 +1,10 @@
 package cs213.photoAlbum.control;
 
-import cs213.photoAlbum.model.*;
+import java.io.IOException;
+
+import cs213.photoAlbum.model.Album;
+import cs213.photoAlbum.model.Photo;
+import cs213.photoAlbum.model.User;
 
 /**
  * Interface defines a public API with which the view can interact with the control object.
@@ -10,8 +14,8 @@ import cs213.photoAlbum.model.*;
  */
 public interface PhotoSource {
 	
-	/*---- Setters/Mutators -----*/
-
+	/*----- State Control -----*/
+	
 	/**
 	 * Method sets the current user. View would call this when the user logs in, and it defines what user
 	 * the control object will be operating upon for the rest of the session.
@@ -24,7 +28,15 @@ public interface PhotoSource {
 	 * Method is called after setCurrentUser, and de-serializes the user data and loads it into memory.
 	 * Should be called directly after setCurrentUser, and before all other interactive methods.
 	 */
-	public void loadUserData();
+	public boolean loadUserData();
+	
+	/**
+	 * Method is responsible for writing the current user out to disk and doing anything else that needs
+	 * to be done for a clean shutdown.
+	 */
+	public boolean shutdown();
+	
+	/*---- Setters/Mutators -----*/
 
 	/**
 	 * Method creates a new user with the given id and name.

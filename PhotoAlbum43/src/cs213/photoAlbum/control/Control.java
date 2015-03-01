@@ -1,6 +1,9 @@
 package cs213.photoAlbum.control;
 
+import java.io.File;
+
 import cs213.photoAlbum.model.Album;
+import cs213.photoAlbum.model.Backend;
 import cs213.photoAlbum.model.Photo;
 import cs213.photoAlbum.model.User;
 
@@ -13,146 +16,194 @@ import cs213.photoAlbum.model.User;
  */
 public class Control implements PhotoSource {
 	
-	private String currentUser;
+	private String currentUserid;
+	private User currentUser;
 
 	@Override
 	public void setCurrentUser(String userid) {
-		// TODO Auto-generated method stub
-
+		currentUserid = userid;
 	}
 	
 	@Override
-	public void loadUserData() {
-		// TODO Auto-generated method stub
-
+	public boolean loadUserData() {
+		if (currentUserid == null) return false;
+		currentUser = Backend.loadUser(currentUserid);
+		return currentUser != null;
+	}
+	
+	@Override
+	public boolean shutdown() {
+		int e_count = 0;
+		boolean status = Backend.writeUser(currentUser);
+		while (!status) {
+			if (++e_count > 5) return false;
+			status = Backend.writeUser(currentUser);
+		}
+		return true;
 	}
 
 	@Override
 	public boolean addUser(String userid, String name) {
-		// TODO Auto-generated method stub
-		return false;
+		currentUserid = userid;
+		if (Backend.loadUser(userid) == null) {
+			currentUser = new User(name, userid);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
 	public boolean removeUser(String userid) {
-		// TODO Auto-generated method stub
-		return false;
+		return Backend.deleteUser(userid);
 	}
 
 	@Override
 	public boolean addAlbum(String album) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		return currentUser.addAlbum(album);
 	}
 
 	@Override
 	public boolean removeAlbum(String album) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		return currentUser.removeAlbum(album);
 	}
 
 	@Override
 	public boolean addPhotoToAlbum(String album, String name, String caption) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		File photoFile = new File(name);
+		if (!photoFile.exists()) return false;
+		return currentUser.addPhotoToAlbum(name, photoFile.lastModified(), album);
 	}
 
 	@Override
 	public boolean movePhoto(String fromAlbum, String toAlbum, String name) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		Photo photo = currentUser.removePhotoFromAlbum(name, fromAlbum);
+		if (photo == null) return false;
+		return currentUser.addPhotoToAlbum(photo, toAlbum);
 	}
 
 	@Override
 	public boolean removePhoto(String name) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		return currentUser.removePhoto(name) != null;
 	}
 
 	@Override
 	public boolean removePhotoFromAlbum(String album, String name) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		return currentUser.removePhotoFromAlbum(name, album) != null;
 	}
 
 	@Override
 	public boolean addTagToPhoto(String name, String tagType, String tagValue) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		return currentUser.addTagToPhoto(name, tagType, tagValue);
 	}
 
 	@Override
 	public boolean addTagToAlbum(String album, String tagType, String tagValue) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		Photo[] photos = currentUser.getPhotos(album);
+		for (Photo photo : photos) {
+			currentUser.addTagToPhoto(photo.getName(), tagType, tagValue);
+		}
+		
+		return true;
 	}
 
 	@Override
 	public boolean removeTagFromPhoto(String name, String tagType) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		return currentUser.removeTagFromPhoto(name, tagType);
 	}
 
 	@Override
-	public boolean removeTagFromPhoto(String name, String tagType,
-			String tagValue) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeTagFromPhoto(String name, String tagType, String tagValue) {
+		if (currentUser == null) return false;
+		
+		return currentUser.removeTagFromPhoto(name, tagType, tagValue);
 	}
 
 	@Override
 	public boolean removeTagFromAlbum(String album, String tagType) {
-		// TODO Auto-generated method stub
-		return false;
+		if (currentUser == null) return false;
+		
+		Photo[] photos = currentUser.getPhotos(album);
+		for (Photo photo : photos) {
+			currentUser.removeTagFromPhoto(photo.getName(), tagType);
+		}
+		
+		return true;
 	}
 
 	@Override
-	public boolean removeTagFromAlbum(String album, String tagType,
-			String tagValue) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeTagFromAlbum(String album, String tagType, String tagValue) {
+		if (currentUser == null) return false;
+		
+		Photo[] photos = currentUser.getPhotos(album);
+		for (Photo photo : photos) {
+			currentUser.removeTagFromPhoto(photo.getName(), tagType, tagValue);
+		}
+		
+		return true;
 	}
 
 	@Override
 	public User getUser(String userid) {
-		// TODO Auto-generated method stub
-		return null;
+		if (userid.equals(currentUserid)) return currentUser;
+		return Backend.loadUser(userid);
 	}
 
 	@Override
 	public Album[] getAlbums() {
-		// TODO Auto-generated method stub
-		return null;
+		if (currentUser == null) return null;
+		return currentUser.getAlbums();
 	}
 
 	@Override
 	public Photo[] getPhotos() {
-		// TODO Auto-generated method stub
-		return null;
+		if (currentUser == null) return null;
+		return currentUser.getPhotos();
 	}
 
 	@Override
 	public Photo[] getPhotosFromAlbum(String album) {
-		// TODO Auto-generated method stub
-		return null;
+		if (currentUser == null) return null;
+		return currentUser.getPhotos(album);
 	}
 
 	@Override
 	public Photo[] getPhotosByDate(String start, String end) {
-		// TODO Auto-generated method stub
-		return null;
+		if (currentUser == null) return null;
+		
+		long startDate = Long.parseLong(start), endDate = Long.parseLong(end);
+		return currentUser.getPhotos(startDate, endDate);
 	}
 
 	@Override
 	public Photo[] getPhotosByTag(String tagType, String tagValue) {
-		// TODO Auto-generated method stub
-		return null;
+		if (currentUser == null) return null;
+		
+		return currentUser.getPhotos(tagType, tagValue);
 	}
 
 	@Override
 	public String[] getTagsForPhoto(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		if (currentUser == null) return null;
+		
+		Photo photo = currentUser.getPhoto(name);
+		return photo.getTags();
 	}
 
 }

@@ -233,6 +233,10 @@ public class User implements Serializable {
 		return id;
 	}
 	
+	public Album getAlbum(String album) {
+		return albums.get(album);
+	}
+	
 	/**
 	 * Method returns all albums for the user.
 	 * 

@@ -1,5 +1,7 @@
 package cs213.photoAlbum.model;
 
+import java.io.Closeable;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,13 +25,15 @@ public class Backend {
 	 * @throws IOException ObjectInputStream can throw this.
 	 * @throws ClassNotFoundException ObjectInputStream can throw this as well.
 	 */
-	public static User loadUser(String userid) throws IOException, ClassNotFoundException {
+	public static User loadUser(String userid) {
+		ObjectInputStream ois = openInputStream("data/" + userid);
 		try {
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data/" + userid));
 			Object deserialized = ois.readObject();
 			return (User) deserialized;
 		} catch (Exception e) {
 			return null;
+		} finally {
+			closeStream(ois);
 		}
 
 	}
@@ -39,13 +43,49 @@ public class Backend {
 	 * 
 	 * @param user The user object to serialize.
 	 * @return Whether or not the operation was successful.
-	 * @throws IOException ObjectOutputStream can throw this.
 	 */
-	public static boolean writeUser(User user) throws IOException {
+	public static boolean writeUser(User user) {
+		ObjectOutputStream oos = openOutputStream("data/" + user.getId());
 		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data/" + user.getId()));
 			oos.writeObject(user);
 		} catch (Exception e) {
+			return false;
+		} finally {
+			closeStream(oos);
+		}
+		return true;
+	}
+	
+	public static boolean deleteUser(String userid) {
+		File user = new File("data/" + userid);
+		if (user.exists()) {
+			user.delete();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private static ObjectInputStream openInputStream(String path) {
+		try {
+			return new ObjectInputStream(new FileInputStream(path));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private static ObjectOutputStream openOutputStream(String path) {
+		try {
+			return new ObjectOutputStream(new FileOutputStream(path));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private static boolean closeStream(Closeable stream) {
+		try {
+			stream.close();
+		} catch (IOException e) {
 			return false;
 		}
 		return true;
