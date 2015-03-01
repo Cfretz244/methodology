@@ -1,7 +1,11 @@
 package cs213.photoAlbum.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Class represents an individual user, and keeps track of their albums and photos.
@@ -24,19 +28,21 @@ public class User implements Serializable {
 	 * @param id The chosen id of the user.
 	 */
 	public User(String name, String id) {
-		// Implementation...
+		this.name = name;
+		this.id = id;
+		allPhotos = new HashMap<String, Photo>();
+		albums = new HashMap<String, Album>();
 	}
 	
-	/*----- Private Methods -----*/
+	/*----- Private Helpers -----*/
 	
 	private boolean addPhoto(Photo photo, String album) {
-		// Implementation...
-		return false;
-	}
-	
-	private boolean removeTag(Photo photo, String tagType, String tagValue) {
-		// Implementation...
-		return false;
+		Album current = albums.get(album);
+		if (current == null) return false;
+
+		current.addPhoto(photo);
+		allPhotos.put(photo.getName(), photo);
+		return true;
 	}
 	
 	/*----- Public Setters/Mutators -----*/
@@ -48,8 +54,8 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean setName(String name) {
-		// Implementation...
-		return false;
+		this.name = name;
+		return true;
 	}
 	
 	/**
@@ -59,8 +65,8 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean setId(String id) {
-		// Implementation...
-		return false;
+		this.id = id;
+		return true;
 	}
 	
 	/**
@@ -70,7 +76,10 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addAlbum(String album) {
-		// Implementation...
+		if (!albums.containsKey(album)) {
+			albums.put(album, new Album(album));
+			return true;
+		}
 		return false;
 	}
 	
@@ -81,8 +90,7 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean removeAlbum(String album) {
-		// Implementation...
-		return false;
+		return albums.remove(album) != null;
 	}
 	
 	/**
@@ -93,8 +101,7 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addPhotoToAlbum(Photo photo, String album) {
-		// Implementation...
-		return false;
+		return addPhoto(photo, album);
 	}
 	
 	/**
@@ -106,8 +113,7 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addPhotoToAlbum(String name, long date, String album) {
-		// Implementation...
-		return false;
+		return addPhoto(new Photo(albums.get(album), name, id, date), album);
 	}
 	
 	/**
@@ -120,8 +126,7 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addPhotoToAlbum(String name, String caption, long date, String album) {
-		// Implementation...
-		return false;
+		return addPhoto(new Photo(albums.get(album), name, caption, id, date), album);
 	}
 	
 	/**
@@ -131,8 +136,16 @@ public class User implements Serializable {
 	 * @return The photo that was removed.
 	 */
 	public Photo removePhoto(String name) {
-		// Implementation...
-		return null;
+		Iterator<String> keys = albums.keySet().iterator();
+		Photo result = null;
+
+		while (keys.hasNext()) {
+			Album current = albums.get(keys.next());
+			Photo tmp = current.removePhoto(name);
+			if (tmp != null) result = tmp;
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -143,8 +156,9 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public Photo removePhotoFromAlbum(String name, String album) {
-		// Implementation...
-		return null;
+		Album current = albums.get(album);
+		if (current == null) return null;
+		return current.removePhoto(name);
 	}
 	
 	/**
@@ -156,8 +170,10 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addTagToPhoto(String photoName, String tagType, String tagValue) {
-		// Implementation...
-		return false;
+		Photo photo = allPhotos.get(photoName);
+		if (photo == null) return false;
+		
+		return photo.addTag(tagType, tagValue);
 	}
 	
 	/**
@@ -167,8 +183,15 @@ public class User implements Serializable {
 	 * @return Whether or not the operation was successful.
 	 */
 	public boolean removeTagsFromPhoto(String photoName) {
-		// Implementation...
-		return false;
+		Photo photo = allPhotos.get(photoName);
+		if (photo == null) return false;
+		
+		String[] tags = photo.getTags();
+		for (String tag : tags) {
+			String type = tag.substring(0, tag.indexOf(":"));
+			photo.removeTag(type);
+		}
+		return true;
 	}
 	
 	/**
@@ -179,8 +202,10 @@ public class User implements Serializable {
 	 * @return Whether or not the operation was successful.
 	 */
 	public boolean removeTagFromPhoto(String photoName, String tagType) {
-		// Implementation...
-		return false;
+		Photo photo = allPhotos.get(photoName);
+		if (photo == null) return false;
+		
+		return photo.removeTag(tagType);
 	}
 	
 	/**
@@ -192,8 +217,10 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean removeTagFromPhoto(String photoName, String tagType, String tagValue) {
-		// Implementation...
-		return false;
+		Photo photo = allPhotos.get(photoName);
+		if (photo == null) return false;
+		
+		return photo.removeTag(tagType, tagValue);
 	}
 	
 	/*----- Public Getters -----*/
@@ -204,8 +231,9 @@ public class User implements Serializable {
 	 * @return An array of albums.
 	 */
 	public Album[] getAlbums() {
-		// Implementation...
-		return null;
+		Album[] result = new Album[albums.size()];
+		albums.values().toArray(result);
+		return result;
 	}
 	
 	/**
@@ -215,8 +243,7 @@ public class User implements Serializable {
 	 * @return A photo object.
 	 */
 	public Photo getPhoto(String name) {
-		// Implementation...
-		return null;
+		return allPhotos.get(name);
 	}
 	
 	/**
@@ -225,8 +252,9 @@ public class User implements Serializable {
 	 * @return An array of photos.
 	 */
 	public Photo[] getPhotos() {
-		// Implementation...
-		return null;
+		Photo[] photos = new Photo[allPhotos.size()];
+		allPhotos.values().toArray(photos);
+		return photos;
 	}
 	
 	/**
@@ -236,8 +264,9 @@ public class User implements Serializable {
 	 * @return An array of photos.
 	 */
 	public Photo[] getPhotos(String album) {
-		// Implementation...
-		return null;
+		Album current = albums.get(album);
+		if (current == null) return null;
+		return current.getPhotos();
 	}
 	
 	/**
@@ -248,8 +277,18 @@ public class User implements Serializable {
 	 * @return An array of photos.
 	 */
 	public Photo[] getPhotos(String tagType, String tagValue) {
-		// Implementation...
-		return null;
+		Iterator<String> iterate = albums.keySet().iterator();
+		Set<Photo> results = new HashSet<Photo>();
+		
+		while (iterate.hasNext()) {
+			Album current = albums.get(iterate.next());
+			Photo[] currentPhotos = current.getPhotos(tagType, tagValue);
+			for (Photo photo : currentPhotos) results.add(photo);
+		}
+		
+		Photo[] resultsArray = new Photo[results.size()];
+		results.toArray(resultsArray);
+		return resultsArray;
 	}
 	
 	/**
@@ -260,8 +299,18 @@ public class User implements Serializable {
 	 * @return An array of photos.
 	 */
 	public Photo[] getPhotos(long startDate, long endDate) {
-		// Implementation...
-		return null;
+		Iterator<String> iterate = albums.keySet().iterator();
+		Set<Photo> results = new HashSet<Photo>();
+		
+		while (iterate.hasNext()) {
+			Album current = albums.get(iterate.next());
+			Photo[] currentPhotos = current.getPhotos(startDate, endDate);
+			for (Photo photo : currentPhotos) results.add(photo);
+		}
+		
+		Photo[] resultsArray = new Photo[results.size()];
+		results.toArray(resultsArray);
+		return resultsArray;
 	}
 
 }
