@@ -44,11 +44,7 @@ public class Backend {
 	public static boolean writeUser(User user) throws IOException {
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data/" + user.getId()));
-			oos.writeObject(user);
-		} catch (Exception e) {
-			return false;
 		}
-		return true;
 	}
 
 }

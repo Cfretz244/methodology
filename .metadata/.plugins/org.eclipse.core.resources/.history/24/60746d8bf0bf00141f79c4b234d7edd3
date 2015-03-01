@@ -1,10 +1,8 @@
 package cs213.photoAlbum.model;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 /**
  * Class is a utility class that can be used to load and store data for users.
@@ -42,13 +40,7 @@ public class Backend {
 	 * @throws IOException ObjectOutputStream can throw this.
 	 */
 	public static boolean writeUser(User user) throws IOException {
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data/" + user.getId()));
-			oos.writeObject(user);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+
 	}
 
 }
