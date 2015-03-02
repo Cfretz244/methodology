@@ -33,6 +33,8 @@ public class Control implements PhotoSource {
 	
 	@Override
 	public boolean shutdown() {
+		if (currentUser == null) return false;
+		
 		int e_count = 0;
 		boolean status = Backend.writeUser(currentUser);
 		while (!status) {
@@ -71,21 +73,30 @@ public class Control implements PhotoSource {
 	}
 
 	@Override
-	public boolean addPhotoToAlbum(String album, String name, String caption) {
-		if (currentUser == null) return false;
+	public int addPhotoToAlbum(String album, String name, String caption) {
+		if (currentUser == null) return -1;
 		
 		File photoFile = new File(name);
-		if (!photoFile.exists()) return false;
-		return currentUser.addPhotoToAlbum(name, photoFile.lastModified(), album);
+		if (!photoFile.exists()) return -1;
+		if (currentUser.addPhotoToAlbum(name, photoFile.lastModified(), album)) {
+			return 1;
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
-	public boolean movePhoto(String fromAlbum, String toAlbum, String name) {
-		if (currentUser == null) return false;
+	public int movePhoto(String fromAlbum, String toAlbum, String name) {
+		if (currentUser == null) return -1;
 		
 		Photo photo = currentUser.removePhotoFromAlbum(name, fromAlbum);
-		if (photo == null) return false;
-		return currentUser.addPhotoToAlbum(photo, toAlbum);
+		if (photo == null) return -1;
+		if (currentUser.addPhotoToAlbum(photo, toAlbum)) {
+			return 1;
+		} else {
+			currentUser.addPhotoToAlbum(photo, fromAlbum);
+			return 0;
+		}
 	}
 
 	@Override
@@ -169,6 +180,11 @@ public class Control implements PhotoSource {
 	public Album[] getAlbums() {
 		if (currentUser == null) return null;
 		return currentUser.getAlbums();
+	}
+	
+	public Photo getPhoto(String name) {
+		if (currentUser == null) return null;
+		return currentUser.getPhoto(name);
 	}
 
 	@Override

@@ -1,0 +1,47 @@
+package cs213.photoAlbum.simpleview;
+
+import cs213.photoAlbum.control.*;
+
+/**
+ * 
+ * 
+ * @author Karan Kadaru
+ */
+public class CmdView {
+	
+	public static void main(String[] args) {
+		String numArgs = "Error: Incorrect number of arguments for command";
+		if (args[0].equals("adduser")) {
+			if (args.length != 3) System.out.println(numArgs);
+			addUser(args[1], args[2]);
+		} else if (args[0].equals("deleteuser")) {
+			if (args.length != 2) System.out.println(numArgs);
+			deleteUser(args[1]);
+		} else if (args[0].equals("listusers")) {
+			if (args.length != 1) System.out.println(numArgs);
+			listUsers();
+		} else if (args[0].equals("login")) {
+			if (args.length != 2) System.out.println(numArgs);
+			PhotoSource control = new Control();
+		} else {
+			System.out.println("Error: Unrecognized command line argument.");
+		}
+	}
+	
+	private static void addUser(String name, String id) {
+		
+	}
+	
+	private static void deleteUser(String id) {
+		
+	}
+
+	private static void listUsers() {
+		
+	}
+	
+	private static void interactive() {
+		
+	}
+
+}

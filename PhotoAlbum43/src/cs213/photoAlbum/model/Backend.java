@@ -26,7 +26,7 @@ public class Backend {
 	 * @throws ClassNotFoundException ObjectInputStream can throw this as well.
 	 */
 	public static User loadUser(String userid) {
-		ObjectInputStream ois = openInputStream("data/" + userid);
+		ObjectInputStream ois = openInputStream("data/" + userid + ".ser");
 		try {
 			Object deserialized = ois.readObject();
 			return (User) deserialized;
@@ -45,7 +45,7 @@ public class Backend {
 	 * @return Whether or not the operation was successful.
 	 */
 	public static boolean writeUser(User user) {
-		ObjectOutputStream oos = openOutputStream("data/" + user.getId());
+		ObjectOutputStream oos = openOutputStream("data/" + user.getId() + ".ser");
 		try {
 			oos.writeObject(user);
 		} catch (Exception e) {
@@ -57,13 +57,26 @@ public class Backend {
 	}
 	
 	public static boolean deleteUser(String userid) {
-		File user = new File("data/" + userid);
+		File user = new File("data/" + userid + ".ser");
 		if (user.exists()) {
 			user.delete();
 			return true;
 		} else {
 			return false;
 		}
+	}
+	
+	public static String[] listUsers() {
+		File dir = new File("data");
+		File[] contents = dir.listFiles();
+		String[] users = new String[contents.length];
+		
+		for (int i = 0; i < contents.length; i++) {
+			File file = contents[i];
+			users[i] = file.getName().substring(0, file.getName().indexOf("."));
+		}
+		
+		return users;
 	}
 	
 	private static ObjectInputStream openInputStream(String path) {

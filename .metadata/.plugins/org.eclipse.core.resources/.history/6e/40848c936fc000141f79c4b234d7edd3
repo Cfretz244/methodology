@@ -1,0 +1,87 @@
+package cs213.photoAlbum.simpleview;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+import cs213.photoAlbum.control.Control;
+import cs213.photoAlbum.control.PhotoSource;
+import cs213.photoAlbum.model.Backend;
+
+/**
+ * 
+ * 
+ * @author Karan Kadaru
+ */
+public class CmdView {
+
+	public static void main(String[] args) {
+		String numArgs = "Error: Incorrect number of arguments for command";
+		PhotoSource control = new Control();
+
+		try {
+			if (args[0].equals("adduser")) {
+				if (args.length != 3) System.out.println(numArgs);
+				addUser(control, args[1], args[2]);
+			} else if (args[0].equals("deleteuser")) {
+				if (args.length != 2) System.out.println(numArgs);
+				deleteUser(args[1]);
+			} else if (args[0].equals("listusers")) {
+				if (args.length != 1) System.out.println(numArgs);
+				listUsers();
+			} else if (args[0].equals("login")) {
+				if (args.length != 2) System.out.println(numArgs);
+				control.setCurrentUser(args[1]);
+				if (control.loadUserData()) {
+					interactive(control);
+				} else {
+					System.out.println("user " + args[1] + " does not exist");
+				}
+			} else {
+				System.out.println("Error: Unrecognized command line argument.");
+			}
+		} finally {
+			control.shutdown();
+		}
+	}
+
+	private static void addUser(PhotoSource control, String name, String id) {
+		if (control.addUser(name, id)) {
+			System.out.println("created user " + id + " with name " + name);
+		} else {
+			System.out.println("user " + id + " already exists with name " + name);
+		}
+	}
+
+	private static void deleteUser(String id) {
+		if (Backend.deleteUser(id)) {
+			System.out.println("deleted user " + id);
+		} else {
+			System.out.println("user " + id + " does not exist");
+		}
+	}
+
+	private static void listUsers() {
+		String[] users = Backend.listUsers();
+		if (users.length > 0) {
+			for (String user : users) {
+				System.out.println(user);
+			}
+		} else {
+			System.out.println("no users exist");
+		}
+	}
+
+	private static void interactive(PhotoSource control) {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			try {
+				
+			} catch (IOException e) {
+				System.out.println("Error: Could not read line from terminal. Exiting...");
+				return;
+			}
+		}
+	}
+
+}

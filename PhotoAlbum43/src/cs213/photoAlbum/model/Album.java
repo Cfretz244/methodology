@@ -178,5 +178,12 @@ public class Album implements Serializable {
 		subset.toArray(results);
 		return results;
 	}
+	
+	public long[] getDateRange() {
+		long[] results = new long[2];
+		results[0] = dates.first().getDate();
+		results[1] = dates.last().getDate();
+		return results;
+	}
 
 }

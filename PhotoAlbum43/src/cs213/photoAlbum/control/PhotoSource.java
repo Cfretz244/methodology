@@ -79,7 +79,7 @@ public interface PhotoSource {
 	 * @param caption The caption for the photo.
 	 * @return Whether or not the operation was successful.
 	 */
-	public boolean addPhotoToAlbum(String album, String name, String caption);
+	public int addPhotoToAlbum(String album, String name, String caption);
 	
 	/**
 	 * Method moves a photo between albums.
@@ -89,7 +89,7 @@ public interface PhotoSource {
 	 * @param name The name of the photo.
 	 * @return Whether or not the operation was successful.
 	 */
-	public boolean movePhoto(String fromAlbum, String toAlbum, String name);
+	public int movePhoto(String fromAlbum, String toAlbum, String name);
 	
 	/**
 	 * Removes a photo from all albums of the current user.
@@ -182,6 +182,14 @@ public interface PhotoSource {
 	 * @return An array of album objects.
 	 */
 	public Album[] getAlbums();
+	
+	/**
+	 * Method returns the photo of the given name.
+	 * 
+	 * @param name Name of the photo you want.
+	 * @return The photo requested or null.
+	 */
+	public Photo getPhoto(String name);
 	
 	/**
 	 * Method returns an array of all photos for the current user.
