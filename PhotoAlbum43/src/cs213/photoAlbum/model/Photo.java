@@ -22,7 +22,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 	private Map<String, Set<String>> tags;
 	private Set<Album> containingAlbums;
 	private static final long serialVersionUID = 1;
-	
+
 	/*----- Constructors -----*/
 
 	/**
@@ -39,7 +39,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 		this.date.setTimeInMillis(date);
 		containingAlbums.add(containing);
 	}
-	
+
 	/**
 	 * Public constructor taking the album name, photo name, caption, and date.
 	 * 
@@ -56,15 +56,15 @@ public class Photo implements Serializable, Comparable<Photo> {
 		this.date.setTimeInMillis(date);
 		containingAlbums.add(containing);
 	}
-	
+
 	/*----- Private Helpers -----*/
-	
+
 	private void setup() {
 		this.date = new GregorianCalendar();
 		tags = new HashMap<String, Set<String>>();
 		containingAlbums = new HashSet<Album>();
 	}
-	
+
 	/*----- Protected Setters/Mutators -----*/
 
 	/**
@@ -104,7 +104,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 	protected boolean removeTag(String type) {
 		return tags.remove(type) != null;
 	}
-	
+
 	/**
 	 * Method removes a specific tag.
 	 * 
@@ -125,7 +125,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 	 */
 	protected boolean addToAlbum(Album album) {
 		if (containingAlbums.contains(album)) return false;
-		
+
 		containingAlbums.add(album);
 		return true;
 	}
@@ -138,7 +138,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 	protected boolean removeFromAlbum(Album album) {
 		return containingAlbums.remove(album);
 	}
-	
+
 	/*----- Public Getters -----*/
 
 	/**
@@ -158,7 +158,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 	public String getCaption() {
 		return caption;
 	}
-	
+
 	/**
 	 * Method returns the userid of the user that owns this photo.
 	 * 
@@ -196,19 +196,19 @@ public class Photo implements Serializable, Comparable<Photo> {
 	public String[] getTags() {
 		Set<String> allTags = new HashSet<String>();
 		Iterator<String> keys = tags.keySet().iterator();
-		
+
 		while (keys.hasNext()) {
 			String key = keys.next();
 			Iterator<String> values = tags.get(key).iterator();
 			while(values.hasNext()) allTags.add(key + ":" + values.next());
 		}
-		
+
 		String[] results = new String[allTags.size()];
 		allTags.toArray(results);
-		
+
 		return results;
 	}
-	
+
 	/**
 	 * Method returns all tags for the current photo with the given type.
 	 * 
@@ -225,15 +225,22 @@ public class Photo implements Serializable, Comparable<Photo> {
 	}
 
 	/**
-	 * Checks to see if photo has tags of the given type.
+	 * Checks to see if photo has tags of the given type or value.
 	 * 
-	 * @param type The type of the tag you're looking for.
+	 * @param tag The fragment of tag you're looking for.
+	 * @param isType Whether or not the fragment you've supplied is a type or value.
 	 * @return Whether or not the photo has tags of the given type.
 	 */
-	public boolean hasTag(String type) {
-		return tags.containsKey(type);
+	public boolean hasTag(String tag, boolean isType) {
+		if (isType) {
+			return tags.containsKey(tag);
+		} else {
+			Iterator<String> keys = tags.keySet().iterator();
+			while (keys.hasNext()) if (tags.get(keys.next()).contains(tag)) return true;
+			return false;
+		}
 	}
-	
+
 	/**
 	 * Checks to see if photo has a specific tag.
 	 * 
@@ -255,9 +262,9 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	public boolean equals(Object other) {
 		if (other == null || !(other instanceof Photo)) return false;
-		
+
 		Photo another = (Photo) other;
 		return name == another.getName() && userid == another.getUserid();
 	}
-	
+
 }

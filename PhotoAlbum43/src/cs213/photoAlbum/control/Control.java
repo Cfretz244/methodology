@@ -200,11 +200,10 @@ public class Control implements PhotoSource {
 	}
 
 	@Override
-	public Photo[] getPhotosByDate(String start, String end) {
+	public Photo[] getPhotosByDate(long start, long end) {
 		if (currentUser == null) return null;
 		
-		long startDate = Long.parseLong(start), endDate = Long.parseLong(end);
-		return currentUser.getPhotos(startDate, endDate);
+		return currentUser.getPhotos(start, end);
 	}
 
 	@Override

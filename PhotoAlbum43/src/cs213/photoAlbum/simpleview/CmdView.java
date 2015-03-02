@@ -3,8 +3,12 @@ package cs213.photoAlbum.simpleview;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import cs213.photoAlbum.control.Control;
 import cs213.photoAlbum.control.PhotoSource;
@@ -14,7 +18,6 @@ import cs213.photoAlbum.model.Photo;
 import cs213.photoAlbum.model.User;
 
 /**
- * 
  * 
  * @author Karan Kadaru
  */
@@ -263,11 +266,60 @@ public class CmdView {
 					String[] tags = photo.getTags();
 					for (String tag : tags) puts(tag);
 				} else if (args[0].equals("getPhotosByDate")) {
-
+					if (args.length != 3) {
+						puts(numArgs);
+						continue;
+					}
+					
+					SimpleDateFormat format = new SimpleDateFormat("M/d/y-h/m/s");
+					Calendar startDate = new GregorianCalendar(), endDate = new GregorianCalendar();
+					try {
+						startDate.setTime(format.parse(args[1]));
+						endDate.setTime(format.parse(args[2]));
+					} catch (ParseException e) {
+						puts("Error: Invalid date format. Format must conform to MM/DD/YYYY-HH:MM:SS");
+						continue;
+					}
+					Photo[] photos = control.getPhotosByDate(startDate.getTimeInMillis(), endDate.getTimeInMillis());
+					puts("Photos for user " + currentUser.getId() + " in range " + startDate + " to " + endDate + ":");
+					printPhotos(photos);
 				} else if (args[0].equals("getPhotosByTag")) {
-
+					if (args.length < 2) {
+						puts(numArgs);
+						continue;
+					}
+					
+					String[] tags = args[1].split(",");
+					Set<Photo> allPhotos = new HashSet<Photo>();
+					for (String tag : tags) {
+						int index = tag.indexOf(":");
+						String type = "", value;
+						if (index >= 0) {
+							type = tag.substring(0, index);
+							value = tag.substring(index + 1, tag.length());
+						} else {
+							value = tag;
+						}
+						
+						Photo[] photos;
+						if (!type.equals("")) {
+							photos = control.getPhotosByTag(type, value);
+						} else {
+							Photo[] tmp = control.getPhotos();
+							Set<Photo> tmpPhotos = new HashSet<Photo>();
+							for (Photo photo : tmp) if (photo.hasTag(value, false)) tmpPhotos.add(photo);
+							photos = new Photo[tmpPhotos.size()];
+							tmpPhotos.toArray(photos);
+						}
+						for (Photo photo : photos) allPhotos.add(photo);
+					}
+					Photo[] printed = new Photo[allPhotos.size()];
+					allPhotos.toArray(printed);
+					
+					puts("Photos for " + currentUser.getId() + " with tags " + args[1]);
+					printPhotos(printed);
 				} else if (args[0].equals("logout")) {
-
+					break;
 				} else {
 					System.out.println("Error: Unrecognized command.");
 				}
@@ -275,6 +327,18 @@ public class CmdView {
 				System.out.println("Error: Could not read line from terminal. Exiting...");
 				return;
 			}
+		}
+	}
+	
+	private static void printPhotos(Photo[] photos) {
+		Calendar date = new GregorianCalendar();
+		for (Photo photo : photos) {
+			String output = photo.getCaption() + " - Album: ";
+			Album[] albums = photo.getContainingAlbums();
+			for (Album album : albums) output += album.getName() + ",";
+			date.setTimeInMillis(photo.getDate());
+			output = output.substring(0, output.length() - 1) + " - Date: " + date;
+			puts(output);
 		}
 	}
 

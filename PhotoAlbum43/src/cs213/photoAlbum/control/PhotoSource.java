@@ -213,7 +213,7 @@ public interface PhotoSource {
 	 * @param end The end date.
 	 * @return An array of photo objects.
 	 */
-	public Photo[] getPhotosByDate(String start, String end);
+	public Photo[] getPhotosByDate(long start, long end);
 	
 	/**
 	 * Method returns an array of all photos with a given tag.
