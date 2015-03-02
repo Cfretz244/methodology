@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -65,8 +66,8 @@ public class CmdView {
 		}
 	}
 
-	private static void addUser(PhotoSource control, String name, String id) {
-		if (control.addUser(name, id)) {
+	private static void addUser(PhotoSource control, String id, String name) {
+		if (control.addUser(id, name)) {
 			puts("created user " + id + " with name " + name);
 		} else {
 			puts("user " + id + " already exists with name " + name);
@@ -99,7 +100,29 @@ public class CmdView {
 				String line = br.readLine();
 				String numArgs = "Error: Incorrect number of arguments for command.";
 
-				String[] args = line.split("\\s+");
+				String[] args;
+				if (line.indexOf("\"") < 0) {
+					args = line.split("\\s+");
+				} else {
+					int lindex = line.indexOf("\""), rindex = 0;
+					ArrayList<String> tmpArgs = new ArrayList<String>();
+					
+					String start = line.substring(0, lindex - 1);
+					String[] partialArgs = start.split("\\s+");
+					for (String arg : partialArgs) tmpArgs.add(arg);
+					
+					while (lindex > 0) {
+						rindex = line.indexOf("\"", lindex + 1);
+						tmpArgs.add(line.substring(lindex + 1, rindex));
+						lindex = line.indexOf("\"", rindex + 1);
+					}
+
+					String rest = line.substring(rindex + 2, line.length());
+					partialArgs = rest.split("\\s+");
+					for (String arg : partialArgs) tmpArgs.add(arg);
+					args = new String[tmpArgs.size()];
+					tmpArgs.toArray(args);
+				}
 				if (args[0].equals("createAlbum")) {
 					if (args.length != 2) {
 						puts(numArgs);
@@ -136,10 +159,14 @@ public class CmdView {
 
 						for (Album album : albums) {
 							long[] dates = album.getDateRange();
-							Calendar start = new GregorianCalendar(), end = new GregorianCalendar();
-							start.setTimeInMillis(dates[0]);
-							end.setTimeInMillis(dates[1]);
-							puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + start + " - " + end);
+							if (dates != null) {
+								Calendar start = new GregorianCalendar(), end = new GregorianCalendar();
+								start.setTimeInMillis(dates[0]);
+								end.setTimeInMillis(dates[1]);
+								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + start + " - " + end);
+							} else {
+								puts(album.getName() + " number of photos: 0");
+							}
 						}
 					} else {
 						puts("No albums exist for user " + currentUser.getId());
@@ -158,9 +185,7 @@ public class CmdView {
 							date.setTimeInMillis(photo.getDate());
 							puts(photo.getName() + " - " + date);
 						}
-					} else {
-						puts("No photos exist for album " + args[1]);
-					}
+					} 
 				} else if (args[0].equals("addPhoto")) {
 					if (args.length != 4) {
 						puts(numArgs);

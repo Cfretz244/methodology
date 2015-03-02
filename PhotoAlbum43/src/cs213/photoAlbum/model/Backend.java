@@ -98,7 +98,7 @@ public class Backend {
 	private static boolean closeStream(Closeable stream) {
 		try {
 			stream.close();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;

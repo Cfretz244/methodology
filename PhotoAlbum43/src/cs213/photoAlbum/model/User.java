@@ -40,9 +40,12 @@ public class User implements Serializable {
 		Album current = albums.get(album);
 		if (current == null) return false;
 
-		current.addPhoto(photo);
-		allPhotos.put(photo.getName(), photo);
-		return true;
+		if (current.addPhoto(photo)) {
+			allPhotos.put(photo.getName(), photo);
+			return true;
+		}
+
+		return false;
 	}
 	
 	/*----- Public Setters/Mutators -----*/

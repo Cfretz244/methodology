@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -181,8 +182,12 @@ public class Album implements Serializable {
 	
 	public long[] getDateRange() {
 		long[] results = new long[2];
-		results[0] = dates.first().getDate();
-		results[1] = dates.last().getDate();
+		try {
+			results[0] = dates.first().getDate();
+			results[1] = dates.last().getDate();
+		} catch (NoSuchElementException e) {
+			return null;
+		}
 		return results;
 	}
 
