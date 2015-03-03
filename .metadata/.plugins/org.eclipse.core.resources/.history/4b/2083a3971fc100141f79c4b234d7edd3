@@ -169,7 +169,7 @@ public class CmdView {
 								Calendar start = new GregorianCalendar(), end = new GregorianCalendar();
 								start.setTimeInMillis(dates[0]);
 								end.setTimeInMillis(dates[1]);
-								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + format.format(start.getTime()) + " - " + format.format(end.getTime()));
+								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + start + " - " + end);
 							} else {
 								puts(album.getName() + " number of photos: 0");
 							}

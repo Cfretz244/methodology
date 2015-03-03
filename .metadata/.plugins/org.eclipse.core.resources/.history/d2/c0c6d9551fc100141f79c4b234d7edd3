@@ -169,7 +169,7 @@ public class CmdView {
 								Calendar start = new GregorianCalendar(), end = new GregorianCalendar();
 								start.setTimeInMillis(dates[0]);
 								end.setTimeInMillis(dates[1]);
-								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + format.format(start.getTime()) + " - " + format.format(end.getTime()));
+								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + start + " - " + end);
 							} else {
 								puts(album.getName() + " number of photos: 0");
 							}
@@ -189,7 +189,7 @@ public class CmdView {
 						Calendar date = new GregorianCalendar();
 						for (Photo photo : photos) {
 							date.setTimeInMillis(photo.getDate());
-							puts(photo.getName() + " - " + format.format(date.getTime()));
+							puts(photo.getName() + " - " + date);
 						}
 					} 
 				} else if (args[0].equals("addPhoto")) {
@@ -289,7 +289,7 @@ public class CmdView {
 					
 					Calendar date = new GregorianCalendar();
 					date.setTimeInMillis(photo.getDate());
-					puts("Date: " + format.format(date.getTime()));
+					puts("Date: " + date);
 					
 					puts("Caption: " + photo.getCaption());
 					
@@ -312,7 +312,7 @@ public class CmdView {
 					}
 					Photo[] photos = control.getPhotosByDate(startDate.getTimeInMillis(), endDate.getTimeInMillis());
 					puts("Photos for user " + currentUser.getId() + " in range " + startDate + " to " + endDate + ":");
-					printPhotos(photos, format);
+					printPhotos(photos);
 				} else if (args[0].equals("getPhotosByTag")) {
 					if (args.length < 2) {
 						puts(numArgs);
@@ -347,7 +347,7 @@ public class CmdView {
 					allPhotos.toArray(printed);
 					
 					puts("Photos for " + currentUser.getId() + " with tags " + args[1]);
-					printPhotos(printed, format);
+					printPhotos(printed);
 				} else if (args[0].equals("logout")) {
 					break;
 				} else {
@@ -360,14 +360,14 @@ public class CmdView {
 		}
 	}
 	
-	private static void printPhotos(Photo[] photos, SimpleDateFormat format) {
+	private static void printPhotos(Photo[] photos) {
 		Calendar date = new GregorianCalendar();
 		for (Photo photo : photos) {
 			String output = photo.getCaption() + " - Album: ";
 			Album[] albums = photo.getContainingAlbums();
 			for (Album album : albums) output += album.getName() + ",";
 			date.setTimeInMillis(photo.getDate());
-			output = output.substring(0, output.length() - 1) + " - Date: " + format.format(date.getTime());
+			output = output.substring(0, output.length() - 1) + " - Date: " + date;
 			puts(output);
 		}
 	}

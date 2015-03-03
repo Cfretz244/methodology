@@ -169,7 +169,7 @@ public class CmdView {
 								Calendar start = new GregorianCalendar(), end = new GregorianCalendar();
 								start.setTimeInMillis(dates[0]);
 								end.setTimeInMillis(dates[1]);
-								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + format.format(start.getTime()) + " - " + format.format(end.getTime()));
+								puts(album.getName() + " number of photos: " + album.getPhotos().length + ", " + start + " - " + end);
 							} else {
 								puts(album.getName() + " number of photos: 0");
 							}
@@ -312,7 +312,7 @@ public class CmdView {
 					}
 					Photo[] photos = control.getPhotosByDate(startDate.getTimeInMillis(), endDate.getTimeInMillis());
 					puts("Photos for user " + currentUser.getId() + " in range " + startDate + " to " + endDate + ":");
-					printPhotos(photos, format);
+					printPhotos(photos);
 				} else if (args[0].equals("getPhotosByTag")) {
 					if (args.length < 2) {
 						puts(numArgs);
@@ -347,7 +347,7 @@ public class CmdView {
 					allPhotos.toArray(printed);
 					
 					puts("Photos for " + currentUser.getId() + " with tags " + args[1]);
-					printPhotos(printed, format);
+					printPhotos(printed);
 				} else if (args[0].equals("logout")) {
 					break;
 				} else {
