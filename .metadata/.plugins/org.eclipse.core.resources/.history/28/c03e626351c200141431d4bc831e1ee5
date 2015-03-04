@@ -356,7 +356,6 @@ public class CmdView {
 		}
 	}
 
-	// This function makes me weep, but it works.
 	private static String[] parseArgs(String line, String[] args) {
 		if (line.indexOf("\"") > 0 && !args[0].equals("getPhotosByDate")) {
 			ArrayList<String> tmpArgs = new ArrayList<String>();
