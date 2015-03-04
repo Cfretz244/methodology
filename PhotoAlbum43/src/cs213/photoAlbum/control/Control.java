@@ -78,11 +78,7 @@ public class Control implements PhotoSource {
 		
 		File photoFile = new File(name);
 		if (!photoFile.exists()) return -1;
-		if (currentUser.addPhotoToAlbum(name, caption, photoFile.lastModified(), album)) {
-			return 1;
-		} else {
-			return 0;
-		}
+		return currentUser.addPhotoToAlbum(name, caption, photoFile.lastModified(), album);
 	}
 
 	@Override

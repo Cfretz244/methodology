@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import cs213.photoAlbum.control.Control;
@@ -102,66 +103,7 @@ public class CmdView {
 				String numArgs = "Error: Incorrect number of arguments for command.";
 
 				String[] args = line.split("\\s+");
-
-				// Big ugly if case to handle quote-enclosed arguments.
-				if (line.indexOf("\"") > 0) {
-					ArrayList<String> tmpArgs = new ArrayList<String>();
-					String totalArg = new String();
-					int index = -1;
-					boolean collecting = false;
-					for (String arg : args) {
-						if (!collecting) {
-							totalArg = arg;
-							if ((index = totalArg.indexOf("\"")) >= 0) {
-								if (totalArg.indexOf("\"", index + 1) < 0) {
-									collecting = true;
-								} else {
-									if ((index = totalArg.indexOf(":")) > 0) {
-										tmpArgs.add(totalArg.substring(0, index));
-										tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
-									} else {
-										tmpArgs.add(totalArg.substring(1, totalArg.length() - 1));
-									}
-								}
-							} else {
-								if ((index = totalArg.indexOf(":")) > 0) {
-									tmpArgs.add(totalArg.substring(0, index));
-									tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
-								} else {
-									tmpArgs.add(totalArg);
-								}
-							}
-						} else {
-							totalArg += " " + arg;
-							if (totalArg.indexOf("\"", index + 1) > 0) {
-								collecting = false;
-								if ((index = totalArg.indexOf(":")) > 0) {
-									tmpArgs.add(totalArg.substring(0, index));
-									tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
-								} else {
-									tmpArgs.add(totalArg.substring(1, totalArg.length() - 1));
-								}
-							}
-						}
-					}
-					args = new String[tmpArgs.size()];
-					tmpArgs.toArray(args);
-				} else if (line.indexOf(":") > 0) {
-					ArrayList<String> tmpArgs = new ArrayList<String>();
-					
-					for (String arg : args) {
-						int index = arg.indexOf(":");
-						if (index > 0) {
-							tmpArgs.add(arg.substring(0, index));
-							tmpArgs.add(arg.substring(index + 1, arg.length()));
-						} else {
-							tmpArgs.add(arg);
-						}
-					}
-					
-					args = new String[tmpArgs.size()];
-					tmpArgs.toArray(args);
-				}
+				args = parseArgs(line, args);
 
 				if (args[0].equals("createAlbum")) {
 					if (args.length != 2) {
@@ -235,7 +177,12 @@ public class CmdView {
 					int status = control.addPhotoToAlbum(args[3], args[1], args[2]);
 					if (status > 0) {
 						puts("Added photo " + args[1] + ":");
-						puts(args[2] + " - Album: " + args[3]);
+						if (status == 1) {
+							puts(args[2] + " - Album: " + args[3]);
+						} else {
+							Photo photo = control.getPhoto(args[1]);
+							puts(photo.getCaption() + " - Album: " + args[3]);
+						}
 					} else if (status == 0) {
 						puts("Photo " + args[1] + " already exists in album " + args[3]);
 					} else if (status == -1) {
@@ -331,7 +278,7 @@ public class CmdView {
 						continue;
 					}
 					Photo[] photos = control.getPhotosByDate(startDate.getTimeInMillis(), endDate.getTimeInMillis());
-					puts("Photos for user " + currentUser.getId() + " in range " + startDate + " to " + endDate + ":");
+					puts("Photos for user " + currentUser.getId() + " in range " + format.format(startDate.getTime()) + " to " + format.format(endDate.getTime()) + ":");
 					printPhotos(photos, format);
 				} else if (args[0].equals("getPhotosByTag")) {
 					if (args.length < 2) {
@@ -339,34 +286,51 @@ public class CmdView {
 						continue;
 					}
 
-					String[] tags = args[1].split(",");
+					String output = "Photos for " + currentUser.getId() + " with tags ";
 					Set<Photo> allPhotos = new HashSet<Photo>();
-					for (String tag : tags) {
-						int index = tag.indexOf(":");
-						String type = "", value;
-						if (index >= 0) {
-							type = tag.substring(0, index);
-							value = tag.substring(index + 1, tag.length());
+					boolean first = true;
+					for (int i = 1; i < args.length; i++) {
+						String tagPiece = args[i], type = "", value = args[i];
+						if (tagPiece.indexOf("7¥p3:") == 0) {
+							type = tagPiece.substring(5, tagPiece.length());
+							value = args[++i];
+							output += type + ":" + value + ", ";
 						} else {
-							value = tag;
+							output += tagPiece + ", ";
 						}
+						
+						if (first) {
+							first = false;
 
-						Photo[] photos;
-						if (!type.equals("")) {
-							photos = control.getPhotosByTag(type, value);
+							Photo[] photos;
+							if (!type.equals("")) {
+								photos = control.getPhotosByTag(type, value);
+							} else {
+								Photo[] tmp = control.getPhotos();
+								Set<Photo> tmpPhotos = new HashSet<Photo>();
+								for (Photo photo : tmp) if (photo.hasTag(value, false)) tmpPhotos.add(photo);
+								photos = new Photo[tmpPhotos.size()];
+								tmpPhotos.toArray(photos);
+							}
+							for (Photo photo : photos) allPhotos.add(photo);
 						} else {
-							Photo[] tmp = control.getPhotos();
-							Set<Photo> tmpPhotos = new HashSet<Photo>();
-							for (Photo photo : tmp) if (photo.hasTag(value, false)) tmpPhotos.add(photo);
-							photos = new Photo[tmpPhotos.size()];
-							tmpPhotos.toArray(photos);
+							Iterator<Photo> iterate = allPhotos.iterator();
+							Set<Photo> intersection = new HashSet<Photo>();
+							while (iterate.hasNext()) {
+								Photo current = iterate.next();
+								if (!type.equals("") && current.hasTag(type, value)) {
+									intersection.add(current);
+								} else if (current.hasTag(value, false)) {
+									intersection.add(current);
+								}
+							}
+							allPhotos = intersection;
 						}
-						for (Photo photo : photos) allPhotos.add(photo);
 					}
 					Photo[] printed = new Photo[allPhotos.size()];
 					allPhotos.toArray(printed);
 
-					puts("Photos for " + currentUser.getId() + " with tags " + args[1]);
+					puts(output.substring(0, output.length() - 2) + ":");
 					printPhotos(printed, format);
 				} else if (args[0].equals("logout")) {
 					break;
@@ -391,7 +355,93 @@ public class CmdView {
 			puts(output);
 		}
 	}
-	
+
+	private static String[] parseArgs(String line, String[] args) {
+		if (line.indexOf("\"") > 0 && !args[0].equals("getPhotosByDate")) {
+			ArrayList<String> tmpArgs = new ArrayList<String>();
+			String totalArg = new String();
+			int index = -1;
+			boolean collecting = false;
+			for (String arg : args) {
+				if (!collecting) {
+					totalArg = arg;
+					if ((index = totalArg.indexOf("\"")) >= 0) {
+						if (totalArg.indexOf("\"", index + 1) < 0) {
+							collecting = true;
+						} else {
+							if ((index = totalArg.indexOf(":")) > 0) {
+								if (args[0].equals("getPhotosByTag") && totalArg.charAt(0) != ',') {
+									tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
+								} else if (args[0].equals("getPhotosByTag")) {
+									tmpArgs.add("7¥p3:" + totalArg.substring(1, index));
+								} else {
+									tmpArgs.add(totalArg.substring(0, index));
+								}
+								tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
+							} else {
+								tmpArgs.add(totalArg.substring(1, totalArg.length() - 1));
+							}
+						}
+					} else {
+						if ((index = totalArg.indexOf(":")) > 0) {
+							if (args[0].equals("getPhotosByTag") && totalArg.charAt(0) != ',') {
+								tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
+							} else if (args[0].equals("getPhotosByTag")) {
+								tmpArgs.add("7¥p3:" + totalArg.substring(1, index));
+							} else {
+								tmpArgs.add(totalArg.substring(0, index));
+							}
+							tmpArgs.add(totalArg.substring(index + 1, totalArg.length()));
+						} else {
+							tmpArgs.add(totalArg);
+						}
+					}
+				} else {
+					totalArg += " " + arg;
+					if (totalArg.indexOf("\"", index + 1) > 0) {
+						collecting = false;
+						if ((index = totalArg.indexOf(":")) > 0) {
+							if (args[0].equals("getPhotosByTag") && totalArg.charAt(0) != ',') {
+								tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
+							} else if (args[0].equals("getPhotosByTag")) {
+								tmpArgs.add("7¥p3:" + totalArg.substring(1, index));
+							} else {
+								tmpArgs.add(totalArg.substring(0, index));
+							}
+							tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
+						} else {
+							tmpArgs.add(totalArg.substring(1, totalArg.length() - 1));
+						}
+					}
+				}
+			}
+			args = new String[tmpArgs.size()];
+			tmpArgs.toArray(args);
+		} else if (line.indexOf(":") > 0 && !args[0].equals("getPhotosByDate")) {
+			ArrayList<String> tmpArgs = new ArrayList<String>();
+
+			for (String arg : args) {
+				int index = arg.indexOf(":");
+				if (index > 0) {
+					if (args[0].equals("getPhotosByTag") && arg.charAt(0) != ',') {
+						tmpArgs.add("7¥p3:" + arg.substring(0, index));
+					} else if (args[0].equals("getPhotosByTag")) {
+						tmpArgs.add("7¥p3:" + arg.substring(1, index));
+					} else {
+						tmpArgs.add(arg.substring(0, index));
+					}
+					tmpArgs.add(arg.substring(index + 1, arg.length()));
+				} else {
+					tmpArgs.add(arg);
+				}
+			}
+
+			args = new String[tmpArgs.size()];
+			tmpArgs.toArray(args);
+		}	
+		return args;
+	}
+
 	private static void puts(String str) {
 		System.out.println(str);
 	}

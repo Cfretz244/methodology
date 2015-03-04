@@ -113,14 +113,16 @@ public class User implements Serializable {
 	 * @param name Name of photo you want to add to the album
 	 * @param date Date the photo was taken.
 	 * @param album Name of album you want to add the photo to.
-	 * @return Whether or not the operation succeeded.
+	 * @return An integer which is positive if the operation succeeded, zero if it failed, and can take on different positive values depending on the conditions.
 	 */
-	public boolean addPhotoToAlbum(String name, long date, String album) {
+	public int addPhotoToAlbum(String name, long date, String album) {
 		Photo photo = allPhotos.get(name);
 		if (photo != null) {
-			return addPhoto(photo, album);
+			boolean status = addPhoto(photo, album);
+			return status ? 2 : 0;
 		} else {
-			return addPhoto(new Photo(albums.get(album), name, id, date), album);
+			boolean status = addPhoto(new Photo(albums.get(album), name, id, date), album);
+			return status ? 1 : 0;
 		}
 	}
 	
@@ -131,14 +133,16 @@ public class User implements Serializable {
 	 * @param caption The caption of the photo.
 	 * @param date The date the photo was taken (or modified in this case).
 	 * @param album The album to add the photo to.
-	 * @return Whether or not the operation succeeded.
+	 * @return An integer which is positive if the operation succeeded, zero if it failed, and can take on different positive values depending on the conditions.
 	 */
-	public boolean addPhotoToAlbum(String name, String caption, long date, String album) {
+	public int addPhotoToAlbum(String name, String caption, long date, String album) {
 		Photo photo = allPhotos.get(name);
 		if (photo != null) {
-			return addPhoto(photo, album);
+			boolean status = addPhoto(photo, album);
+			return status ? 2 : 0;
 		} else {
-			return addPhoto(new Photo(albums.get(album), name, caption, id, date), album);
+			boolean status = addPhoto(new Photo(albums.get(album), name, caption, id, date), album);
+			return status ? 1 : 0;
 		}
 	}
 	
@@ -324,6 +328,7 @@ public class User implements Serializable {
 		while (iterate.hasNext()) {
 			Album current = albums.get(iterate.next());
 			Photo[] currentPhotos = current.getPhotos(tagType, tagValue);
+			if (currentPhotos == null) continue;
 			for (Photo photo : currentPhotos) results.add(photo);
 		}
 		

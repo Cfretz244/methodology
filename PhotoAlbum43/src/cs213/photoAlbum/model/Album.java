@@ -157,6 +157,7 @@ public class Album implements Serializable {
 	 */
 	public Photo[] getPhotos(String type, String value) {
 		Set<Photo> category = tags.get(type), temp = new HashSet<Photo>();
+		if (category == null) return null;
 
 		Iterator<Photo> iterate = category.iterator();
 		while (iterate.hasNext()) {
