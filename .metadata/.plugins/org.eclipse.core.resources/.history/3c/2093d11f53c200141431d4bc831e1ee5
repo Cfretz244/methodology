@@ -13,7 +13,7 @@ import java.io.ObjectOutputStream;
  * 
  * @author Chris Fretz and Karan Kadaru
  */
-public class Backend implements DataWriter {
+public class Backend {
 
 	/*----- Static Utility Methods -----*/
 
@@ -25,7 +25,7 @@ public class Backend implements DataWriter {
 	 * @throws IOException ObjectInputStream can throw this.
 	 * @throws ClassNotFoundException ObjectInputStream can throw this as well.
 	 */
-	public User loadUser(String userid) {
+	public static User loadUser(String userid) {
 		ObjectInputStream ois = openInputStream("data/" + userid + ".ser");
 		try {
 			Object deserialized = ois.readObject();
@@ -44,7 +44,7 @@ public class Backend implements DataWriter {
 	 * @param user The user object to serialize.
 	 * @return Whether or not the operation was successful.
 	 */
-	public boolean writeUser(User user) {
+	public static boolean writeUser(User user) {
 		ObjectOutputStream oos = openOutputStream("data/" + user.getId() + ".ser");
 		try {
 			oos.writeObject(user);
@@ -56,7 +56,7 @@ public class Backend implements DataWriter {
 		return true;
 	}
 	
-	public boolean deleteUser(String userid) {
+	public static boolean deleteUser(String userid) {
 		File user = new File("data/" + userid + ".ser");
 		if (user.exists()) {
 			user.delete();
@@ -66,7 +66,7 @@ public class Backend implements DataWriter {
 		}
 	}
 	
-	public String[] listUsers() {
+	public static String[] listUsers() {
 		File dir = new File("data");
 		File[] contents = dir.listFiles();
 		String[] users = new String[contents.length];

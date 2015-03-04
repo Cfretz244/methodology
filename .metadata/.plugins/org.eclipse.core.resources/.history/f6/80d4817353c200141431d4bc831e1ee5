@@ -16,7 +16,6 @@ import cs213.photoAlbum.control.Control;
 import cs213.photoAlbum.control.PhotoSource;
 import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Backend;
-import cs213.photoAlbum.model.DataWriter;
 import cs213.photoAlbum.model.Photo;
 import cs213.photoAlbum.model.User;
 
@@ -77,8 +76,7 @@ public class CmdView {
 	}
 
 	private static void deleteUser(String id) {
-		DataWriter backend = new Backend();
-		if (backend.deleteUser(id)) {
+		if (Backend.deleteUser(id)) {
 			puts("deleted user " + id);
 		} else {
 			puts("user " + id + " does not exist");
@@ -86,8 +84,7 @@ public class CmdView {
 	}
 
 	private static void listUsers() {
-		DataWriter backend = new Backend();
-		String[] users = backend.listUsers();
+		String[] users = Backend.listUsers();
 		if (users.length > 0) {
 			for (String user : users) {
 				puts(user);

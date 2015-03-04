@@ -4,7 +4,6 @@ import java.io.File;
 
 import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Backend;
-import cs213.photoAlbum.model.DataWriter;
 import cs213.photoAlbum.model.Photo;
 import cs213.photoAlbum.model.User;
 
@@ -33,7 +32,7 @@ public class Control implements PhotoSource {
 	@Override
 	public boolean loadUserData() {
 		if (currentUserid == null) return false;
-		currentUser = backend.loadUser(currentUserid);
+		currentUser = Backend.loadUser(currentUserid);
 		return currentUser != null;
 	}
 	
@@ -42,10 +41,10 @@ public class Control implements PhotoSource {
 		if (currentUser == null) return false;
 		
 		int e_count = 0;
-		boolean status = backend.writeUser(currentUser);
+		boolean status = Backend.writeUser(currentUser);
 		while (!status) {
 			if (++e_count > 5) return false;
-			status = backend.writeUser(currentUser);
+			status = Backend.writeUser(currentUser);
 		}
 		return true;
 	}
@@ -53,7 +52,7 @@ public class Control implements PhotoSource {
 	@Override
 	public boolean addUser(String userid, String name) {
 		currentUserid = userid;
-		if (backend.loadUser(userid) == null) {
+		if (Backend.loadUser(userid) == null) {
 			currentUser = new User(name, userid);
 			return true;
 		} else {
@@ -63,7 +62,7 @@ public class Control implements PhotoSource {
 
 	@Override
 	public boolean removeUser(String userid) {
-		return backend.deleteUser(userid);
+		return Backend.deleteUser(userid);
 	}
 
 	@Override
@@ -175,7 +174,7 @@ public class Control implements PhotoSource {
 	@Override
 	public User getUser(String userid) {
 		if (userid.equals(currentUserid)) return currentUser;
-		return backend.loadUser(userid);
+		return Backend.loadUser(userid);
 	}
 
 	@Override
