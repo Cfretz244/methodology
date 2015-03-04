@@ -95,40 +95,74 @@ public class CmdView {
 
 	private static void interactive(PhotoSource control, User currentUser) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		SimpleDateFormat format = new SimpleDateFormat("M/d/y-h/m/s");
+		SimpleDateFormat format = new SimpleDateFormat("M/d/y-h:m:s");
 		while (true) {
 			try {
 				String line = br.readLine();
 				String numArgs = "Error: Incorrect number of arguments for command.";
 
-				String[] args;
-				if (line.indexOf("\"") < 0) {
-					args = line.split("\\s+");
-				} else {
-					int lindex = line.indexOf("\""), rindex = 0;
-					ArrayList<String> tmpArgs = new ArrayList<String>();
-					String[] partialArgs;
-					
-					if (line.charAt(0) != '"') {
-						String start = line.substring(0, lindex - 1);
-						partialArgs = start.split("\\s+");
-						for (String arg : partialArgs) tmpArgs.add(arg);
-					}
-					
-					while (lindex > 0) {
-						rindex = line.indexOf("\"", lindex + 1);
-						tmpArgs.add(line.substring(lindex + 1, rindex));
-						lindex = line.indexOf("\"", rindex + 1);
-					}
+				String[] args = line.split("\\s+");
 
-					if (rindex != line.length() - 1) {
-						String rest = line.substring(rindex + 2, line.length());
-						partialArgs = rest.split("\\s+");
-						for (String arg : partialArgs) tmpArgs.add(arg);
+				// Big ugly if case to handle quote-enclosed arguments.
+				if (line.indexOf("\"") > 0) {
+					ArrayList<String> tmpArgs = new ArrayList<String>();
+					String totalArg = new String();
+					int index = -1;
+					boolean collecting = false;
+					for (String arg : args) {
+						if (!collecting) {
+							totalArg = arg;
+							if ((index = totalArg.indexOf("\"")) >= 0) {
+								if (totalArg.indexOf("\"", index + 1) < 0) {
+									collecting = true;
+								} else {
+									if ((index = totalArg.indexOf(":")) > 0) {
+										tmpArgs.add(totalArg.substring(0, index));
+										tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
+									} else {
+										tmpArgs.add(totalArg.substring(1, totalArg.length() - 1));
+									}
+								}
+							} else {
+								if ((index = totalArg.indexOf(":")) > 0) {
+									tmpArgs.add(totalArg.substring(0, index));
+									tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
+								} else {
+									tmpArgs.add(totalArg);
+								}
+							}
+						} else {
+							totalArg += " " + arg;
+							if (totalArg.indexOf("\"", index + 1) > 0) {
+								collecting = false;
+								if ((index = totalArg.indexOf(":")) > 0) {
+									tmpArgs.add(totalArg.substring(0, index));
+									tmpArgs.add(totalArg.substring(index + 2, totalArg.length() - 1));
+								} else {
+									tmpArgs.add(totalArg.substring(1, totalArg.length() - 1));
+								}
+							}
+						}
 					}
 					args = new String[tmpArgs.size()];
 					tmpArgs.toArray(args);
+				} else if (line.indexOf(":") > 0) {
+					ArrayList<String> tmpArgs = new ArrayList<String>();
+					
+					for (String arg : args) {
+						int index = arg.indexOf(":");
+						if (index > 0) {
+							tmpArgs.add(arg.substring(0, index));
+							tmpArgs.add(arg.substring(index + 1, arg.length()));
+						} else {
+							tmpArgs.add(arg);
+						}
+					}
+					
+					args = new String[tmpArgs.size()];
+					tmpArgs.toArray(args);
 				}
+
 				if (args[0].equals("createAlbum")) {
 					if (args.length != 2) {
 						puts(numArgs);
@@ -197,7 +231,7 @@ public class CmdView {
 						puts(numArgs);
 						continue;
 					}
-					
+
 					int status = control.addPhotoToAlbum(args[3], args[1], args[2]);
 					if (status > 0) {
 						puts("Added photo " + args[1] + ":");
@@ -212,7 +246,7 @@ public class CmdView {
 						puts(numArgs);
 						continue;
 					}
-					
+
 					int status = control.movePhoto(args[2], args[3], args[1]);
 					if (status > 0) {
 						puts("Moved photo " + args[1] + ":");
@@ -225,7 +259,7 @@ public class CmdView {
 						puts(numArgs);
 						continue;
 					}
-					
+
 					if (control.removePhotoFromAlbum(args[2], args[1])) {
 						puts("Removed photo:");
 						puts(args[1] + " - From album " + args[2]);
@@ -233,49 +267,35 @@ public class CmdView {
 						puts("Photo " + args[1] + " is not in album " + args[2]);
 					}
 				} else if (args[0].equals("addTag")) {
-					if (args.length != 3) {
-						puts(numArgs);
-						continue;
-					}
-					
-					int index = args[2].indexOf(":");
-					if (index > 0) {
-						String type = args[2].substring(0, index);
-						String value = args[2].substring(index + 1, args[2].length());
-						if (control.addTagToPhoto(args[1], type, value)) {
-							puts("Added tag:");
-							puts(args[1] + " " + type + ":" + value);
-						} else {
-							puts("Tag already exists for " + args[1] + " " + type + ":" + value);
-						}
-					} else {
-						puts("Error: Invalid format for tag.");
-					}
-				} else if (args[0].equals("deleteTag")) {
-					if (args.length != 3) {
+					if (args.length != 4) {
 						puts(numArgs);
 						continue;
 					}
 
-					int index = args[2].indexOf(":");
-					if (index > 0) {
-						String type = args[2].substring(0, index);
-						String value = args[2].substring(index + 1, args[2].length());
-						if (control.removeTagFromPhoto(args[1], type, value)) {
-							puts("Deleted tag:");
-							puts(args[1] + " " + type + ":" + value);
-						} else {
-							puts("Tag does not exist for " + args[1] + " " + type + ":" + value);
-						}
+					if (control.addTagToPhoto(args[1], args[2], args[3])) {
+						puts("Added tag:");
+						puts(args[1] + " " + args[2] + ":" + args[3]);
 					} else {
-						puts("Error: Invalid format for tag.");
+						puts("Tag already exists for " + args[1] + " " + args[2] + ":" + args[3]);
+					}
+				} else if (args[0].equals("deleteTag")) {
+					if (args.length != 4) {
+						puts(numArgs);
+						continue;
+					}
+
+					if (control.removeTagFromPhoto(args[1], args[2], args[3])) {
+						puts("Deleted tag:");
+						puts(args[1] + " " + args[2] + ":" + args[3]);
+					} else {
+						puts("Tag does not exist for " + args[1] + " " + args[2] + ":" + args[3]);
 					}
 				} else if (args[0].equals("listPhotoInfo")) {
 					if (args.length != 2) {
 						puts(numArgs);
 						continue;
 					}
-					
+
 					Photo photo = control.getPhoto(args[1]);
 					if (photo == null) {
 						puts("Photo " + args[1] + " does not exist");
@@ -286,13 +306,13 @@ public class CmdView {
 					String albums = "Album: ";
 					for (Album album : photo.getContainingAlbums()) albums += album.getName() + ",";
 					puts(albums.substring(0, albums.length() - 1));
-					
+
 					Calendar date = new GregorianCalendar();
 					date.setTimeInMillis(photo.getDate());
 					puts("Date: " + format.format(date.getTime()));
-					
+
 					puts("Caption: " + photo.getCaption());
-					
+
 					puts("Tags:");
 					String[] tags = photo.getTags();
 					for (String tag : tags) puts(tag);
@@ -301,7 +321,7 @@ public class CmdView {
 						puts(numArgs);
 						continue;
 					}
-					
+
 					Calendar startDate = new GregorianCalendar(), endDate = new GregorianCalendar();
 					try {
 						startDate.setTime(format.parse(args[1]));
@@ -318,7 +338,7 @@ public class CmdView {
 						puts(numArgs);
 						continue;
 					}
-					
+
 					String[] tags = args[1].split(",");
 					Set<Photo> allPhotos = new HashSet<Photo>();
 					for (String tag : tags) {
@@ -330,7 +350,7 @@ public class CmdView {
 						} else {
 							value = tag;
 						}
-						
+
 						Photo[] photos;
 						if (!type.equals("")) {
 							photos = control.getPhotosByTag(type, value);
@@ -345,7 +365,7 @@ public class CmdView {
 					}
 					Photo[] printed = new Photo[allPhotos.size()];
 					allPhotos.toArray(printed);
-					
+
 					puts("Photos for " + currentUser.getId() + " with tags " + args[1]);
 					printPhotos(printed, format);
 				} else if (args[0].equals("logout")) {
@@ -359,7 +379,7 @@ public class CmdView {
 			}
 		}
 	}
-	
+
 	private static void printPhotos(Photo[] photos, SimpleDateFormat format) {
 		Calendar date = new GregorianCalendar();
 		for (Photo photo : photos) {
@@ -371,7 +391,7 @@ public class CmdView {
 			puts(output);
 		}
 	}
-
+	
 	private static void puts(String str) {
 		System.out.println(str);
 	}

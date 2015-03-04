@@ -116,7 +116,12 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addPhotoToAlbum(String name, long date, String album) {
-		return addPhoto(new Photo(albums.get(album), name, id, date), album);
+		Photo photo = allPhotos.get(name);
+		if (photo != null) {
+			return addPhoto(photo, album);
+		} else {
+			return addPhoto(new Photo(albums.get(album), name, id, date), album);
+		}
 	}
 	
 	/**
@@ -129,7 +134,12 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean addPhotoToAlbum(String name, String caption, long date, String album) {
-		return addPhoto(new Photo(albums.get(album), name, caption, id, date), album);
+		Photo photo = allPhotos.get(name);
+		if (photo != null) {
+			return addPhoto(photo, album);
+		} else {
+			return addPhoto(new Photo(albums.get(album), name, caption, id, date), album);
+		}
 	}
 	
 	/**
@@ -176,7 +186,11 @@ public class User implements Serializable {
 		Photo photo = allPhotos.get(photoName);
 		if (photo == null) return false;
 		
-		return photo.addTag(tagType, tagValue);
+		boolean status = photo.addTag(tagType, tagValue);
+		Album[] containingAlbums = photo.getContainingAlbums();
+		for (Album album : containingAlbums) album.tagsChanged(photo);
+		
+		return status;
 	}
 	
 	/**
@@ -194,6 +208,10 @@ public class User implements Serializable {
 			String type = tag.substring(0, tag.indexOf(":"));
 			photo.removeTag(type);
 		}
+		
+		Album[] containing = photo.getContainingAlbums();
+		for (Album album : containing) album.tagsChanged(photo);
+		
 		return true;
 	}
 	
@@ -208,7 +226,11 @@ public class User implements Serializable {
 		Photo photo = allPhotos.get(photoName);
 		if (photo == null) return false;
 		
-		return photo.removeTag(tagType);
+		boolean status = photo.removeTag(tagType);
+		Album[] containing = photo.getContainingAlbums();
+		for (Album album : containing) album.tagsChanged(photo);
+		
+		return status;
 	}
 	
 	/**
@@ -223,7 +245,11 @@ public class User implements Serializable {
 		Photo photo = allPhotos.get(photoName);
 		if (photo == null) return false;
 		
-		return photo.removeTag(tagType, tagValue);
+		boolean status = photo.removeTag(tagType, tagValue);
+		Album[] containing = photo.getContainingAlbums();
+		for (Album album : containing) album.tagsChanged(photo);
+		
+		return status;
 	}
 	
 	/*----- Public Getters -----*/

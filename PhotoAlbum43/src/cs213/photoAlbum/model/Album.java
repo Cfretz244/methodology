@@ -64,6 +64,8 @@ public class Album implements Serializable {
 			category.add(photo);
 		}
 		
+		photo.addToAlbum(this);
+		
 		return true;
 	}
 	
@@ -79,10 +81,12 @@ public class Album implements Serializable {
 		
 		dates.remove(photo);
 		String[] allTags = photo.getTags();
-		for (String tag: allTags) {
+		for (String tag : allTags) {
 			String type = tag.substring(0, tag.indexOf(":"));
 			tags.get(type).remove(photo);
 		}
+		
+		photo.removeFromAlbum(this);
 		
 		return photo;
 	}
