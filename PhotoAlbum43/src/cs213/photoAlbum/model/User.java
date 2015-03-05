@@ -9,7 +9,6 @@ import java.util.Set;
 
 /**
  * Class represents an individual user, and keeps track of their albums and photos.
- * 
  * @author Chris Fretz
  */
 public class User implements Serializable {
@@ -23,7 +22,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Public constructor for user. Takes a name and an id.
-	 * 
 	 * @param name The chosen name of the user.
 	 * @param id The chosen id of the user.
 	 */
@@ -52,7 +50,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method changes the name of the user.
-	 * 
 	 * @param name The new name for the user.
 	 * @return Whether or not the operation succeeded.
 	 */
@@ -63,7 +60,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method changes the id of the user.
-	 * 
 	 * @param id The new id for the user.
 	 * @return Whether or not the operation succeeded.
 	 */
@@ -74,7 +70,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method adds a new album to the user.
-	 * 
 	 * @param album Name of the album.
 	 * @return Whether or not the operation succeeded.
 	 */
@@ -88,7 +83,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method removes an album from the user.
-	 * 
 	 * @param album Name of the album.
 	 * @return Whether or not the operation succeeded.
 	 */
@@ -98,7 +92,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method adds a photo to an already existing album.
-	 * 
 	 * @param photo Photo object you want to add.
 	 * @param album Name of album photo should be added to.
 	 * @return Whether or not the operation succeeded.
@@ -109,11 +102,10 @@ public class User implements Serializable {
 	
 	/**
 	 * Method adds a photo to an already existing album.
-	 * 
 	 * @param name Name of photo you want to add to the album
 	 * @param date Date the photo was taken.
 	 * @param album Name of album you want to add the photo to.
-	 * @return An integer which is positive if the operation succeeded, zero if it failed, and can take on different positive values depending on the conditions.
+	 * @return An integer which is positive if the operation succeeded, non-positive if it failed, and can take on different positive values depending on the conditions.
 	 */
 	public int addPhotoToAlbum(String name, long date, String album) {
 		Photo photo = allPhotos.get(name);
@@ -128,12 +120,11 @@ public class User implements Serializable {
 	
 	/**
 	 * Method adds a photo to an already existing album.
-	 * 
 	 * @param name The name of the photo to be added.
 	 * @param caption The caption of the photo.
 	 * @param date The date the photo was taken (or modified in this case).
 	 * @param album The album to add the photo to.
-	 * @return An integer which is positive if the operation succeeded, zero if it failed, and can take on different positive values depending on the conditions.
+	 * @return An integer which is positive if the operation succeeded, non-positive if it failed, and can take on different positive values depending on the conditions.
 	 */
 	public int addPhotoToAlbum(String name, String caption, long date, String album) {
 		Photo photo = allPhotos.get(name);
@@ -148,7 +139,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method removes a photo from all of the user's albums.
-	 * 
 	 * @param name Name of the photo to be removed.
 	 * @return The photo that was removed.
 	 */
@@ -167,7 +157,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method removes a photo from a specific album.
-	 * 
 	 * @param name Name of the photo to remove.
 	 * @param album Name of the album to remove from.
 	 * @return Whether or not the operation succeeded.
@@ -180,17 +169,16 @@ public class User implements Serializable {
 	
 	/**
 	 * Method adds a tag to a specific photo.
-	 * 
 	 * @param photoName The name of the photo we are adding the tag to.
-	 * @param tagType The type of the tag.
-	 * @param tagValue The value of the tag.
+	 * @param type The type of the tag.
+	 * @param value The value of the tag.
 	 * @return Whether or not the operation succeeded.
 	 */
-	public boolean addTagToPhoto(String photoName, String tagType, String tagValue) {
+	public boolean addTagToPhoto(String photoName, String type, String value) {
 		Photo photo = allPhotos.get(photoName);
 		if (photo == null) return false;
 		
-		boolean status = photo.addTag(tagType, tagValue);
+		boolean status = photo.addTag(type, value);
 		Album[] containingAlbums = photo.getContainingAlbums();
 		for (Album album : containingAlbums) album.tagsChanged(photo);
 		
@@ -199,7 +187,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method removes all tag from a specific photo.
-	 * 
 	 * @param photoName Name of the photo to remove tags from.
 	 * @return Whether or not the operation was successful.
 	 */
@@ -221,16 +208,15 @@ public class User implements Serializable {
 	
 	/**
 	 * Method removes all tags of a given type from a photo.
-	 * 
 	 * @param photoName Name of the photo to remove tags from.
-	 * @param tagType Type of tag to remove.
+	 * @param type Type of tag to remove.
 	 * @return Whether or not the operation was successful.
 	 */
-	public boolean removeTagFromPhoto(String photoName, String tagType) {
+	public boolean removeTagFromPhoto(String photoName, String type) {
 		Photo photo = allPhotos.get(photoName);
 		if (photo == null) return false;
 		
-		boolean status = photo.removeTag(tagType);
+		boolean status = photo.removeTag(type);
 		Album[] containing = photo.getContainingAlbums();
 		for (Album album : containing) album.tagsChanged(photo);
 		
@@ -239,17 +225,16 @@ public class User implements Serializable {
 	
 	/**
 	 * Method removes a specific tag from a specific photo.
-	 * 
 	 * @param photoName Name of the photo to remove tags from.
-	 * @param tagType Type of tag to remove.
-	 * @param tagValue Value of tag to remove.
+	 * @param type Type of tag to remove.
+	 * @param value Value of tag to remove.
 	 * @return Whether or not the operation succeeded.
 	 */
-	public boolean removeTagFromPhoto(String photoName, String tagType, String tagValue) {
+	public boolean removeTagFromPhoto(String photoName, String type, String value) {
 		Photo photo = allPhotos.get(photoName);
 		if (photo == null) return false;
 		
-		boolean status = photo.removeTag(tagType, tagValue);
+		boolean status = photo.removeTag(type, value);
 		Album[] containing = photo.getContainingAlbums();
 		for (Album album : containing) album.tagsChanged(photo);
 		
@@ -258,21 +243,33 @@ public class User implements Serializable {
 	
 	/*----- Public Getters -----*/
 	
+	/**
+	 * Method gets the name of the user.
+	 * @return The name of the user.
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Method gets the ID of the user.
+	 * @return The ID of the user.
+	 */
 	public String getId() {
 		return id;
 	}
 	
+	/**
+	 * Method returns the album object for a given name.
+	 * @param album Name of the album you want.
+	 * @return The requested album object.
+	 */
 	public Album getAlbum(String album) {
 		return albums.get(album);
 	}
 	
 	/**
 	 * Method returns all albums for the user.
-	 * 
 	 * @return An array of albums.
 	 */
 	public Album[] getAlbums() {
@@ -283,9 +280,8 @@ public class User implements Serializable {
 	
 	/**
 	 * Method returns a specific photo.
-	 * 
 	 * @param name Name of the requested photo.
-	 * @return A photo object.
+	 * @return The requested photo object.
 	 */
 	public Photo getPhoto(String name) {
 		return allPhotos.get(name);
@@ -293,8 +289,7 @@ public class User implements Serializable {
 	
 	/**
 	 * Method returns all photos for the user.
-	 * 
-	 * @return An array of photos.
+	 * @return An array of the requested photos.
 	 */
 	public Photo[] getPhotos() {
 		Photo[] photos = new Photo[allPhotos.size()];
@@ -304,7 +299,6 @@ public class User implements Serializable {
 	
 	/**
 	 * Method returns all photos contained within a specific album.
-	 * 
 	 * @param album Name of album to get photos from.
 	 * @return An array of photos.
 	 */
@@ -316,18 +310,17 @@ public class User implements Serializable {
 	
 	/**
 	 * Method gets all photos with a specific tag.
-	 * 
-	 * @param tagType The type of the tag.
-	 * @param tagValue The value of the tag.
+	 * @param type The type of the tag.
+	 * @param value The value of the tag.
 	 * @return An array of photos.
 	 */
-	public Photo[] getPhotos(String tagType, String tagValue) {
+	public Photo[] getPhotos(String type, String value) {
 		Iterator<String> iterate = albums.keySet().iterator();
 		Set<Photo> results = new HashSet<Photo>();
 		
 		while (iterate.hasNext()) {
 			Album current = albums.get(iterate.next());
-			Photo[] currentPhotos = current.getPhotos(tagType, tagValue);
+			Photo[] currentPhotos = current.getPhotos(type, value);
 			if (currentPhotos == null) continue;
 			for (Photo photo : currentPhotos) results.add(photo);
 		}
@@ -339,10 +332,9 @@ public class User implements Serializable {
 	
 	/**
 	 * Method gets all photos within a given date range.
-	 * 
-	 * @param startDate The starting date.
-	 * @param endDate The ending date.
-	 * @return An array of photos.
+	 * @param startDate The starting date represented as a Unix timestamp.
+	 * @param endDate The ending date represented as a Unix timestamp.
+	 * @return An array of the requested photos.
 	 */
 	public Photo[] getPhotos(long startDate, long endDate) {
 		Iterator<String> iterate = albums.keySet().iterator();

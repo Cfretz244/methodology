@@ -13,7 +13,6 @@ import java.util.TreeSet;
 /**
  * Class represents an individual photo album for a user. It keeps track of all of its photos, and 
  * maintains several different tables of photos allowing efficient access.
- * 
  * @author Chris Fretz
  */
 public class Album implements Serializable {
@@ -28,7 +27,6 @@ public class Album implements Serializable {
 	
 	/**
 	 * Public constructor for Album. Takes a name and initializes an album object.
-	 * 
 	 * @param name The name of the album.
 	 */
 	public Album(String name) {
@@ -43,7 +41,6 @@ public class Album implements Serializable {
 	
 	/**
 	 * Method adds a photo to the album.
-	 * 
 	 * @param photo Photo to be added.
 	 * @return Status of operation.
 	 */
@@ -71,7 +68,6 @@ public class Album implements Serializable {
 	
 	/**
 	 * Method removes a photo from the album.
-	 * 
 	 * @param photo Name of photo to be removed.
 	 * @return The photo that was removed.
 	 */
@@ -94,7 +90,6 @@ public class Album implements Serializable {
 	/**
 	 * Method is called upon the album object when the tag of a photo has changed so that the album
 	 * can update its state to reflect the fact.
-	 * 
 	 * @param photo The photo object whose tags have changed.
 	 */
 	protected void tagsChanged(Photo photo) {
@@ -129,18 +124,16 @@ public class Album implements Serializable {
 	/*----- Public Getters -----*/
 	
 	/**
-	 * Returns the name of the album.
-	 * 
-	 * @return The name.
+	 * Method returns the name of the album.
+	 * @return The name of the album.
 	 */
 	public String getName() {
 		return name;
 	}
 	
 	/**
-	 * Returns an array of the photos the album contains.
-	 * 
-	 * @return An array of the photos.
+	 * Method returns an array of the photos the album contains.
+	 * @return An array of the photos the album contains.
 	 */
 	public Photo[] getPhotos() {
 		Photo[] allPhotos = new Photo[photos.size()];
@@ -149,10 +142,9 @@ public class Album implements Serializable {
 	}
 	
 	/**
-	 * Returns an array of photos that have the given tag.
-	 * 
-	 * @param tagType The type of the tag.
-	 * @param tagValue The value of the tag.
+	 * Method returns an array of photos that have the given tag.
+	 * @param type The type of the tag.
+	 * @param value The value of the tag.
 	 * @return An array of photos that have the given tag.
 	 */
 	public Photo[] getPhotos(String type, String value) {
@@ -171,10 +163,9 @@ public class Album implements Serializable {
 	}
 	
 	/**
-	 * Returns an array of photos within the given time range.
-	 * 
-	 * @param startDate The starting date.
-	 * @param endDate The ending date.
+	 * Method returns an array of photos within the given time range.
+	 * @param startDate The starting date as a Unix timestamp.
+	 * @param endDate The ending date as a Unix timestamp.
 	 * @return An array of photos within the given dates.
 	 */
 	public Photo[] getPhotos(long startDate, long endDate) {
@@ -185,6 +176,10 @@ public class Album implements Serializable {
 		return results;
 	}
 	
+	/**
+	 * Method returns an array containing the earliest and latest dates of photos contained within the album.
+	 * @return Array of dates represented as Unix timestamps.
+	 */
 	public long[] getDateRange() {
 		long[] results = new long[2];
 		try {

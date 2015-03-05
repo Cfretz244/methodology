@@ -1,0 +1,101 @@
+package cs213.photoAlbum.model;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+/**
+ * Class is a utility class that can be used to load and store data for users.
+ * @author Chris Fretz and Karan Kadaru
+ */
+public class Backend implements DataWriter {
+
+	/*----- Static Utility Methods -----*/
+
+	public User loadUser(String userid) {
+		ObjectInputStream ois = openInputStream("data/" + userid + ".ser");
+		try {
+			Object deserialized = ois.readObject();
+			return (User) deserialized;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			closeStream(ois);
+		}
+
+	}
+
+	public boolean writeUser(User user) {
+		ObjectOutputStream oos = openOutputStream("data/" + user.getId() + ".ser");
+		try {
+			oos.writeObject(user);
+		} catch (Exception e) {
+			return false;
+		} finally {
+			closeStream(oos);
+		}
+		return true;
+	}
+	
+	/**
+	 * Method is responsible for removing serialized object files for the specified user.
+	 * @param userid The ID of the user you would like to delete.
+	 * @return Whether or not the operation was successful.
+	 */
+	public boolean deleteUser(String userid) {
+		File user = new File("data/" + userid + ".ser");
+		if (user.exists()) {
+			user.delete();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Method is responsible for listing all users currently registered with the program.
+	 * @return An array of the users currently registered with the program.
+	 */
+	public String[] listUsers() {
+		File dir = new File("data");
+		File[] contents = dir.listFiles();
+		String[] users = new String[contents.length];
+		
+		for (int i = 0; i < contents.length; i++) {
+			File file = contents[i];
+			users[i] = file.getName().substring(0, file.getName().indexOf("."));
+		}
+		
+		return users;
+	}
+	
+	private static ObjectInputStream openInputStream(String path) {
+		try {
+			return new ObjectInputStream(new FileInputStream(path));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private static ObjectOutputStream openOutputStream(String path) {
+		try {
+			return new ObjectOutputStream(new FileOutputStream(path));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	private static boolean closeStream(Closeable stream) {
+		try {
+			stream.close();
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+}

@@ -1,6 +1,7 @@
 package cs213.photoAlbum.control;
 
 import java.io.File;
+import java.io.IOException;
 
 import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Backend;
@@ -9,10 +10,8 @@ import cs213.photoAlbum.model.Photo;
 import cs213.photoAlbum.model.User;
 
 /**
- * Class serves as a bridge between the View and Model. The view can call methods on the control object
- * to influence the model.
+ * Class serves as a bridge between the View and Model. The view can call methods on the control object to influence the model.
  * All method descriptions are provided in the PhotoSource interface.
- * 
  * @author Karan Kadaru
  */
 public class Control implements PhotoSource {
@@ -21,6 +20,9 @@ public class Control implements PhotoSource {
 	private User currentUser;
 	private DataWriter backend;
 	
+	/**
+	 * Public constructor.
+	 */
 	public Control() {
 		backend = new Backend();
 	}
@@ -84,6 +86,11 @@ public class Control implements PhotoSource {
 		
 		File photoFile = new File(name);
 		if (!photoFile.exists()) return -1;
+		try {
+			name = photoFile.getCanonicalPath();
+		} catch (IOException e) {
+			return -2;
+		}
 		return currentUser.addPhotoToAlbum(name, caption, photoFile.lastModified(), album);
 	}
 
@@ -116,57 +123,57 @@ public class Control implements PhotoSource {
 	}
 
 	@Override
-	public boolean addTagToPhoto(String name, String tagType, String tagValue) {
+	public boolean addTagToPhoto(String name, String type, String value) {
 		if (currentUser == null) return false;
 		
-		return currentUser.addTagToPhoto(name, tagType, tagValue);
+		return currentUser.addTagToPhoto(name, type, value);
 	}
 
 	@Override
-	public boolean addTagToAlbum(String album, String tagType, String tagValue) {
+	public boolean addTagToAlbum(String album, String type, String value) {
 		if (currentUser == null) return false;
 		
 		Photo[] photos = currentUser.getPhotos(album);
 		for (Photo photo : photos) {
-			currentUser.addTagToPhoto(photo.getName(), tagType, tagValue);
+			currentUser.addTagToPhoto(photo.getName(), type, value);
 		}
 		
 		return true;
 	}
 
 	@Override
-	public boolean removeTagFromPhoto(String name, String tagType) {
+	public boolean removeTagFromPhoto(String name, String type) {
 		if (currentUser == null) return false;
 		
-		return currentUser.removeTagFromPhoto(name, tagType);
+		return currentUser.removeTagFromPhoto(name, type);
 	}
 
 	@Override
-	public boolean removeTagFromPhoto(String name, String tagType, String tagValue) {
+	public boolean removeTagFromPhoto(String name, String type, String value) {
 		if (currentUser == null) return false;
 		
-		return currentUser.removeTagFromPhoto(name, tagType, tagValue);
+		return currentUser.removeTagFromPhoto(name, type, value);
 	}
 
 	@Override
-	public boolean removeTagFromAlbum(String album, String tagType) {
+	public boolean removeTagFromAlbum(String album, String type) {
 		if (currentUser == null) return false;
 		
 		Photo[] photos = currentUser.getPhotos(album);
 		for (Photo photo : photos) {
-			currentUser.removeTagFromPhoto(photo.getName(), tagType);
+			currentUser.removeTagFromPhoto(photo.getName(), type);
 		}
 		
 		return true;
 	}
 
 	@Override
-	public boolean removeTagFromAlbum(String album, String tagType, String tagValue) {
+	public boolean removeTagFromAlbum(String album, String type, String value) {
 		if (currentUser == null) return false;
 		
 		Photo[] photos = currentUser.getPhotos(album);
 		for (Photo photo : photos) {
-			currentUser.removeTagFromPhoto(photo.getName(), tagType, tagValue);
+			currentUser.removeTagFromPhoto(photo.getName(), type, value);
 		}
 		
 		return true;
@@ -209,10 +216,10 @@ public class Control implements PhotoSource {
 	}
 
 	@Override
-	public Photo[] getPhotosByTag(String tagType, String tagValue) {
+	public Photo[] getPhotosByTag(String type, String value) {
 		if (currentUser == null) return null;
 		
-		return currentUser.getPhotos(tagType, tagValue);
+		return currentUser.getPhotos(type, value);
 	}
 
 	@Override

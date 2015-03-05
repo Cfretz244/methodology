@@ -12,7 +12,6 @@ import java.util.Set;
 /**
  * This class describes what a Photo is, and provides a protected interface for mutation, and a public
  * interface for viewing.
- * 
  * @author Chris Fretz
  */
 public class Photo implements Serializable, Comparable<Photo> {
@@ -27,9 +26,9 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Public constructor taking the album name, photo name, and date.
-	 * 
-	 * @param album The name of the album.
+	 * @param containing The name of the album.
 	 * @param name The name of the photo.
+	 * @param userid The ID of the user this photo belongs to.
 	 * @param date The date this photo was taken as a Unix timestamp.
 	 */
 	public Photo(Album containing, String name, String userid, long date) {
@@ -42,10 +41,10 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Public constructor taking the album name, photo name, caption, and date.
-	 * 
-	 * @param album The name of the album.
+	 * @param containing The name of the album.
 	 * @param name The name of the photo.
 	 * @param caption A caption for the photo.
+	 * @param userid The ID of the user this photo belongs to.
 	 * @param date The date the photo was taken as a Unix timestamp.
 	 */
 	public Photo(Album containing, String name, String caption, String userid, long date) {
@@ -77,7 +76,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method adds a tag to the photo.
-	 * 
 	 * @param type Type of tag, used to index into the tag map.
 	 * @param value Value of tag.
 	 * @return Whether or not the operation succeeded.
@@ -97,7 +95,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method removes all tags of a given type.
-	 * 
 	 * @param type Type of tag to be removed
 	 * @return Whether or not the operation succeeded.
 	 */
@@ -107,7 +104,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method removes a specific tag.
-	 * 
 	 * @param type Type of the tag to be removed.
 	 * @param value Value of tag to be removed.
 	 * @return Whether or not the operation succeeded.
@@ -120,7 +116,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method adds the current photo to album.
-	 * @param album Name of album
+	 * @param album The album object we are adding this photo to.
 	 * @return Whether or not the operation succeeded.
 	 */
 	protected boolean addToAlbum(Album album) {
@@ -132,7 +128,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method removes current photo from album.
-	 * @param album Name of album
+	 * @param album The album object we are removing this photo from.
 	 * @return Whether or not the operation succeeded.
 	 */
 	protected boolean removeFromAlbum(Album album) {
@@ -143,7 +139,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method returns the name of the photo.
-	 * 
 	 * @return The name of the photo.
 	 */
 	public String getName() {
@@ -152,7 +147,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method returns the caption of the photo.
-	 * 
 	 * @return The caption of the photo
 	 */
 	public String getCaption() {
@@ -161,7 +155,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method returns the userid of the user that owns this photo.
-	 * 
 	 * @return The userid of the user that owns this photo.
 	 */
 	public String getUserid() {
@@ -170,8 +163,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/** 
 	 * Method returns the date the photo was taken.
-	 * 
-	 * @return Date the photo was taken.
+	 * @return Date the photo was taken as a Unix timestamp.
 	 */
 	public long getDate() {
 		return date.getTimeInMillis();
@@ -179,7 +171,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method returns the albums this photo is contained in.
-	 * 
 	 * @return Array of the albums this photo is contained in.
 	 */
 	public Album[] getContainingAlbums() {
@@ -190,7 +181,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method returns all tags for the current photo.
-	 * 
 	 * @return Array of tags in the form "<type>:<value>"
 	 */
 	public String[] getTags() {
@@ -211,7 +201,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Method returns all tags for the current photo with the given type.
-	 * 
 	 * @param type The type of the tag you're looking for.
 	 * @return An array of tags.
 	 */
@@ -226,7 +215,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Checks to see if photo has tags of the given type or value.
-	 * 
 	 * @param tag The fragment of tag you're looking for.
 	 * @param isType Whether or not the fragment you've supplied is a type or value.
 	 * @return Whether or not the photo has tags of the given type.
@@ -243,7 +231,6 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 	/**
 	 * Checks to see if photo has a specific tag.
-	 * 
 	 * @param type Type of the tag you're looking for.
 	 * @param value Value of the tag you're looking for.
 	 * @return Whether or not the photo has the tag you're looking for.
@@ -260,6 +247,7 @@ public class Photo implements Serializable, Comparable<Photo> {
 		return thisDate.compareTo(otherDate);
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (other == null || !(other instanceof Photo)) return false;
 

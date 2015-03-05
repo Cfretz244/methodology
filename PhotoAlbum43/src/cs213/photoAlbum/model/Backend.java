@@ -10,21 +10,13 @@ import java.io.ObjectOutputStream;
 
 /**
  * Class is a utility class that can be used to load and store data for users.
- * 
  * @author Chris Fretz and Karan Kadaru
  */
 public class Backend implements DataWriter {
 
 	/*----- Static Utility Methods -----*/
 
-	/**
-	 * Method is responsible for loading a serialized user based on id.
-	 * 
-	 * @param userid The id of the user you want to load.
-	 * @return The user object that was requested.
-	 * @throws IOException ObjectInputStream can throw this.
-	 * @throws ClassNotFoundException ObjectInputStream can throw this as well.
-	 */
+	@Override
 	public User loadUser(String userid) {
 		ObjectInputStream ois = openInputStream("data/" + userid + ".ser");
 		try {
@@ -38,12 +30,7 @@ public class Backend implements DataWriter {
 
 	}
 
-	/**
-	 * Method is responsible for serializing a given user object.
-	 * 
-	 * @param user The user object to serialize.
-	 * @return Whether or not the operation was successful.
-	 */
+	@Override
 	public boolean writeUser(User user) {
 		ObjectOutputStream oos = openOutputStream("data/" + user.getId() + ".ser");
 		try {
@@ -56,6 +43,7 @@ public class Backend implements DataWriter {
 		return true;
 	}
 	
+	@Override
 	public boolean deleteUser(String userid) {
 		File user = new File("data/" + userid + ".ser");
 		if (user.exists()) {
@@ -66,6 +54,7 @@ public class Backend implements DataWriter {
 		}
 	}
 	
+	@Override
 	public String[] listUsers() {
 		File dir = new File("data");
 		File[] contents = dir.listFiles();
