@@ -18,7 +18,6 @@ public class Backend implements DataWriter {
 
 	@Override
 	public User loadUser(String userid) {
-		directoryCheck();
 		ObjectInputStream ois = openInputStream("data/" + userid + ".ser");
 		try {
 			Object deserialized = ois.readObject();
@@ -33,7 +32,6 @@ public class Backend implements DataWriter {
 
 	@Override
 	public boolean writeUser(User user) {
-		directoryCheck();
 		ObjectOutputStream oos = openOutputStream("data/" + user.getId() + ".ser");
 		try {
 			oos.writeObject(user);
@@ -47,7 +45,6 @@ public class Backend implements DataWriter {
 	
 	@Override
 	public boolean deleteUser(String userid) {
-		directoryCheck();
 		File user = new File("data/" + userid + ".ser");
 		if (user.exists()) {
 			user.delete();
@@ -59,7 +56,6 @@ public class Backend implements DataWriter {
 	
 	@Override
 	public String[] listUsers() {
-		directoryCheck();
 		File dir = new File("data");
 		File[] contents = dir.listFiles();
 		String[] users = new String[contents.length];
@@ -70,11 +66,6 @@ public class Backend implements DataWriter {
 		}
 		
 		return users;
-	}
-	
-	private static void directoryCheck() {
-		File directory = new File("data");
-		if (!directory.exists()) directory.mkdir();
 	}
 	
 	private static ObjectInputStream openInputStream(String path) {

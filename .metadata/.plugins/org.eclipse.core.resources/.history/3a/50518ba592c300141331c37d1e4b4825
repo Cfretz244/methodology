@@ -47,7 +47,6 @@ public class Backend implements DataWriter {
 	
 	@Override
 	public boolean deleteUser(String userid) {
-		directoryCheck();
 		File user = new File("data/" + userid + ".ser");
 		if (user.exists()) {
 			user.delete();
@@ -59,7 +58,6 @@ public class Backend implements DataWriter {
 	
 	@Override
 	public String[] listUsers() {
-		directoryCheck();
 		File dir = new File("data");
 		File[] contents = dir.listFiles();
 		String[] users = new String[contents.length];
