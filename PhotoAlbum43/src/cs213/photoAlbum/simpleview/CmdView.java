@@ -451,7 +451,7 @@ public class CmdView {
 						if (totalArg.indexOf("\"", index + 1) < 0) {
 							collecting = true;
 						} else {
-							if ((index = totalArg.indexOf(":")) > 0) {
+							if ((index = totalArg.indexOf(":")) > 0 && totalArg.toLowerCase().indexOf("c:") < 0) {
 								// getPhotosByTag needs to know whether each argument is a type or a value, so this allows for that.
 								if (args[0].toLowerCase().equals("getphotosbytag") && totalArg.charAt(0) != ',') {
 									tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
@@ -466,7 +466,7 @@ public class CmdView {
 							}
 						}
 					} else {
-						if ((index = totalArg.indexOf(":")) > 0) {
+						if ((index = totalArg.indexOf(":")) > 0 && totalArg.toLowerCase().indexOf("c:") < 0) {
 							if (args[0].toLowerCase().equals("getphotosbytag") && totalArg.charAt(0) != ',') {
 								tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
 							} else if (args[0].toLowerCase().equals("getphotosbytag")) {
@@ -483,7 +483,7 @@ public class CmdView {
 					totalArg += " " + arg;
 					if (totalArg.indexOf("\"", index + 1) > 0) {
 						collecting = false;
-						if ((index = totalArg.indexOf(":")) > 0) {
+						if ((index = totalArg.indexOf(":")) > 0 && line.toLowerCase().indexOf("c:") < 0) {
 							if (args[0].toLowerCase().equals("getphotosbytag") && totalArg.charAt(0) != ',') {
 								tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
 							} else if (args[0].toLowerCase().equals("getphotosbytag")) {
@@ -500,7 +500,7 @@ public class CmdView {
 			}
 			args = new String[tmpArgs.size()];
 			tmpArgs.toArray(args);
-		} else if (line.indexOf(":") > 0 && !args[0].toLowerCase().equals("getphotosbydate")) {
+		} else if (line.indexOf(":") > 0 && !args[0].toLowerCase().equals("getphotosbydate") && line.toLowerCase().indexOf("c:") < 0) {
 			// Supplied line contains no quotes. Yay!
 			ArrayList<String> tmpArgs = new ArrayList<String>();
 
