@@ -1,1 +1,1 @@
-adding the rest of everything
+added main bulk of interactive code, and update for windows users
