@@ -1,7 +1,10 @@
 package pieces;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import chess.Board;
 import chess.Color;
-import chess.Tile;
 
 public class King extends Piece {
 	
@@ -10,8 +13,23 @@ public class King extends Piece {
 		rank = "K";
 	}
 	
-	public boolean moveTo(Tile dest) {
-		return false;
+	public Set<Integer[]> validMoves() {
+		Set<Integer[]> moves = new HashSet<Integer[]>();
+		
+		if (x - 1 >= 0) {
+			moves.add(new Integer[] {x - 1, y});
+			if (y + 1 < Board.HEIGHT) moves.add(new Integer[] {x - 1, y + 1});
+			if (y - 1 >= 0) moves.add(new Integer[] {x - 1, y - 1});
+		}
+		if (y + 1 < Board.HEIGHT) moves.add(new Integer[] {x, y + 1});
+		if (y - 1 >= 0) moves.add(new Integer[] {x, y - 1});
+		if (x + 1 < Board.WIDTH) {
+			moves.add(new Integer[] {x + 1, y});
+			if (y + 1 < Board.HEIGHT) moves.add(new Integer[] {x + 1, y + 1});
+			if (y - 1 >= 0) moves.add(new Integer[] {x + 1, y - 1});
+		}
+		
+		return moves;
 	}
 
 }

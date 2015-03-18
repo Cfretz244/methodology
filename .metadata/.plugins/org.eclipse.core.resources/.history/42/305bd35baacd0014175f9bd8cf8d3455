@@ -1,0 +1,20 @@
+package pieces;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import chess.Color;
+
+public class Pawn extends Piece {
+	
+	public Pawn(int x, int y, Color team) {
+		super(x, y, team);
+		rank = "p";
+	}
+	
+	public Set<Integer[]> validMoves() {
+		Set moves = new HashSet<Integer[]>();
+		if (!hasMoved) moved.add([x, y + 2]);
+	}
+	
+}

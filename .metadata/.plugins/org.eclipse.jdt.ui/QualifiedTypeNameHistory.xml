@@ -8,4 +8,5 @@
 <fullyQualifiedTypeName name="java.text.ParseException"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="cs213.photoAlbum.model.DataWriter"/>
+<fullyQualifiedTypeName name="chess.Board"/>
 </qualifiedTypeNameHistroy>

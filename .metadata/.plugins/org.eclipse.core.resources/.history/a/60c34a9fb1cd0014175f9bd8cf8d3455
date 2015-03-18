@@ -1,0 +1,18 @@
+package pieces;
+
+import java.util.Set;
+
+import chess.Color;
+
+public class King extends Piece {
+	
+	public King(int x, int y, Color team) {
+		super(x, y, team);
+		rank = "K";
+	}
+	
+	public Set<Integer[]> validMoves() {
+		Set<Integer[]> moves = new HashSet<Integer[]>();
+	}
+
+}
