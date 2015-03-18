@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.List;
+import java.util.Set;
+
 import pieces.Bishop;
 import pieces.King;
 import pieces.Knight;
@@ -14,7 +17,7 @@ public class Board {
 	public static final int KING_STARTING_X = 4;
 	
 	public Board() {
-		board = new Tile[8][8];
+		board = new Tile[WIDTH][HEIGHT];
 		boolean colored = true;
 		for (int y = 0; y < HEIGHT; y++) {
 			for (int x = 0; x < WIDTH; x++, colored = !colored) {
@@ -53,6 +56,12 @@ public class Board {
 	}
 	
 	public boolean movePiece(int[] from, int[] to) {
+		Tile start = board[from[0]][from[1]];
+		Tile end = board[to[0]][to[1]];
+		if (start.piece == null) return false;
+		
+		Set<List<Integer>> moves = start.piece.validMoves();
+		
 		return false;
 	}
 	

@@ -1,5 +1,6 @@
 package pieces;
 
+import java.util.List;
 import java.util.Set;
 
 import chess.Color;
@@ -19,7 +20,7 @@ public abstract class Piece {
 		hasMoved = false;
 	}
 	
-	public abstract Set<Integer[]> validMoves();
+	public abstract Set<List<Integer>> validMoves();
 	
 	public void moveTo(Tile dest) {
 		hasMoved = true;

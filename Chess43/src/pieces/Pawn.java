@@ -1,6 +1,8 @@
 package pieces;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import chess.Board;
@@ -13,11 +15,11 @@ public class Pawn extends Piece {
 		rank = "p";
 	}
 	
-	public Set<Integer[]> validMoves() {
-		Set<Integer[]> moves = new HashSet<Integer[]>();
+	public Set<List<Integer>> validMoves() {
+		Set<List<Integer>> moves = new HashSet<List<Integer>>();
 
-		if (!hasMoved) moves.add(new Integer[] {x, y + 2});
-		if (y + 1 < Board.HEIGHT) moves.add(new Integer[] {x, y + 1});
+		if (!hasMoved) moves.add(Arrays.asList(x, y + 2));
+		if (y + 1 < Board.HEIGHT) moves.add(Arrays.asList(x, y + 1));
 
 		return moves;
 	}
