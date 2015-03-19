@@ -14,10 +14,24 @@ public class Knight extends Piece {
 	}
 	
 	@Override
+	// Method implements abstract superclass method.
 	public ArrayList<ArrayList<Location>> validMoves() {
+		// Handle instantiations.
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
 		for (int i = 0; i <= Board.WEST; i++) moves.add(new ArrayList<Location>());
 		
+		// Knights are weird, so this loop iterates across all locations a knight can move to in one move,
+		// and groups together positions into the 4 cardinal directions.
+		// Example:
+		/*
+		 * 		X	X
+		 * 		| N |
+		 * X -			- X
+		 * W	  K	  	  E
+		 * X - 			- X
+		 * 		|	|
+		 * 		X S X
+		 */
 		for (int i = -2; i <= 2; i++) {
 			if (i == 0) continue;
 			for (int j = -2; j <= 2; j++) {
