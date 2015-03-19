@@ -1,6 +1,10 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import pieces.Bishop;
 import pieces.King;
@@ -13,12 +17,14 @@ import pieces.Rook;
 public class Board {
 
 	private Tile[][] board;
+	private Map<String, Set<Piece>> pieces;
 	public static final int HEIGHT = 8, WIDTH = 8;
 	public static final int KING_STARTING_X = 4, CASTLE = 8;
 	public static final int NORTH = 0, EAST = 2, SOUTH = 4, WEST = 6;
 	public static final int NEAST = 1, SEAST = 3, SWEST = 5, NWEST = 7;
 
 	public Board() {
+		pieces = new HashMap<String, Set<Piece>>();
 		board = new Tile[WIDTH][HEIGHT];
 		boolean colored = true;
 		for (int y = 0; y < HEIGHT; y++) {
@@ -50,17 +56,21 @@ public class Board {
 						break;
 					}
 				} else if (y == 1 || y == 6) {
-					board[x][y].piece = new Pawn(x, y, team);
+					fresh.piece = new Pawn(x, y, team);
+				}
+				if (fresh.piece != null) {
+					if (pieces.get(fresh.piece.toString()) == null) pieces.put(fresh.piece.toString(), new HashSet<Piece>());
+					pieces.get(fresh.piece.toString()).add(fresh.piece);
 				}
 			}
 			colored = !colored;
 		}
 	}
 
-	public boolean movePiece(Location from, Location to) {
+	public boolean movePiece(Location from, Location to, Color currentColor) {
 		Tile start = board[from.x][from.y];
 		Tile end = board[to.x][to.y];
-		if (start.piece == null) return false;
+		if (start.piece == null || start.piece.getTeam() != currentColor) return false;
 
 		Piece piece = start.piece;
 		ArrayList<ArrayList<Location>> moves = piece.validMoves();
@@ -69,15 +79,23 @@ public class Board {
 		if (chosenDirection == -1) return false;
 
 		if (chosenDirection != Board.CASTLE) {
+			if (end.piece != null) {
+				if (end.piece.getTeam() == piece.getTeam()) return false;
+				pieces.get(end.piece.toString()).remove(end.piece);
+			}
 			start.piece = null;
 			end.piece = piece;
 			piece.moveTo(to);
 		} else {
-			Piece other = board[to.x][to.y].piece;
-			start.piece = other;
-			end.piece = piece;
-			piece.moveTo(to);
-			other.moveTo(from);
+			Piece rook = end.piece;
+			start.piece = null;
+			end.piece = null;
+			if (to.x > from.x) {
+				board[from.x + 1][from.y].piece = other;
+				Tile kingPos = board[from.x + 2][from.y];
+			} else {
+				
+			}
 		}
 		return true;
 	}
@@ -100,12 +118,12 @@ public class Board {
 				break;
 			}
 		}
-		if (valid && chosenDirection != -1 && !(piece instanceof Pawn)) {
+		if (!(piece instanceof Pawn) && valid && chosenDirection != -1) {
 			return chosenDirection;
-		} else if (piece instanceof Pawn && pawnCheck(from, to, piece) && chosenDirection != -1) {
-			return chosenDirection;
+		} else if (piece instanceof Pawn && pawnCheck(from, to, piece)) {
+			return 0;
 		} else if (piece instanceof King && castleCheck(from, to, piece) && chosenDirection != -1) {
-			
+			return chosenDirection;
 		} else {
 			return -1;
 		}
@@ -116,23 +134,27 @@ public class Board {
 		if (piece instanceof Pawn) directions = new int[] {Board.NORTH, Board.SOUTH};
 		else if (piece instanceof Rook) directions = new int[] {Board.NORTH, Board.EAST, Board.SOUTH, Board.WEST};
 		else if (piece instanceof Knight) directions = new int[] {Board.NORTH, Board.EAST, Board.SOUTH, Board.WEST};
-		else if (piece instanceof Bishop) directions = new int[] {Board.NEAST, Board.SEAST, Board.SWEST, Board.SEAST};
+		else if (piece instanceof Bishop) directions = new int[] {Board.NEAST, Board.SEAST, Board.SWEST, Board.NWEST};
 		else if (piece instanceof Queen) directions = new int[] {Board.NORTH, Board.NEAST, Board.EAST, Board.SEAST, Board.SOUTH, Board.SWEST, Board.WEST, Board.NWEST};
 		else directions = new int[] {Board.NORTH, Board.NEAST, Board.EAST, Board.SEAST, Board.SOUTH, Board.SWEST, Board.WEST, Board.NWEST, Board.CASTLE};
 		return directions;
 	}
 
 	public boolean pawnCheck(Location from, Location to, Piece piece) {
-		if (from.x == to.x && board[to.x][to.y] != null) {
+		if (from.x == to.x && board[to.x][to.y].piece != null) {
 			return false;
 		} else if (from.x != to.x) {
-			if (board[to.x][to.y] == null) {
+			if (board[to.x][to.y].piece == null) {
 				return false;
 			} else if (piece.getTeam() == Color.WHITE && to.y != from.y + 1) {
 				return false;
 			} else if (piece.getTeam() == Color.BLACK && to.y != from.y - 1) {
 				return false;
 			}
+		} else if (piece.getTeam() == Color.WHITE && from.y > to.y) {
+			return false;
+		} else if (piece.getTeam() == Color.BLACK && from.y < to.y) {
+			return false;
 		}
 		return true;
 	}
@@ -140,9 +162,15 @@ public class Board {
 	public boolean castleCheck(Location from, Location to, Piece piece) {
 		Piece other = board[to.x][to.y].piece;
 		if (other == null || (!(other instanceof King) && !(other instanceof Knight))) return false;
+		if (to.x > from.x) {
+			if (board[from.x + 1][from.y].piece != null || board[from.x + 2][from.y].piece != null) return false;
+		} else {
+			if (board[from.x - 1][from.y].piece != null || board[from.x - 2][from.y].piece != null || board[from.x - 3][from.y].piece != null) return false;
+		}
 		return !piece.hasMoved() && !other.hasMoved();
 	}
 
+	@Override
 	public String toString() {
 		String str = new String();
 		for (int y = HEIGHT - 1; y >= 0; y--) {

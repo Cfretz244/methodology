@@ -87,11 +87,20 @@ public class Board {
 			end.piece = piece;
 			piece.moveTo(to);
 		} else {
-			Piece other = board[to.x][to.y].piece;
-			start.piece = other;
-			end.piece = piece;
-			piece.moveTo(to);
-			other.moveTo(from);
+			Piece rook = end.piece;
+			start.piece = null;
+			end.piece = null;
+			if (to.x > from.x) {
+				board[from.x + 1][from.y].piece = rook;
+				board[from.x + 2][from.y].piece = piece;
+				rook.moveTo(new Location(from.x + 1, from.y));
+				piece.moveTo(new Location(from.x + 2, from.y));
+			} else {
+				board[from.x - 1][from.y].piece = rook;
+				board[from.x - 2][from.y].piece = piece;
+				rook.moveTo(new Location(from.x - 1, from.y));
+				piece.moveTo(new Location(from.x -2, from.y));
+			}
 		}
 		return true;
 	}
@@ -158,6 +167,11 @@ public class Board {
 	public boolean castleCheck(Location from, Location to, Piece piece) {
 		Piece other = board[to.x][to.y].piece;
 		if (other == null || (!(other instanceof King) && !(other instanceof Knight))) return false;
+		if (to.x > from.x) {
+			if (board[from.x + 1][from.y].piece != null || board[from.x + 2][from.y].piece != null) return false;
+		} else {
+			if (board[from.x - 1][from.y].piece != null || board[from.x - 2][from.y].piece != null || board[from.x - 3][from.y].piece != null) return false;
+		}
 		return !piece.hasMoved() && !other.hasMoved();
 	}
 
