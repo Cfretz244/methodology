@@ -27,6 +27,7 @@ public abstract class Piece {
 		y = dest.y;
 	}
 	
+	@Override
 	public String toString() {
 		return team == Color.WHITE ? "w" + rank : "b" + rank;
 	}

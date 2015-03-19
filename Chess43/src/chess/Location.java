@@ -15,4 +15,9 @@ public class Location {
 		Location other = (Location) o;
 		return other.x == x && other.y == y;
 	}
+	
+	@Override
+	public String toString() {
+		return x + ", " + y;
+	}
 }

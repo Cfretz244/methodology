@@ -13,9 +13,10 @@ public class Rook extends Piece {
 		rank = "R";
 	}
 	
+	@Override
 	public ArrayList<ArrayList<Location>> validMoves() {
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
-		for (int i = 0; i <= Board.CASTLE; i++) moves.add(new ArrayList<Location>());
+		for (int i = 0; i <= Board.WEST; i++) moves.add(new ArrayList<Location>());
 
 		boolean hasMoves = true;
 		for (int i = 1; hasMoves; i++) {
@@ -37,7 +38,6 @@ public class Rook extends Piece {
 				moves.get(Board.WEST).add(new Location(x - i, y));
 			}
 		}
-		if (!hasMoved) moves.get(Board.CASTLE).add(new Location(Board.KING_STARTING_X, y));
 		
 		return moves;
 	}

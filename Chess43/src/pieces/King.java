@@ -13,9 +13,10 @@ public class King extends Piece {
 		rank = "K";
 	}
 	
+	@Override
 	public ArrayList<ArrayList<Location>> validMoves() {
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
-		for (int i = 0; i <= Board.NWEST; i++) moves.add(new ArrayList<Location>());
+		for (int i = 0; i <= Board.CASTLE; i++) moves.add(new ArrayList<Location>());
 		
 		if (y + 1 < Board.HEIGHT) moves.get(Board.NORTH).add(new Location(x, y + 1));
 		if (x + 1 < Board.WIDTH) {
@@ -30,8 +31,8 @@ public class King extends Piece {
 			if (y + 1 < Board.HEIGHT) moves.get(Board.NWEST).add(new Location(x - 1, y + 1));
 		}
 		if (!hasMoved) {
-			moves.get(Board.WEST).add(new Location(0, y));
-			moves.get(Board.EAST).add(new Location(Board.WIDTH - 1, y));
+			moves.get(Board.CASTLE).add(new Location(0, y));
+			moves.get(Board.CASTLE).add(new Location(Board.WIDTH - 1, y));
 		}
 		
 		return moves;

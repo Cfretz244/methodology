@@ -1,0 +1,37 @@
+package chess;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Chess {
+	
+	static Color currentTurn = Color.WHITE;
+	
+	public static void main(String[] args) throws IOException {
+		Board board = new Board();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			System.out.println(board);
+			if (currentTurn == Color.WHITE) System.out.print("White's move: ");
+			else System.out.print("Black's move: ");
+			
+			String[] input = br.readLine().split(" ");
+			if (input.length < 2) {
+				puts("Illegal move, try again");
+				continue;
+			}
+			
+			int file1 = ((int) input[0].charAt(0)) - ((int) 'a');
+			int file2 = ((int) input[1].charAt(0)) - ((int) 'a');
+			int rank1 = ((int) input[0].charAt(1)) - ((int) '1');
+			int rank2 = ((int) input[1].charAt(1)) - ((int) '1');
+			board.movePiece(new Location(file1, rank1), new Location(file2, rank2));
+		}
+	}
+	
+	public static void puts(String str) {
+		System.out.println(str);
+	}
+
+}

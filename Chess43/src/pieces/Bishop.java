@@ -13,6 +13,7 @@ public class Bishop extends Piece {
 		rank = "B";
 	}
 	
+	@Override
 	public ArrayList<ArrayList<Location>> validMoves() {
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
 		for (int i = 0; i <= Board.NWEST; i++) moves.add(new ArrayList<Location>());

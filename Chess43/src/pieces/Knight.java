@@ -13,6 +13,7 @@ public class Knight extends Piece {
 		super.rank = "N";
 	}
 	
+	@Override
 	public ArrayList<ArrayList<Location>> validMoves() {
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
 		for (int i = 0; i <= Board.WEST; i++) moves.add(new ArrayList<Location>());
@@ -20,7 +21,7 @@ public class Knight extends Piece {
 		for (int i = -2; i <= 2; i++) {
 			if (i == 0) continue;
 			for (int j = -2; j <= 2; j++) {
-				if (j == 0 || i == j) continue;
+				if (j == 0 || Math.abs(i) == Math.abs(j)) continue;
 				
 				if (x + i >= 0 && x + i < Board.WIDTH && y + j >= 0 && y + j < Board.HEIGHT) {
 					ArrayList<Location> direction;
@@ -33,7 +34,7 @@ public class Knight extends Piece {
 					} else {
 						direction = moves.get(Board.WEST);
 					}
-					direction.add(new Location(x + i, y + i));
+					direction.add(new Location(x + i, y + j));
 				}
 			}
 		}

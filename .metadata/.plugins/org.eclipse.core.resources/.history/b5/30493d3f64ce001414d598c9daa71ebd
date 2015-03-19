@@ -1,0 +1,30 @@
+package chess;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class Chess {
+	
+	static Color currentTurn = Color.WHITE;
+	
+	public static void main(String[] args) throws IOException {
+		Board board = new Board();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			System.out.println(board);
+			if (currentTurn == Color.WHITE) puts("White's move: ");
+			else System.out.print("Black's move: ");
+			
+			String[] input = br.readLine().split(" ");
+			if (input.length < 2) {
+				
+			}
+		}
+	}
+	
+	public static void puts(String str) {
+		System.out.println(str);
+	}
+
+}

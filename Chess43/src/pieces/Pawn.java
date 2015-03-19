@@ -13,6 +13,7 @@ public class Pawn extends Piece {
 		rank = "p";
 	}
 	
+	@Override
 	public ArrayList<ArrayList<Location>> validMoves() {
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
 		for (int i = 0; i <= Board.SOUTH; i++) moves.add(new ArrayList<Location>());
