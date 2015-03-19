@@ -1,0 +1,47 @@
+package pieces;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import chess.Board;
+import chess.Color;
+import chess.Location;
+
+public class Rook extends Piece {
+	
+	public Rook(int x, int y, Color team) {
+		super(x, y, team);
+		rank = "R";
+	}
+	
+	public ArrayList<ArrayList<Location>> validMoves() {
+		int[][][] moves = new int[4][][];
+		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
+		for (int i = 0; i < 5; i++) moves.add(new ArrayList<Location>());
+
+		if (!hasMoved) moves.add(Arrays.asList(Board.KING_STARTING_X, y));
+		boolean hasMoves = true;
+		for (int i = 1; hasMoves; i++) {
+			hasMoves = false;
+			if (x - i >= 0) {
+				hasMoves = true;
+				moves.add(Arrays.asList(x - i, y));
+			}
+			if (x + i < Board.WIDTH) {
+				hasMoves = true;
+				moves.add(Arrays.asList(x + i, y));
+			}
+			if (y - i >= 0) {
+				hasMoves = true;
+				moves.add(Arrays.asList(x, y - i));
+			}
+			if (y + i < Board.HEIGHT) {
+				hasMoves = true;
+				moves.add(Arrays.asList(x, y + i));
+			}
+		}
+		
+		return moves;
+	}
+	
+}

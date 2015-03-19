@@ -1,10 +1,9 @@
 package pieces;
 
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 
 import chess.Color;
-import chess.Tile;
+import chess.Location;
 
 public abstract class Piece {
 	
@@ -20,16 +19,24 @@ public abstract class Piece {
 		hasMoved = false;
 	}
 	
-	public abstract Set<List<Integer>> validMoves();
+	public abstract ArrayList<ArrayList<Location>> validMoves();
 	
-	public void moveTo(Tile dest) {
+	public void moveTo(Location dest) {
 		hasMoved = true;
-		x = dest.getX();
-		y = dest.getY();
+		x = dest.x;
+		y = dest.y;
 	}
 	
 	public String toString() {
 		return team == Color.WHITE ? "w" + rank : "b" + rank;
+	}
+	
+	public boolean hasMoved() {
+		return hasMoved;
+	}
+	
+	public Color getTeam() {
+		return team;
 	}
 	
 }

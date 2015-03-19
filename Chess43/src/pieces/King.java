@@ -1,12 +1,10 @@
 package pieces;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 
 import chess.Board;
 import chess.Color;
+import chess.Location;
 
 public class King extends Piece {
 	
@@ -15,24 +13,25 @@ public class King extends Piece {
 		rank = "K";
 	}
 	
-	public Set<List<Integer>> validMoves() {
-		Set<List<Integer>> moves = new HashSet<List<Integer>>();
+	public ArrayList<ArrayList<Location>> validMoves() {
+		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
+		for (int i = 0; i <= Board.NWEST; i++) moves.add(new ArrayList<Location>());
 		
-		if (!hasMoved) {
-			moves.add(Arrays.asList(0, y));
-			moves.add(Arrays.asList(Board.WIDTH, y));
-		}
-		if (x - 1 >= 0) {
-			moves.add(Arrays.asList(x - 1, y));
-			if (y + 1 < Board.HEIGHT) moves.add(Arrays.asList(x - 1, y + 1));
-			if (y - 1 >= 0) moves.add(Arrays.asList(x - 1, y - 1));
-		}
-		if (y + 1 < Board.HEIGHT) moves.add(Arrays.asList(x, y + 1));
-		if (y - 1 >= 0) moves.add(Arrays.asList(x, y - 1));
+		if (y + 1 < Board.HEIGHT) moves.get(Board.NORTH).add(new Location(x, y + 1));
 		if (x + 1 < Board.WIDTH) {
-			moves.add(Arrays.asList(x + 1, y));
-			if (y + 1 < Board.HEIGHT) moves.add(Arrays.asList(x + 1, y + 1));
-			if (y - 1 >= 0) moves.add(Arrays.asList(x + 1, y - 1));
+			if (y + 1 < Board.HEIGHT) moves.get(Board.NEAST).add(new Location(x + 1, y + 1));
+			moves.get(Board.EAST).add(new Location(x + 1, y));
+			if (y - 1 >= 0) moves.get(Board.SEAST).add(new Location(x + 1, y - 1));
+		}
+		if (y - 1 >= 0) moves.get(Board.SOUTH).add(new Location(x, y - 1));
+		if (x - 1 >= 0) {
+			if (y - 1 >= 0) moves.get(Board.SWEST).add(new Location(x - 1, y - 1));
+			moves.get(Board.WEST).add(new Location(x - 1, y));
+			if (y + 1 < Board.HEIGHT) moves.get(Board.NWEST).add(new Location(x - 1, y + 1));
+		}
+		if (!hasMoved) {
+			moves.get(Board.WEST).add(new Location(0, y));
+			moves.get(Board.EAST).add(new Location(Board.WIDTH - 1, y));
 		}
 		
 		return moves;

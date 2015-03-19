@@ -1,12 +1,10 @@
 package pieces;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 
 import chess.Board;
 import chess.Color;
+import chess.Location;
 
 public class Rook extends Piece {
 	
@@ -15,30 +13,31 @@ public class Rook extends Piece {
 		rank = "R";
 	}
 	
-	public Set<List<Integer>> validMoves() {
-		Set<List<Integer>> moves = new HashSet<List<Integer>>();
+	public ArrayList<ArrayList<Location>> validMoves() {
+		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
+		for (int i = 0; i <= Board.CASTLE; i++) moves.add(new ArrayList<Location>());
 
-		if (!hasMoved) moves.add(Arrays.asList(Board.KING_STARTING_X, y));
 		boolean hasMoves = true;
 		for (int i = 1; hasMoves; i++) {
 			hasMoves = false;
-			if (x - i >= 0) {
+			if (y + i < Board.HEIGHT) {
 				hasMoves = true;
-				moves.add(Arrays.asList(x - i, y));
+				moves.get(Board.NORTH).add(new Location(x, y + i));
 			}
 			if (x + i < Board.WIDTH) {
 				hasMoves = true;
-				moves.add(Arrays.asList(x + i, y));
+				moves.get(Board.EAST).add(new Location(x + i, y));
 			}
 			if (y - i >= 0) {
 				hasMoves = true;
-				moves.add(Arrays.asList(x, y - i));
+				moves.get(Board.SOUTH).add(new Location(x, y - i));
 			}
-			if (y + i < Board.HEIGHT) {
+			if (x - i >= 0) {
 				hasMoves = true;
-				moves.add(Arrays.asList(x, y + i));
+				moves.get(Board.WEST).add(new Location(x - i, y));
 			}
 		}
+		if (!hasMoved) moves.get(Board.CASTLE).add(new Location(Board.KING_STARTING_X, y));
 		
 		return moves;
 	}

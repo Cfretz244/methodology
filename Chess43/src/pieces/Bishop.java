@@ -1,12 +1,10 @@
 package pieces;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 
 import chess.Board;
 import chess.Color;
+import chess.Location;
 
 public class Bishop extends Piece {
 	
@@ -15,27 +13,28 @@ public class Bishop extends Piece {
 		rank = "B";
 	}
 	
-	public Set<List<Integer>> validMoves() {
-		Set<List<Integer>> moves = new HashSet<List<Integer>>();
+	public ArrayList<ArrayList<Location>> validMoves() {
+		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
+		for (int i = 0; i <= Board.NWEST; i++) moves.add(new ArrayList<Location>());
 		
 		boolean hasMoves = true;
 		for (int i = 1; hasMoves; i++) {
 			hasMoves = false;
-			if (x - i >= 0 && y + i < Board.HEIGHT) {
-				hasMoves = true;
-				moves.add(Arrays.asList(x - i, y + i));
-			}
 			if (x + i < Board.WIDTH && y + i < Board.HEIGHT) {
 				hasMoves = true;
-				moves.add(Arrays.asList(x + i, y + i));
-			}
-			if (x - i >= 0 && y - i >= 0) {
-				hasMoves = true;
-				moves.add(Arrays.asList(x - i, y - i));
+				moves.get(Board.NEAST).add(new Location(x + i, y + i));
 			}
 			if (x + i < Board.WIDTH && y - i >= 0) {
 				hasMoves = true;
-				moves.add(Arrays.asList(x + i, y - i));
+				moves.get(Board.SEAST).add(new Location(x + i, y - i));
+			}
+			if (x - i >= 0 && y - i >= 0) {
+				hasMoves = true;
+				moves.get(Board.SWEST).add(new Location(x - i, y - i));
+			}
+			if (x - i >= 0 && y + i < Board.HEIGHT) {
+				hasMoves = true;
+				moves.get(Board.NWEST).add(new Location(x - i, y + i));
 			}
 		}
 		

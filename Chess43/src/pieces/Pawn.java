@@ -1,12 +1,10 @@
 package pieces;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.ArrayList;
 
 import chess.Board;
 import chess.Color;
+import chess.Location;
 
 public class Pawn extends Piece {
 	
@@ -15,11 +13,14 @@ public class Pawn extends Piece {
 		rank = "p";
 	}
 	
-	public Set<List<Integer>> validMoves() {
-		Set<List<Integer>> moves = new HashSet<List<Integer>>();
+	public ArrayList<ArrayList<Location>> validMoves() {
+		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
+		for (int i = 0; i <= Board.SOUTH; i++) moves.add(new ArrayList<Location>());
 
-		if (!hasMoved) moves.add(Arrays.asList(x, y + 2));
-		if (y + 1 < Board.HEIGHT) moves.add(Arrays.asList(x, y + 1));
+		if (team == Color.WHITE && y + 1 < Board.HEIGHT) moves.get(Board.NORTH).add(new Location(x, y + 1));
+		else if (team == Color.BLACK && y - 1 >= 0) moves.get(Board.SOUTH).add(new Location(x, y - 1));
+
+		if (!hasMoved) moves.get(team == Color.WHITE ? Board.NORTH : Board.SOUTH).add(team == Color.WHITE ? new Location(x, y + 2) : new Location(x, y - 2));
 
 		return moves;
 	}
