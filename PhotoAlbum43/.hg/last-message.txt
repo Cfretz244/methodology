@@ -1,1 +1,1 @@
-added main bulk of interactive code, and update for windows users
+changed a null to an empty string

@@ -55,6 +55,10 @@ public abstract class Piece {
 		return team == Color.WHITE ? "w" + rank : "b" + rank;
 	}
 	
+	public Location getLocation() {
+		return new Location(x, y);
+	}
+	
 	public boolean hasMoved() {
 		return hasMoved;
 	}

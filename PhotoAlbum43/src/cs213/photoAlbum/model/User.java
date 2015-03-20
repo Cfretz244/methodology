@@ -87,7 +87,19 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean removeAlbum(String album) {
-		return albums.remove(album) != null;
+		Album removed = albums.remove(album);
+		if (removed == null) return false;
+		
+		Photo[] photos = removed.getPhotos();
+		for (Photo photo : photos) {
+			if (photo.getContainingAlbums().length > 1) {
+				photo.removeFromAlbum(removed);
+			} else {
+				allPhotos.remove(photo.getName());
+			}
+		}
+		
+		return true;
 	}
 	
 	/**

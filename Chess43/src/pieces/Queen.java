@@ -55,7 +55,7 @@ public class Queen extends Piece {
 				// We've found a location in the western direction.
 				moves.get(Board.WEST).add(new Location(x - i, y));
 				
-				// Check if we have a location in the northwester direction.
+				// Check if we have a location in the northwestern direction.
 				if (y + i < Board.HEIGHT) moves.get(Board.NWEST).add(new Location(x - i, y + i));
 			}
 		}

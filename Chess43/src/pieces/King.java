@@ -20,7 +20,7 @@ public class King extends Piece {
 		ArrayList<ArrayList<Location>> moves = new ArrayList<ArrayList<Location>>();
 		for (int i = 0; i <= Board.CASTLE; i++) moves.add(new ArrayList<Location>());
 		
-		// King can move a single tile in all directions, so this is a combination of the rook and bishop logic.
+		// King can move a single tile in all directions, so this is a combination of the rook and bishop logic, but without a loop.
 		if (y + 1 < Board.HEIGHT) moves.get(Board.NORTH).add(new Location(x, y + 1));
 		if (x + 1 < Board.WIDTH) {
 			if (y + 1 < Board.HEIGHT) moves.get(Board.NEAST).add(new Location(x + 1, y + 1));
@@ -35,6 +35,7 @@ public class King extends Piece {
 		}
 		
 		// We also need to remember that kings can castle if they haven't moved yet.
+		// Although castling isn't really a "direction", I use the same abstraction so that it works easily with the rest of the program.
 		if (!hasMoved) {
 			moves.get(Board.CASTLE).add(new Location(0, y));
 			moves.get(Board.CASTLE).add(new Location(Board.WIDTH - 1, y));

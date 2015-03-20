@@ -1,6 +1,7 @@
 package cs213.photoAlbum.simpleview;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.ParseException;
@@ -212,7 +213,8 @@ public class CmdView {
 						puts(numArgs);
 						continue;
 					}
-
+					
+					args[1] = getFullPath(args[1]);
 					int status = control.addPhotoToAlbum(args[3], args[1], args[2]);
 					if (status > 0) {
 						// Add operation was successful.
@@ -243,6 +245,7 @@ public class CmdView {
 						continue;
 					}
 
+					args[1] = getFullPath(args[1]);
 					int status = control.movePhoto(args[2], args[3], args[1]);
 					if (status > 0) {
 						// Move was successful.
@@ -259,6 +262,7 @@ public class CmdView {
 						continue;
 					}
 
+					args[1] = getFullPath(args[1]);
 					if (control.removePhotoFromAlbum(args[2], args[1])) {
 						puts("Removed photo:");
 						puts(args[1] + " - From album " + args[2]);
@@ -272,6 +276,7 @@ public class CmdView {
 						continue;
 					}
 
+					args[1] = getFullPath(args[1]);
 					if (control.addTagToPhoto(args[1], args[2], args[3])) {
 						puts("Added tag:");
 						puts(args[1] + " " + args[2] + ":" + args[3]);
@@ -285,6 +290,7 @@ public class CmdView {
 						continue;
 					}
 
+					args[1] = getFullPath(args[1]);
 					if (control.removeTagFromPhoto(args[1], args[2], args[3])) {
 						puts("Deleted tag:");
 						puts(args[1] + " " + args[2] + ":" + args[3]);
@@ -299,6 +305,7 @@ public class CmdView {
 					}
 
 					// Get the requested photo and verify that it actually exists.
+					args[1] = getFullPath(args[1]);
 					Photo photo = control.getPhoto(args[1]);
 					if (photo == null) {
 						puts("Photo " + args[1] + " does not exist");
@@ -355,7 +362,7 @@ public class CmdView {
 					for (int i = 1; i < args.length; i++) {
 						// Parse out the tags.
 						String tagPiece = args[i], type = "", value = args[i];
-						if (tagPiece.indexOf("7¥p3:") == 0) {
+						if (tagPiece.indexOf("7yp3:") == 0) {
 							// The current tag has a specified type.
 							type = tagPiece.substring(5, tagPiece.length());
 							value = args[++i];
@@ -454,9 +461,9 @@ public class CmdView {
 							if ((index = totalArg.indexOf(":")) > 0 && totalArg.toLowerCase().indexOf("c:") < 0) {
 								// getPhotosByTag needs to know whether each argument is a type or a value, so this allows for that.
 								if (args[0].toLowerCase().equals("getphotosbytag") && totalArg.charAt(0) != ',') {
-									tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
+									tmpArgs.add("7yp3:" + totalArg.substring(0, index));
 								} else if (args[0].toLowerCase().equals("getphotosbytag")) {
-									tmpArgs.add("7¥p3:" + totalArg.substring(1, index));
+									tmpArgs.add("7yp3:" + totalArg.substring(1, index));
 								} else {
 									tmpArgs.add(totalArg.substring(0, index));
 								}
@@ -468,9 +475,9 @@ public class CmdView {
 					} else {
 						if ((index = totalArg.indexOf(":")) > 0 && totalArg.toLowerCase().indexOf("c:") < 0) {
 							if (args[0].toLowerCase().equals("getphotosbytag") && totalArg.charAt(0) != ',') {
-								tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
+								tmpArgs.add("7yp3:" + totalArg.substring(0, index));
 							} else if (args[0].toLowerCase().equals("getphotosbytag")) {
-								tmpArgs.add("7¥p3:" + totalArg.substring(1, index));
+								tmpArgs.add("7yp3:" + totalArg.substring(1, index));
 							} else {
 								tmpArgs.add(totalArg.substring(0, index));
 							}
@@ -485,9 +492,9 @@ public class CmdView {
 						collecting = false;
 						if ((index = totalArg.indexOf(":")) > 0 && line.toLowerCase().indexOf("c:") < 0) {
 							if (args[0].toLowerCase().equals("getphotosbytag") && totalArg.charAt(0) != ',') {
-								tmpArgs.add("7¥p3:" + totalArg.substring(0, index));
+								tmpArgs.add("7yp3:" + totalArg.substring(0, index));
 							} else if (args[0].toLowerCase().equals("getphotosbytag")) {
-								tmpArgs.add("7¥p3:" + totalArg.substring(1, index));
+								tmpArgs.add("7yp3:" + totalArg.substring(1, index));
 							} else {
 								tmpArgs.add(totalArg.substring(0, index));
 							}
@@ -508,9 +515,9 @@ public class CmdView {
 				int index = arg.indexOf(":");
 				if (index > 0) {
 					if (args[0].toLowerCase().equals("getphotosbytag") && arg.charAt(0) != ',') {
-						tmpArgs.add("7¥p3:" + arg.substring(0, index));
+						tmpArgs.add("7yp3:" + arg.substring(0, index));
 					} else if (args[0].toLowerCase().equals("getphotosbytag")) {
-						tmpArgs.add("7¥p3:" + arg.substring(1, index));
+						tmpArgs.add("7yp3:" + arg.substring(1, index));
 					} else {
 						tmpArgs.add(arg.substring(0, index));
 					}
@@ -524,6 +531,15 @@ public class CmdView {
 			tmpArgs.toArray(args);
 		}	
 		return args;
+	}
+	
+	private static String getFullPath(String path) {
+		try {
+			File file = new File(path);
+			return file.getCanonicalPath();
+		} catch (Exception e) {
+			return "";
+		}
 	}
 
 	// I got tired of typing out System.out.println, and I like coding in Ruby.
