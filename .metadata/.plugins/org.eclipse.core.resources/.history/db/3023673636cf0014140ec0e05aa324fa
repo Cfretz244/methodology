@@ -85,7 +85,7 @@ public class Board {
 	}
 
 	// Method moves a piece from one location to another, assuming that the movement is legal.
-	public int movePiece(Location from, Location to, Color currentColor, String promotion) {
+	public int movePiece(Location from, Location to, Color currentColor) {
 		// Get the starting and ending tiles.
 		Tile start = board[from.x][from.y];
 		Tile end = board[to.x][to.y];
@@ -150,27 +150,6 @@ public class Board {
 				board[from.x - 2][from.y].piece = null;
 			}
 			return 0;
-		}
-		
-		if (piece instanceof Pawn && (to.y == 7 || to.y == 0)) {
-			Piece newPiece;
-			switch (promotion) {
-			case "R":
-				newPiece = new Rook(to.x, to.y, currentColor);
-				break;
-			case "N":
-				newPiece = new Knight(to.x, to.y, currentColor);
-				break;
-			case "B":
-				newPiece = new Bishop(to.x, to.y, currentColor);
-				break;
-			case "Q":
-			default:
-				newPiece = new Queen(to.x, to.y, currentColor);
-			}
-			pieces.get(newPiece.toString()).add(newPiece);
-			pieces.get(piece.toString()).remove(piece);
-			end.piece = newPiece;
 		}
 		
 		if (inCheck(currentColor == Color.WHITE ? Color.BLACK : Color.WHITE)) return 2;
@@ -244,7 +223,7 @@ public class Board {
 		
 		return false;
 	}
-	
+
 	// Pawn movement is unique amongst chess pieces, so this method actually handles all validation for whether or not a pawn can move
 	// from one square to another.
 	public boolean pawnCheck(Location from, Location to, Piece piece) {

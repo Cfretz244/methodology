@@ -77,7 +77,7 @@ public class Board {
 				// the Set the piece will be stored in (if it doesn't exist) using the name of the piece, and then stores the piece in the set.
 				if (fresh.piece != null) {
 					if (pieces.get(fresh.piece.toString()) == null) pieces.put(fresh.piece.toString(), new HashSet<Piece>());
-					pieces.get(fresh.piece.toString()).add(fresh.piece);
+					pieces.get(fresh.piece).add(fresh.piece);
 				}
 			}
 			colored = !colored;
@@ -106,7 +106,7 @@ public class Board {
 			if (end.piece != null) {
 				// We are capturing a piece. Make sure it isn't from our team, and then remove it from the pieces hashtable.
 				if (end.piece.getTeam() == piece.getTeam()) return 0;
-				pieces.get(end.piece.toString()).remove(end.piece);
+				pieces.get(end.piece).remove(end.piece);
 			}
 			
 			// Move the piece.
@@ -168,8 +168,8 @@ public class Board {
 			default:
 				newPiece = new Queen(to.x, to.y, currentColor);
 			}
-			pieces.get(newPiece.toString()).add(newPiece);
-			pieces.get(piece.toString()).remove(piece);
+			pieces.get(newPiece).add(newPiece);
+			pieces.get(piece).remove(piece);
 			end.piece = newPiece;
 		}
 		

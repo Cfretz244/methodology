@@ -63,7 +63,7 @@ public class Chess {
 			
 			// Assuming all of the previous checks pass, we ask the board to move the piece to the specified location, and assuming it is successful, we update
 			// the turn.
-			int status = board.movePiece(new Location(file1, rank1), new Location(file2, rank2), currentTurn, input.length == 3 ? input[2] : "");
+			int status = board.movePiece(new Location(file1, rank1), new Location(file2, rank2), currentTurn);
 			if (status > 0) {
 				currentTurn = currentTurn == Color.WHITE ? Color.BLACK : Color.WHITE;
 

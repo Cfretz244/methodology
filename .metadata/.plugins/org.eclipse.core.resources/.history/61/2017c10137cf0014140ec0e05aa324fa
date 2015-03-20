@@ -152,7 +152,7 @@ public class Board {
 			return 0;
 		}
 		
-		if (piece instanceof Pawn && (to.y == 7 || to.y == 0)) {
+		if (piece instanceof Pawn && to.y == 7) {
 			Piece newPiece;
 			switch (promotion) {
 			case "R":
@@ -168,9 +168,7 @@ public class Board {
 			default:
 				newPiece = new Queen(to.x, to.y, currentColor);
 			}
-			pieces.get(newPiece.toString()).add(newPiece);
-			pieces.get(piece.toString()).remove(piece);
-			end.piece = newPiece;
+			pieces.get(newPiece).add(newPiece);
 		}
 		
 		if (inCheck(currentColor == Color.WHITE ? Color.BLACK : Color.WHITE)) return 2;
