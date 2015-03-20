@@ -68,14 +68,8 @@ public class Chess {
 				currentTurn = currentTurn == Color.WHITE ? Color.BLACK : Color.WHITE;
 
 				if (input.length == 3 && input[2].equals("draw?") && !drawing) drawing = true;
-				if (status == 3) {
-					puts((currentTurn == Color.WHITE ? "Black " : "White ") + "wins!");
-					return;
-				} else if (status == 2) {
-					checked = true;
-				} else {
-					checked = false;
-				}
+				if (status == 2) checked = true;
+				else checked = false;
 			} else {
 				puts(errorMsg);
 			}

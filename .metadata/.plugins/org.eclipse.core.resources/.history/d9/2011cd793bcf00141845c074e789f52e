@@ -69,13 +69,10 @@ public class Chess {
 
 				if (input.length == 3 && input[2].equals("draw?") && !drawing) drawing = true;
 				if (status == 3) {
-					puts((currentTurn == Color.WHITE ? "Black " : "White ") + "wins!");
-					return;
-				} else if (status == 2) {
-					checked = true;
-				} else {
-					checked = false;
+					puts((currentTurn == Color.WHITE ? "White " : "Black ") + "wins!")
 				}
+				if (status == 2) checked = true;
+				else checked = false;
 			} else {
 				puts(errorMsg);
 			}

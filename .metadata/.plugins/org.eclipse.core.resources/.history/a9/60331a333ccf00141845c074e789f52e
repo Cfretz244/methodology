@@ -21,6 +21,6 @@ public class Location {
 	@Override
 	// Method returns a string representation of a location.
 	public String toString() {
-		return "(" + x + ", " + y + ")";
+		return x + ", " + y;
 	}
 }
