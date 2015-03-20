@@ -37,8 +37,8 @@ public class King extends Piece {
 		// We also need to remember that kings can castle if they haven't moved yet.
 		// Although castling isn't really a "direction", I use the same abstraction so that it works easily with the rest of the program.
 		if (!hasMoved) {
-			moves.get(Board.CASTLE).add(new Location(2, y));
-			moves.get(Board.CASTLE).add(new Location(6, y));
+			moves.get(Board.CASTLE).add(new Location(0, y));
+			moves.get(Board.CASTLE).add(new Location(Board.WIDTH - 1, y));
 		}
 		
 		return moves;

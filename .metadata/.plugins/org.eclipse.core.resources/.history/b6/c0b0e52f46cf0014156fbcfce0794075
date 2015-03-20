@@ -119,15 +119,17 @@ public class Board {
 			start.piece = null;
 			end.piece = null;
 			if (to.x > from.x) {
-				board[from.x + 1][from.y].piece = tmp;
+				Piece rook = board[to.x + 1][to.y].piece;
+				board[from.x + 1][from.y].piece = rook;
 				board[from.x + 2][from.y].piece = piece;
-				tmp.moveTo(new Location(from.x + 1, from.y));
+				rook.moveTo(new Location(from.x + 1, from.y));
 				piece.moveTo(new Location(from.x + 2, from.y));
 			} else {
-				board[from.x - 1][from.y].piece = tmp;
+				Piece rook = board[to.x - 2][to.y].piece;
+				board[from.x - 1][from.y].piece = rook;
 				board[from.x - 2][from.y].piece = piece;
-				tmp.moveTo(new Location(from.x - 1, from.y));
-				piece.moveTo(new Location(from.x -2, from.y));
+				rook.moveTo(new Location(from.x - 1, from.y));
+				piece.moveTo(new Location(from.x - 2, from.y));
 			}
 		}
 		
@@ -204,13 +206,18 @@ public class Board {
 						break;
 					}
 				}
+				if (index == 0) {
+					Location locale = moves.get(direction).get(index);
+					Tile current = board[locale.x][locale.y];
+					if (current.piece != null && current.piece.getTeam() == piece.getTeam()) valid = false;
+				}
 				break;
 			}
 		}
 		
 		// Pawns and Kings have conditional movement (Pawns capturing another piece and a King castling), so this checks those conditions using the
 		// pawnCheck and castleCheck methods.
-		if (!(piece instanceof Pawn) && valid && chosenDirection != -1) {
+		if (!(piece instanceof Pawn) && valid && chosenDirection != -1 && chosenDirection != Board.CASTLE) {
 			return chosenDirection;
 		} else if (piece instanceof Pawn && pawnCheck(from, to, piece)) {
 			return 0;
@@ -250,7 +257,31 @@ public class Board {
 	}
 	
 	public boolean mated(Color team) {
-		Piece king = pieces.get((team == Color.WHITE ? "w" : "b") + "K").iterator().next();
+		for (Set<Piece> subset : pieces.values()) {
+			for (Piece piece: subset) {
+				if (piece.getTeam() == team) {
+					ArrayList<ArrayList<Location>> moves = piece.validMoves();
+					Location from = piece.getLocation();
+					int[] directions = getDirections(piece);
+					for (int direction : directions) {
+						for (Location to : moves.get(direction)) {
+							if (canMoveTo(piece, moves, directions, from, to) != -1) {
+								Piece tmp = board[to.x][to.y].piece;
+								board[from.x][from.y].piece = null;
+								board[to.x][to.y].piece = piece;
+								piece.moveTo(to);
+								boolean checked = inCheck(team);
+								piece.moveTo(from);
+								board[from.x][from.y].piece = piece;
+								board[to.x][to.y].piece = tmp;
+								if (!checked) return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 	
 	// Pawn movement is unique amongst chess pieces, so this method actually handles all validation for whether or not a pawn can move
@@ -276,14 +307,19 @@ public class Board {
 
 	// Method checks whether or not a castling request is valid.
 	public boolean castleCheck(Location from, Location to, Piece piece) {
-		Piece other = board[to.x][to.y].piece;
-		if (other == null || (!(other instanceof King) && !(other instanceof Knight))) return false;
+		if (piece.hasMoved()) return false;
+
+		Piece other;
+		if (to.x > from.x) other = board[to.x + 1][to.y].piece;
+		else other = board[to.x - 2][to.y].piece;
+		if (other == null || !(other instanceof Rook) || other.hasMoved()) return false;
+
 		if (to.x > from.x) {
 			if (board[from.x + 1][from.y].piece != null || board[from.x + 2][from.y].piece != null) return false;
 		} else {
 			if (board[from.x - 1][from.y].piece != null || board[from.x - 2][from.y].piece != null || board[from.x - 3][from.y].piece != null) return false;
 		}
-		return !piece.hasMoved() && !other.hasMoved();
+		return true;
 	}
 
 	@Override

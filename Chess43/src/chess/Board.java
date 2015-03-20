@@ -117,17 +117,20 @@ public class Board {
 			// We are castling. Check which type of castling is being performed, check that the intervening squares are unoccupied, and then
 			// perform the castle.
 			start.piece = null;
-			end.piece = null;
 			if (to.x > from.x) {
-				board[from.x + 1][from.y].piece = tmp;
+				Piece rook = board[to.x + 1][to.y].piece;
+				board[to.x + 1][to.y].piece = null;
+				board[from.x + 1][from.y].piece = rook;
 				board[from.x + 2][from.y].piece = piece;
-				tmp.moveTo(new Location(from.x + 1, from.y));
+				rook.moveTo(new Location(from.x + 1, from.y));
 				piece.moveTo(new Location(from.x + 2, from.y));
 			} else {
-				board[from.x - 1][from.y].piece = tmp;
+				Piece rook = board[to.x - 2][to.y].piece;
+				board[to.x - 2][to.y].piece = null;
+				board[from.x - 1][from.y].piece = rook;
 				board[from.x - 2][from.y].piece = piece;
-				tmp.moveTo(new Location(from.x - 1, from.y));
-				piece.moveTo(new Location(from.x -2, from.y));
+				rook.moveTo(new Location(from.x - 1, from.y));
+				piece.moveTo(new Location(from.x - 2, from.y));
 			}
 		}
 		
@@ -305,9 +308,12 @@ public class Board {
 
 	// Method checks whether or not a castling request is valid.
 	public boolean castleCheck(Location from, Location to, Piece piece) {
-		Piece other = board[to.x][to.y].piece;
-		if (other == null || (!(other instanceof King) && !(other instanceof Rook))) return false;
-		else if (piece.hasMoved() || other.hasMoved()) return false;
+		if (piece.hasMoved()) return false;
+
+		Piece other;
+		if (to.x > from.x) other = board[to.x + 1][to.y].piece;
+		else other = board[to.x - 2][to.y].piece;
+		if (other == null || !(other instanceof Rook) || other.hasMoved()) return false;
 
 		if (to.x > from.x) {
 			if (board[from.x + 1][from.y].piece != null || board[from.x + 2][from.y].piece != null) return false;
