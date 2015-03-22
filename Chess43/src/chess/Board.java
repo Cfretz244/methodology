@@ -271,11 +271,13 @@ public class Board {
 						for (Location to : moves.get(direction)) {
 							if (canMoveTo(piece, moves, directions, from, to) != -1) {
 								Piece tmp = board[to.x][to.y].piece;
+								boolean hasMoved = piece.hasMoved();
 								board[from.x][from.y].piece = null;
 								board[to.x][to.y].piece = piece;
 								piece.moveTo(to);
 								boolean checked = inCheck(team);
 								piece.moveTo(from);
+								if (!hasMoved) piece.resetMovement();
 								board[from.x][from.y].piece = piece;
 								board[to.x][to.y].piece = tmp;
 								if (!checked) return false;	
@@ -298,7 +300,7 @@ public class Board {
 				return false;
 			}
 		} else if (from.x != to.x) {
-			if (board[to.x][to.y].piece == null) {
+			if (board[to.x][to.y].piece == null && !(board[to.x][from.y].piece instanceof Pawn)) {
 				return false;
 			} else if (piece.getTeam() == Color.WHITE && to.y != from.y + 1) {
 				return false;
@@ -310,12 +312,18 @@ public class Board {
 		} else if (piece.getTeam() == Color.BLACK && from.y < to.y) {
 			return false;
 		}
+		
+		if (from.x != to.x && board[to.x][to.y].piece == null && board[to.x][from.y].piece instanceof Pawn) {
+			Piece captured = board[to.x][from.y].piece;
+			pieces.get(captured.toString()).remove(captured);
+			board[to.x][from.y].piece = null;
+		}
 		return true;
 	}
 
 	// Method checks whether or not a castling request is valid.
 	public boolean castleCheck(Location from, Location to, Piece piece) {
-		if (piece.hasMoved()) return false;
+		if (piece.hasMoved() || (to.x != 2 && to.x != 6) || (to.y != 0 && to.y != 7)) return false;
 
 		Piece other;
 		if (to.x > from.x) other = board[to.x + 1][to.y].piece;

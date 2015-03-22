@@ -63,10 +63,6 @@ public abstract class Piece {
 		return hasMoved;
 	}
 	
-	public void resetMovement() {
-		hasMoved = false;
-	}
-	
 	public Color getTeam() {
 		return team;
 	}
