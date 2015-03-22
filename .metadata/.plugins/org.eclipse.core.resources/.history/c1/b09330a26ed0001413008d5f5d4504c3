@@ -297,6 +297,7 @@ public class Board {
 			} else if (board[to.x][to.y].piece != null) {
 				return false;
 			}
+			return false;
 		} else if (from.x != to.x) {
 			if (board[to.x][to.y].piece == null) {
 				return false;

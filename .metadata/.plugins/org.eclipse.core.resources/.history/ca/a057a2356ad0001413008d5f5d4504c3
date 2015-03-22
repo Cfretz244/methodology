@@ -178,7 +178,7 @@ public class Board {
 
 		Color enemy = currentColor == Color.WHITE ? Color.BLACK : Color.WHITE;
 		if (inCheck(enemy)) {
-			if (mated(enemy)) return 3;
+			if (mated(enemy) return 3;
 			else return 2;
 		} else if (mated(enemy)){
 			return 4;
@@ -210,7 +210,7 @@ public class Board {
 						break;
 					}
 				}
-				if (index == 0 || piece instanceof Knight) {
+				if (index == 0) {
 					Location locale = moves.get(direction).get(index);
 					Tile current = board[locale.x][locale.y];
 					if (current.piece != null && current.piece.getTeam() == piece.getTeam()) valid = false;
@@ -291,12 +291,8 @@ public class Board {
 	// Pawn movement is unique amongst chess pieces, so this method actually handles all validation for whether or not a pawn can move
 	// from one square to another.
 	public boolean pawnCheck(Location from, Location to, Piece piece) {
-		if (from.x == to.x) {
-			if ((from.y > to.y && from.y - to.y == 2 && board[to.x][to.y + 1].piece != null) || (from.y < to.y && to.y - from.y == 2 && board[to.x][to.y - 1].piece != null)) {
-				return false;
-			} else if (board[to.x][to.y].piece != null) {
-				return false;
-			}
+		if (from.x == to.x && board[to.x][to.y].piece != null) {
+			return false;
 		} else if (from.x != to.x) {
 			if (board[to.x][to.y].piece == null) {
 				return false;

@@ -17,6 +17,10 @@ import pieces.Rook;
 // Class represents a Board.
 public class Board {
 
+	private interface Function<One, Two, Three, Four, Five> {
+		public boolean apply(One one, Two two, Three three, Four four, Five five);
+	}
+
 	// A 2d Tile array that represents the board.
 	private Tile[][] board;
 
@@ -178,10 +182,8 @@ public class Board {
 
 		Color enemy = currentColor == Color.WHITE ? Color.BLACK : Color.WHITE;
 		if (inCheck(enemy)) {
-			if (mated(enemy)) return 3;
+			if (positionIteration(mated(), enemy))) return 3;
 			else return 2;
-		} else if (mated(enemy)){
-			return 4;
 		} else {
 			return 1;
 		}
@@ -210,7 +212,7 @@ public class Board {
 						break;
 					}
 				}
-				if (index == 0 || piece instanceof Knight) {
+				if (index == 0) {
 					Location locale = moves.get(direction).get(index);
 					Tile current = board[locale.x][locale.y];
 					if (current.piece != null && current.piece.getTeam() == piece.getTeam()) valid = false;
@@ -260,7 +262,7 @@ public class Board {
 		return false;
 	}
 
-	public boolean mated(Color team) {
+	public boolean positionInteration(Function<Piece, Integer, Location, Location, Color> operation, Color team) {
 		for (Set<Piece> subset : pieces.values()) {
 			for (Piece piece : subset) {
 				if (piece.getTeam() == team) {
@@ -269,17 +271,8 @@ public class Board {
 					int[] directions = getDirections(piece);
 					for (int direction : directions) {
 						for (Location to : moves.get(direction)) {
-							if (canMoveTo(piece, moves, directions, from, to) != -1) {
-								Piece tmp = board[to.x][to.y].piece;
-								board[from.x][from.y].piece = null;
-								board[to.x][to.y].piece = piece;
-								piece.moveTo(to);
-								boolean checked = inCheck(team);
-								piece.moveTo(from);
-								board[from.x][from.y].piece = piece;
-								board[to.x][to.y].piece = tmp;
-								if (!checked) return false;	
-							}
+							int status = canMoveTo(piece, moves, directions, from, to);
+							if (!operation.apply(piece, status, from, to, team)) return false;
 						}
 					}
 				}
@@ -288,15 +281,32 @@ public class Board {
 		return true;
 	}
 
+	public Function<Piece, Integer, Location, Location, Color> mated() {
+		return (piece, status, from, to, team) -> {
+			if (status != -1) {
+				Piece tmp = board[to.x][to.y].piece;
+				board[from.x][from.y].piece = null;
+				board[to.x][to.y].piece = piece;
+				piece.moveTo(to);
+				boolean checked = inCheck(team);
+				piece.moveTo(from);
+				board[from.x][from.y].piece = piece;
+				board[to.x][to.y].piece = tmp;
+				if (!checked) return false;
+			}
+			return true;
+		};
+	}
+
+	public Function<Piece, Integer, Location, Location, Color> stale() {
+		return (piece, status, from, to, team) -> status;
+	}
+
 	// Pawn movement is unique amongst chess pieces, so this method actually handles all validation for whether or not a pawn can move
 	// from one square to another.
 	public boolean pawnCheck(Location from, Location to, Piece piece) {
-		if (from.x == to.x) {
-			if ((from.y > to.y && from.y - to.y == 2 && board[to.x][to.y + 1].piece != null) || (from.y < to.y && to.y - from.y == 2 && board[to.x][to.y - 1].piece != null)) {
-				return false;
-			} else if (board[to.x][to.y].piece != null) {
-				return false;
-			}
+		if (from.x == to.x && board[to.x][to.y].piece != null) {
+			return false;
 		} else if (from.x != to.x) {
 			if (board[to.x][to.y].piece == null) {
 				return false;

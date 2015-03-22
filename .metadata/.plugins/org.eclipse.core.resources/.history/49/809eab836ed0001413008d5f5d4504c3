@@ -294,9 +294,10 @@ public class Board {
 		if (from.x == to.x) {
 			if ((from.y > to.y && from.y - to.y == 2 && board[to.x][to.y + 1].piece != null) || (from.y < to.y && to.y - from.y == 2 && board[to.x][to.y - 1].piece != null)) {
 				return false;
-			} else if (board[to.x][to.y].piece != null) {
+			} else if (board[to.x][to.y] != null) {
 				return false;
 			}
+			return false;
 		} else if (from.x != to.x) {
 			if (board[to.x][to.y].piece == null) {
 				return false;
