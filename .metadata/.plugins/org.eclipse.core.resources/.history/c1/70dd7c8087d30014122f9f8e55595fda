@@ -1,0 +1,50 @@
+package guiview;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import cs213.photoAlbum.control.Control;
+
+public class OverView extends JFrame {
+
+	private static final long serialVersionUID = 1;
+	private static final int LOGIN = 0, ADMIN = 1, ACCOUNT = 2;
+	private JPanel base;
+	private Control control;
+	private int state;
+	
+	public OverView() {
+		state = LOGIN;
+		control = new Control();
+		base = new LoginPanel(username -> {
+			if (username.equals("admin")) {
+				switchToAdmin();
+			} else {
+				switchToAccount();
+			}
+		}, control);
+		add(base);
+		pack();
+		setVisible(true);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+	}
+	
+	public void switchToLogin() {
+		
+	}
+	
+	public void switchToAdmin() {
+		state = ADMIN;
+		base = new AdminPanel(dummy -> switchToLogin(), control);
+	}
+	
+	public void switchToAccount() {
+		state = ACCOUNT;
+		System.out.println("Switching to account...");
+	}
+	
+	public static void main(String[] args) {
+		OverView view = new OverView();
+	}
+	
+}

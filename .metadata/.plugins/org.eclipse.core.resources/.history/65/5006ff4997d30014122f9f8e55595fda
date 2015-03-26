@@ -1,0 +1,27 @@
+package guiview;
+
+import javax.swing.AbstractListModel;
+
+public class UserList extends AbstractListModel<String> {
+	
+	private static final long serialVersionUID = 1;
+	
+	private String[] users;
+	
+	public UserList(Control control) {
+		this.users = users;
+	}
+	
+	public String getElementAt(int index) {
+		if (index < 0 || index >= users.length) {
+			return "";
+		} else {
+			return users[index];
+		}
+	}
+	
+	public int getSize() {
+		return users.length;
+	}
+
+}

@@ -178,6 +178,11 @@ public class Control implements PhotoSource {
 		
 		return true;
 	}
+	
+	@Override
+	public String[] listUsers() {
+		return backend.listUsers();
+	}
 
 	@Override
 	public User getUser(String userid) {

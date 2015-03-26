@@ -155,6 +155,12 @@ public interface PhotoSource {
 	/*----- Getters -----*/
 	
 	/**
+	 * Method returns an array of all userids currently registered with the program.
+	 * @return An array of userids.
+	 */
+	public String[] listUsers();
+	
+	/**
 	 * Method returns a user object for a given id.
 	 * @param userid The id of the user you want.
 	 * @return The User object.

@@ -1,0 +1,7 @@
+package guiview;
+
+import javax.swing.JPanel;
+
+public class OverPanel extends JPanel {
+
+}

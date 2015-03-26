@@ -1,0 +1,11 @@
+package guiview;
+
+import javax.swing.JPanel;
+
+public class AccountPanel extends JPanel {
+	
+	public AccountPanel(Consumer<Integer> leave, Control control) {
+		
+	}
+
+}

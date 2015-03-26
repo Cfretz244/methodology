@@ -1,0 +1,17 @@
+package guiview;
+
+import javax.swing.AbstractListModel;
+
+import cs213.photoAlbum.model.User;
+
+public class UserList extends AbstractListModel<String> {
+	
+	public String getElementAt(int index) {
+		
+	}
+	
+	public int getSize() {
+		
+	}
+
+}
