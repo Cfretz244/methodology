@@ -39,6 +39,29 @@ public class UserList extends AbstractListModel<String> {
 		}
 	}
 	
+	public boolean deleteUser(String id) {
+		if (control.removeUser(id)) {
+			String[] newUsers = control.listUsers();
+			int index = newUsers.length;
+			for (int i = 0; i < newUsers.length; i++) {
+				try {
+					if (!newUsers[i].equals(users[i])) {
+						index = i;
+						break;
+					}
+				} catch (IndexOutOfBoundsException e) {
+					index = i;
+					break;
+				}
+			}
+			users = newUsers;
+			fireIntervalRemoved(this, index, index);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public String getElementAt(int index) {
 		if (index < 0 || index >= users.length) {
 			return "";

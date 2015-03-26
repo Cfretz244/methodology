@@ -1,5 +1,6 @@
 package guiview;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -22,7 +23,7 @@ public class AdminPanel extends JPanel implements ActionListener {
 	private UserList model;
 	private JList<String> userList;
 	private JButton addButton, deleteButton, doneButton, cancelButton;
-	private JLabel nameLabel, idLabel;
+	private JLabel nameLabel, idLabel, error;
 	private JTextField nameField, idField;
 	private JPanel controlPanel, detailPanel;
 	
@@ -74,11 +75,16 @@ public class AdminPanel extends JPanel implements ActionListener {
 		
 		constraints = new GridBagConstraints();
 		constraints.gridy = 4;
+		constraints.gridwidth = 2;
+		detailPanel.add(error, constraints);
+		
+		constraints = new GridBagConstraints();
+		constraints.gridy = 5;
 		constraints.weighty = 0.3;
 		detailPanel.add(doneButton, constraints);
 		
 		constraints = new GridBagConstraints();
-		constraints.gridy = 4;
+		constraints.gridy = 5;
 		constraints.gridx = 1;
 		constraints.weighty = 0.3;
 		detailPanel.add(cancelButton, constraints);
@@ -95,6 +101,8 @@ public class AdminPanel extends JPanel implements ActionListener {
 		cancelButton = new JButton("Cancel");
 		nameLabel = new JLabel("User Name:");
 		idLabel = new JLabel("User ID:");
+		error = new JLabel(" ");
+		error.setForeground(Color.RED);
 		nameField = new JTextField(10);
 		idField = new JTextField(10);
 		controlPanel = new JPanel(new GridBagLayout());
@@ -136,6 +144,19 @@ public class AdminPanel extends JPanel implements ActionListener {
 		
 		if (clicked == addButton) {
 			switchDetailPanel();
+		} else if (clicked == deleteButton) {
+			String selected = userList.getSelectedValue();
+			if (selected != null) {
+				model.deleteUser(selected);
+			}
+		} else if (clicked == doneButton) {
+			if (model.addUser(nameField.getText(), idField.getText())) {
+				nameField.setText("");
+				idField.setText("");
+				switchControlPanel();
+			} else {
+				error.setText("User ID already taken");
+			}
 		} else if (clicked == cancelButton) {
 			switchControlPanel();
 		}

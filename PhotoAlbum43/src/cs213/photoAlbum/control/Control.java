@@ -56,8 +56,12 @@ public class Control implements PhotoSource {
 	public boolean addUser(String userid, String name) {
 		currentUserid = userid;
 		if (backend.loadUser(userid) == null) {
-			currentUser = new User(name, userid);
-			return true;
+			User user = new User(name, userid);
+			if (backend.writeUser(user)) {
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
