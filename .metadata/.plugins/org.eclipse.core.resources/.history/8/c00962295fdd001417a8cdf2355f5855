@@ -117,10 +117,9 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		for (int otherIndex = 9 * currentPage; index < 9 && otherIndex < albums.length; index++, otherIndex++) {
 			albumBtns.get(index).setAlbum(albums[otherIndex]);
 		}
-		for (; index < 9; index++) albumBtns.get(index).setAlbum(null);
-
+		while (index++ < 9) albumBtns.get(index).setAlbum(null);
 		if (selected == null) {
-			selected = albumBtns.get(0);
+			selected = albumBtns.get(9 * currentPage);
 			selected.select();
 		}
 		repaint();
@@ -188,7 +187,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			control.removeAlbum(selected.getAlbum().getName());
 			selected.setAlbum(null);
 			populateAlbumPanel();
-			updateLabels();
 		} else if (source == rename) {
 			Album album = selected.getAlbum();
 			beingModified = album;
@@ -216,7 +214,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 				selected.select();
 				selected = null;
 				populateAlbumPanel();
-				updateLabels();
 			}
 		} else if (source == prev) {
 			if (currentPage > 0) {
@@ -224,7 +221,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 				selected.select();
 				selected = null;
 				populateAlbumPanel();
-				updateLabels();
 			}
 		}
 	}

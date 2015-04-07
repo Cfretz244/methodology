@@ -113,12 +113,9 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	
 	private void populateAlbumPanel() {
 		Album[] albums = control.getAlbums();
-		int index = 0;
-		for (int otherIndex = 9 * currentPage; index < 9 && otherIndex < albums.length; index++, otherIndex++) {
+		for (int index = 0, otherIndex = 9 * currentPage; index < 9 && otherIndex < albums.length; index++, otherIndex++) {
 			albumBtns.get(index).setAlbum(albums[otherIndex]);
 		}
-		for (; index < 9; index++) albumBtns.get(index).setAlbum(null);
-
 		if (selected == null) {
 			selected = albumBtns.get(0);
 			selected.select();
@@ -140,13 +137,8 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			}
 
 			long[] dates = current.getDateRange();
-			if (dates != null) {
-				startDate.setText("Start Date: " + format.format(new Date(dates[0])));
-				endDate.setText("End Date: " + format.format(new Date(dates[1])));
-			} else {
-				startDate.setText("(N/A)");
-				endDate.setText("(N/A)");
-			}
+			startDate.setText("Start Date: " + format.format(new Date(dates[0])));
+			endDate.setText("End Date: " + format.format(new Date(dates[1])));
 		} else {
 			name.setText("Name: (N/A)");
 			number.setText("# Photos: 0");
@@ -188,7 +180,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			control.removeAlbum(selected.getAlbum().getName());
 			selected.setAlbum(null);
 			populateAlbumPanel();
-			updateLabels();
 		} else if (source == rename) {
 			Album album = selected.getAlbum();
 			beingModified = album;
@@ -206,26 +197,11 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			} else {
 				control.addAlbum(name);
 			}
-			populateAlbumPanel();
-			updateLabels();
 			swapPanels(null);
 		} else if (source == next) {
-			Album[] albums = control.getAlbums();
-			if (albums.length >= 9 * (currentPage + 1)) {
-				currentPage++;
-				selected.select();
-				selected = null;
-				populateAlbumPanel();
-				updateLabels();
-			}
+			
 		} else if (source == prev) {
-			if (currentPage > 0) {
-				currentPage--;
-				selected.select();
-				selected = null;
-				populateAlbumPanel();
-				updateLabels();
-			}
+			
 		}
 	}
 	
