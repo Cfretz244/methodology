@@ -1,7 +1,0 @@
-package guiview;
-
-import javax.swing.AbstractListModel;
-
-public class UserList extends AbstractListModel<E> {
-
-}

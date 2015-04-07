@@ -1,5 +1,8 @@
 package guiview;
 
+import java.awt.Component;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -14,23 +17,33 @@ public class OverView extends JFrame {
 	private static final int LOGIN = 0, ADMIN = 1, ACCOUNT = 2;
 	private String username;
 	private JPanel base;
+	private Resizable child;
 	private Control control;
 	private WindowAdapter windowHandler;
+	private ComponentAdapter sizeHandler;
 	private int state;
 	
 	public OverView() {
 		username = new String();
 		control = new Control();
+
 		windowHandler = new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
 				control.shutdown();
 			}
 		};
+
+		sizeHandler = new ComponentAdapter() {
+			public void componentResized(ComponentEvent event) {
+				child.resized(event.getComponent().getSize());
+			}
+		};
+
 		switchToLogin();
-		add(base);
 		pack();
 		setVisible(true);
 		addWindowListener(windowHandler);
+		addComponentListener(sizeHandler);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
@@ -45,9 +58,11 @@ public class OverView extends JFrame {
 				switchToAccount();
 			}
 		}, control);
+		child = (Resizable) base;
 		add(base);
 		revalidate();
 		repaint();
+		pack();
 	}
 	
 	private void switchToAdmin() {
@@ -55,9 +70,11 @@ public class OverView extends JFrame {
 		setTitle("Administration");
 		remove(base);
 		base = new AdminPanel(dummy -> switchToLogin(), control);
+		child = (Resizable) base;
 		add(base);
 		revalidate();
 		repaint();
+		pack();
 	}
 	
 	private void switchToAccount() {
@@ -65,9 +82,11 @@ public class OverView extends JFrame {
 		setTitle(username + " Photo Albums");
 		remove(base);
 		base = new AccountPanel(dummy -> switchToLogin(), control);
+		child = (Resizable) base;
 		add(base);
 		revalidate();
 		repaint();
+		pack();
 	}
 	
 	public static void main(String[] args) {
