@@ -1,5 +1,6 @@
 package guiview;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -14,6 +15,7 @@ import java.util.function.Consumer;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 
 import cs213.photoAlbum.control.Control;
 import cs213.photoAlbum.model.Album;
@@ -26,6 +28,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	private JButton create, delete, rename, open, prev, next;
 	private JLabel name, number, startDate, endDate;
 	private ArrayList<AlbumButton> albumBtns;
+	private AlbumButton selected;
 	private int currentPage, currentAlbum;
 	
 	public AccountPanel(Consumer<Integer> leave, Control control) {
@@ -41,12 +44,14 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		constraints.gridwidth = 4;
 		constraints.gridheight = 4;
 		constraints.fill = GridBagConstraints.BOTH;
+		constraints.insets = new Insets(10, 10, 10, 10);
 		add(albumPanel, constraints);
 		populateAlbumPanel();
 		
 		/* Side Buttons Constraints */
 		constraints = new GridBagConstraints();
 		constraints.gridx = 4;
+		constraints.weighty = 0.25;
 		add(create, constraints);
 		
 		constraints.gridy = 1;
@@ -91,6 +96,10 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		for (int index = 0, otherIndex = 9 * currentPage; index < 9 && otherIndex < albums.length; index++, otherIndex++) {
 			albumBtns.get(index).setAlbum(albums[otherIndex]);
 		}
+		if (selected == null) {
+			selected = albumBtns.get(0);
+			selected.select();
+		}
 		repaint();
 		revalidate();
 	}
@@ -111,7 +120,11 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
 		if (source instanceof AlbumButton) {
-			currentAlbum = ((AlbumButton) source).getIndex();
+			AlbumButton button = (AlbumButton) source;
+			currentAlbum = button.getIndex();
+			selected.select();
+			selected = button;
+			selected.select();
 			updateLabels();
 		}
 	}
@@ -122,6 +135,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 
 	private void instantiate() {
 		albumPanel = new JPanel(new GridBagLayout());
+		albumPanel.setBorder(new LineBorder(Color.black, 2, true));
 		create = new JButton(" Create Album ");
 		delete = new JButton(" Delete Album ");
 		rename = new JButton("Rename Album");
