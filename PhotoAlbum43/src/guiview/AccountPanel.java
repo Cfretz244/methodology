@@ -138,6 +138,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.weightx = 0.3;
 		constraints.weighty = 0.3;
+		constraints.insets = new Insets(10, 10, 10, 10);
 		for (int i = 0; i < 3; i++) {
 			constraints.gridy = i;
 			for (int j = 0; j < 3; j++) {

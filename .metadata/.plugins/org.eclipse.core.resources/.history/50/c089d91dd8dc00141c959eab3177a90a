@@ -25,7 +25,7 @@ public class AlbumButton extends JButton implements Resizable {
 	private BufferedImage keyPhoto, defaultPhoto;
 	private int index;
 	private static final int CORNER_RADIUS = 80;
-	private static final double PADDING = 0.75;
+	private static final float PADDING = 0.9f;
 
 	public AlbumButton(int index) {
 		Dimension size = new Dimension(50, 50);
@@ -95,9 +95,9 @@ public class AlbumButton extends JButton implements Resizable {
 	}
 
 	public void resized(Dimension size) {
-		double legSize = size.getHeight() > size.getWidth() ? size.getWidth() / 3 : size.getHeight() / 3;
-		legSize *= PADDING;
-		setPreferredSize(new Dimension((int) legSize, (int) legSize));
+		int legSize = size.getHeight() > size.getWidth() ? (int) Math.floor(size.getWidth() / 3) : (int) Math.floor(size.getHeight() / 3);
+		legSize -= PADDING;
+		setPreferredSize(new Dimension(legSize, legSize));
 	}
 
 }
