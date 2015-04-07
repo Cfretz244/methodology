@@ -77,6 +77,17 @@ public class Control implements PhotoSource {
 		if (currentUser == null) return false;
 		return currentUser.addAlbum(album);
 	}
+	
+	@Override
+	public boolean changeAlbumName(String oldName, String newName) {
+		if (currentUser == null) return false;
+		if (!currentUser.addAlbum(newName)) return false;
+
+		Photo[] photos = currentUser.getPhotos(oldName);
+		for (Photo photo : photos) movePhoto(oldName, newName, photo.getName());
+		currentUser.removeAlbum(oldName);
+		return true;
+	}
 
 	@Override
 	public boolean removeAlbum(String album) {

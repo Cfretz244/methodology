@@ -59,6 +59,14 @@ public interface PhotoSource {
 	public boolean addAlbum(String album);
 	
 	/**
+	 * Method changes the name of the specified album.
+	 * @param oldName The current name of the album.
+	 * @param newName What the name should be changed to.
+	 * @return Whether or not the operation was successful.
+	 */
+	public boolean changeAlbumName(String oldName, String newName);
+	
+	/**
 	 * Method removes an album from the current user.
 	 * @param album Name of album to be removed.
 	 * @return Whether or not the operation was successful.

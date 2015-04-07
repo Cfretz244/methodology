@@ -47,9 +47,12 @@ public class AlbumButton extends JButton implements Resizable {
 	}
 
 	public void setAlbum(Album album) {
-		if (album == null) return;
-
 		this.album = album;
+		if (album == null) {
+			keyPhoto = null;
+			return;
+		}
+
 		Photo[] photos = album.getPhotos();
 		if (photos.length > 0) {
 			try {
