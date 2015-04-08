@@ -38,14 +38,15 @@ public class AddPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
 	private Photo photo;
-	private JButton selectPhoto, addNewPhoto, cancelAdd;
+	private JButton selectButton, addButton, cancelButton;
 	private JTextField caption;
 	private JFileChooser chooser;
-	private Consumer<String> addPhoto, updateUI;
+	private Consumer<String[]> addPhoto;
+	private Consumer<String> updateUI;
 	private Consumer<?> cancel;
 	private File chosen;
 	
-	public AddPanel(Consumer<String> addPhoto, Consumer<String> updateUI, Consumer<?> cancel) {
+	public AddPanel(Consumer<String[]> addPhoto, Consumer<String> updateUI, Consumer<?> cancel) {
 		this.addPhoto = addPhoto;
 		this.updateUI = updateUI;
 		this.cancel = cancel;
@@ -56,53 +57,53 @@ public class AddPanel extends JPanel implements ActionListener {
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
-		add(selectPhoto, gbc);
+		add(selectButton, gbc);
 		gbc.gridy = 1;
 		add(caption, gbc);
 		gbc = new GridBagConstraints();
 		gbc.gridy = 2;
-		add(cancelAdd, gbc);
+		add(cancelButton, gbc);
 		gbc.gridx = 1;
-		add(addNewPhoto, gbc);
+		add(addButton, gbc);
 	}
 	
 	public void setPhoto(Photo photo) {
 		this.photo = photo;
-		selectPhoto.setEnabled(this.photo != null);
+		selectButton.setEnabled(this.photo != null);
 		caption.setText(this.photo != null ? photo.getCaption() : "");
 	}
 	
 	private void instantiate() {
-		selectPhoto = new JButton("Select Photo");
-		addNewPhoto = new JButton("Submit");
-		cancelAdd = new JButton("Cancel");
+		selectButton = new JButton("Select Photo");
+		addButton = new JButton("Submit");
+		cancelButton = new JButton("Cancel");
 		caption = new JTextField();
 		chooser = new JFileChooser();
 		chooser.setFileFilter(new ImageFilter());
 	}
 	
 	private void bind() {
-		selectPhoto.addActionListener(this);
-		addNewPhoto.addActionListener(this);
-		cancelAdd.addActionListener(this);
+		selectButton.addActionListener(this);
+		addButton.addActionListener(this);
+		cancelButton.addActionListener(this);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
-		if (button == addNewPhoto) {
+		if (button == addButton) {
 			try {
-				if (chosen != null) {
+				if (chosen != null && caption.getText() != "") {
 					File temp = chosen;
 					chosen = null;
 					photo = null;
-					addPhoto.accept(temp.getCanonicalPath());
+					addPhoto.accept(new String[] {temp.getCanonicalPath(), caption.getText()});
 				} else {
 					// TODO: Need to show an error message if this happens.
 				}
 			} catch (IOException e) {
 				// TODO: Add handling for this.
 			}
-		} else if (button == selectPhoto) {
+		} else if (button == selectButton) {
 			int returnVal = chooser.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				chosen = chooser.getSelectedFile();

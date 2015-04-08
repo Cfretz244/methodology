@@ -1,0 +1,53 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.GridBagLayout;
+import java.awt.event.ActionListener;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
+import cs213.photoAlbum.model.Album;
+
+public class MovePanel extends JPanel implements ActionListener {
+	
+	private static final long serialVersionUID = 1;
+	private JButton moveButton, cancelButton;
+	private JComboBox<String> moveTo;
+	private Consumer<String> movePhoto;
+	private Consumer<?> cancel;
+	private Supplier<Album[]> supplier;
+	
+	public MovePanel(Consumer<String> movePhoto, Supplier<Album[]> supplier, Consumer<?> cancel) {
+		this.movePhoto = movePhoto;
+		this.cancel = cancel;
+		this.supplier = supplier;;
+		
+		setLayout(new GridBagLayout());
+		instantiate();
+		bind();
+	}
+	
+	public void update() {
+		moveTo.removeAllItems();
+		Album[] albums = supplier.get();
+		for (Album album : albums) moveTo.addItem(album.getName());
+	}
+	
+	public void actionPerformed(ActionEvent event) {
+		
+	}
+	
+	private void instantiate() {
+		moveButton = new JButton("Move");
+		cancelButton = new JButton("Cancel");
+		moveTo = new JComboBox<String>();
+	}
+	
+	private void bind() {
+		moveButton.addActionListener(this);
+	}
+
+}

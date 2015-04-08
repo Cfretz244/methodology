@@ -20,12 +20,15 @@ public class PhotoPanel extends JPanel implements Resizable {
 	private static final long serialVersionUID = 1;
 	private List<PhotoButton> buttons;
 	private Supplier<Drawable[]> updater;
+	private boolean enabled;
 
 	public PhotoPanel(ActionListener listener, Supplier<Drawable[]> updater) {
 		this.updater = updater;
 		setLayout(new GridBagLayout());
 		setBorder(new LineBorder(Color.black, 2, true));
 		buttons = new ArrayList<PhotoButton>();
+		enabled = false;
+
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.weightx = 0.3;
 		constraints.weighty = 0.3;
@@ -45,13 +48,21 @@ public class PhotoPanel extends JPanel implements Resizable {
 	
 	public void updatePhotos() {
 		Drawable[] data = updater.get();
-
 		int index = 0;
 		for (; index < data.length; index++) {
 			Drawable current = data[index];
 			buttons.get(index).setDrawable(current);
 		}
 		for (; index < 9; index++) buttons.get(index).setDrawable(null);
+		repaint();
+	}
+	
+	public void enable() {
+		for (PhotoButton button : buttons) button.setEnabled(true);
+	}
+	
+	public void disable() {
+		for (PhotoButton button : buttons) button.setEnabled(false);
 	}
 
 	public PhotoButton getButton(int index) {

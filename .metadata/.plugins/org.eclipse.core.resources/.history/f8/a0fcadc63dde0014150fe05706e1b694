@@ -1,0 +1,35 @@
+package cs213.photoAlbum.guiview;
+
+import java.util.function.Consumer;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
+import cs213.photoAlbum.model.Photo;
+
+public class MovePanel extends JPanel {
+	
+	private static final long serialVersionUID = 1;
+	private JButton moveButton, cancelButton;
+	private JComboBox<String> moveTo;
+	private Consumer<String> movePhoto;
+	private Consumer<?> cancel;
+	
+	public MovePanel(Consumer<String> movePhoto, Consumer<?> cancel) {
+		this.movePhoto = movePhoto;
+		this.cancel = cancel;
+		
+		setLayout(new GridBagLayout());
+		instantiate();
+	}
+	
+	public void setPhoto(Photo photo) {
+		
+	}
+	
+	private void instantiate() {
+		
+	}
+
+}

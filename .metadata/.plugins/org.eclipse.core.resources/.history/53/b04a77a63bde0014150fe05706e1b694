@@ -1,0 +1,7 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JPanel;
+
+public class MovePanel extends JPanel {
+
+}

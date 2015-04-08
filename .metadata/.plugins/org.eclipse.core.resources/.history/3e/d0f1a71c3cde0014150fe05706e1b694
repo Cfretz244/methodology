@@ -1,0 +1,15 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+
+public class MovePanel extends JPanel {
+	
+	private static final long serialVersionUID = 1;
+	private JButton moveButton, cancelButton;
+	private JComboBox<String> moveTo;
+	
+	public MovePanel(Consumer<String[]> movePhoto, Consumer<?> cancel)
+
+}
