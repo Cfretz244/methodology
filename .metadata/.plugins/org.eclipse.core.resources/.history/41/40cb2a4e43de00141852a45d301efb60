@@ -136,13 +136,6 @@ public class Control implements PhotoSource {
 		
 		return currentUser.removePhotoFromAlbum(name, album) != null;
 	}
-	
-	@Override
-	public boolean changeCaptionForPhoto(String name, String caption) {
-		if (currentUser == null) return false;
-		
-		return currentUser.recaptionPhoto(name, caption);
-	}
 
 	@Override
 	public boolean addTagToPhoto(String name, String type, String value) {

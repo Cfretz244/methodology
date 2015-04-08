@@ -25,7 +25,7 @@ public class MovePanel extends JPanel implements ActionListener {
 	public MovePanel(Consumer<String> movePhoto, Supplier<Album[]> supplier, Consumer<?> cancel) {
 		this.movePhoto = movePhoto;
 		this.cancel = cancel;
-		this.supplier = supplier;
+		this.supplier = supplier;;
 		
 		setLayout(new GridBagLayout());
 		instantiate();

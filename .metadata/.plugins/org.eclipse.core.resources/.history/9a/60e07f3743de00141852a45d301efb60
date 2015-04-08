@@ -110,11 +110,11 @@ public interface PhotoSource {
 	
 	/**
 	 * Changes a caption for an existing photo.
-	 * @param name Name of the photo.
-	 * @param caption New caption.
-	 * @return Whether or not the operation was successful.
+	 * @param name
+	 * @param caption
+	 * @return
 	 */
-	public boolean changeCaptionForPhoto(String name, String caption);
+	public boolean changeCaptionoForPhoto(String name, String caption);
 	
 	/**
 	 * Method adds a tag to a given photo.

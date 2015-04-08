@@ -62,7 +62,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		}
 		
 		public void setImage(Drawable data) {
-			readImage(data.getPath());
+			readImage(data != null ? data.getPath() : defaultPath);
 		}
 		
 		public void setImage(String path) {
@@ -149,7 +149,7 @@ public class AlbumView extends JFrame implements ActionListener {
 			photoPanel.enable();
 			add(infoPanel, gbc);
 		} else if (state == ADD_TAG) {
-			addPanel.setPhoto((Photo) selected.getDrawable());
+			addPanel.setPhoto(null);
 			photoDisplay.setImage(defaultPhoto);
 			photoPanel.disable();
 			add(addPanel, gbc);
@@ -157,13 +157,20 @@ public class AlbumView extends JFrame implements ActionListener {
 			movePanel.update();
 			photoPanel.disable();
 			add(movePanel, gbc);
+		} else if (state == EDIT) {
+			addPanel.setPhoto((Photo) selected.getDrawable());
+			photoDisplay.setImage(selected.getDrawable());
+			photoPanel.disable();
+			add(addPanel, gbc);
 		}
 		repaint();
 		revalidate();
 	}
 	
 	private void addPhoto(String[] properties) {
-		control.addPhotoToAlbum(current.getName(), properties[0], properties[1]);
+		if (properties[0] != null) control.addPhotoToAlbum(current.getName(), properties[0], properties[1]);
+		else control.changeCaptionForPhoto(((Photo) selected.getDrawable()).getName(), properties[1]);
+
 		photoPanel.updatePhotos();
 		transitionToState(NORMAL);
 	}
@@ -182,6 +189,7 @@ public class AlbumView extends JFrame implements ActionListener {
 			selected = button;
 			selected.select();
 			photoDisplay.setImage(selected.getDrawable());
+			transitionToState(NORMAL);
 		} else if (source instanceof JButton) {
 			JButton button = (JButton) source;
 			if (button == addPhoto) {
@@ -192,7 +200,7 @@ public class AlbumView extends JFrame implements ActionListener {
 			} else if (button == move) {
 				transitionToState(MOVE);
 			} else if (button == recaption) {
-				
+				transitionToState(EDIT);
 			} else if (button == addTag) {
 				
 			} else if (button == deleteTag) {

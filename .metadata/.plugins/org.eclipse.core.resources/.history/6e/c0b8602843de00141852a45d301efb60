@@ -109,14 +109,6 @@ public interface PhotoSource {
 	public boolean removePhotoFromAlbum(String album, String name);
 	
 	/**
-	 * Changes a caption for an existing photo.
-	 * @param name Name of the photo.
-	 * @param caption New caption.
-	 * @return Whether or not the operation was successful.
-	 */
-	public boolean changeCaptionForPhoto(String name, String caption);
-	
-	/**
 	 * Method adds a tag to a given photo.
 	 * @param name Name of the photo to receive the tag.
 	 * @param type Type of the tag to add.

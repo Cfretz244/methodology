@@ -104,11 +104,7 @@ public class AddPanel extends JPanel implements ActionListener {
 					// TODO: Add handling for this.
 				}
 			} else {
-				if (caption.getText() != "") {
-					addPhoto.accept(new String[] {null, caption.getText()});
-				} else {
-					// TODO: Need to show an error message if this happens.
-				}
+				addPhoto.accept(new String[] {temp)
 			}
 		} else if (button == selectButton) {
 			int returnVal = chooser.showOpenDialog(this);

@@ -186,8 +186,7 @@ public class User implements Serializable {
 	 * @return Whether or not the operation succeeded.
 	 */
 	public boolean recaptionPhoto(String name, String caption) {
-		allPhotos.get(name).setCaption(caption);
-		return true;
+		allPhotos.get(name).setCaption(name);
 	}
 	
 	/**

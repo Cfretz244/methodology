@@ -52,13 +52,21 @@ public class AlbumView extends JFrame implements ActionListener {
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		}
 		
-		public void setImage(Drawable data) {
+		private void readImage(String path) {
 			try {
-				image = ImageIO.read(new File(data.getPath()));
+				image = ImageIO.read(new File(path));
 			} catch (Exception e) {
 				image = defaultImage;
 			}
 			repaint();
+		}
+		
+		public void setImage(Drawable data) {
+			readImage(data.getPath());
+		}
+		
+		public void setImage(String path) {
+			readImage(path);
 		}
 
 	}
@@ -70,13 +78,14 @@ public class AlbumView extends JFrame implements ActionListener {
 	private Control control;
 	private Album current;
 	private PhotoButton selected;
+	private static final String defaultPhoto = "assets/404.png";
 	private int currentPage;
 	
 	/*----- Unconditionally Visible Components -----*/
 	private JTextField searchBar;
 	private JComboBox<String> searchType;
 	private PhotoPanel photoPanel;
-	private JPanel operationPanel, tagPanel, movePanel;
+	private JPanel operationPanel, tagPanel;
 	private PhotoDisplay photoDisplay;
 	private JButton prev, next, search, addPhoto, deletePhoto, move, recaption, addTag, deleteTag;
 	
@@ -91,8 +100,7 @@ public class AlbumView extends JFrame implements ActionListener {
 	private JTextField tagType, tagValue;
 	
 	/*----- Components Visible When Moving a Photo -----*/
-	private JButton movePhoto, cancelMove;
-	private JComboBox<String> moveTo;
+	private MovePanel movePanel;
 	
 	public AlbumView(Album current, Control control) {
 		this.current = current;
@@ -137,16 +145,35 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.weightx = 0.6;
 		gbc.weighty = 0.1;
 		if (state == NORMAL) {
-			add(infoPanel, gbc);
 			infoPanel.setPhoto((Photo) selected.getDrawable());
+			photoPanel.enable();
+			add(infoPanel, gbc);
 		} else if (state == ADD_TAG) {
+			addPanel.setPhoto(null);
+			photoDisplay.setImage(defaultPhoto);
+			photoPanel.disable();
 			add(addPanel, gbc);
+		} else if (state == MOVE) {
+			movePanel.update();
+			photoPanel.disable();
+			add(movePanel, gbc);
+		} else if (state == EDIT) {
 			addPanel.setPhoto((Photo) selected.getDrawable());
 		}
+		repaint();
+		revalidate();
 	}
 	
-	private void addPhoto(String path) {
-		System.out.println(path);
+	private void addPhoto(String[] properties) {
+		control.addPhotoToAlbum(current.getName(), properties[0], properties[1]);
+		photoPanel.updatePhotos();
+		transitionToState(NORMAL);
+	}
+	
+	private void movePhoto(String toAlbum) {
+		control.movePhoto(current.getName(), toAlbum, ((Photo) selected.getDrawable()).getName());
+		photoPanel.updatePhotos();
+		transitionToState(NORMAL);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
@@ -157,15 +184,15 @@ public class AlbumView extends JFrame implements ActionListener {
 			selected = button;
 			selected.select();
 			photoDisplay.setImage(selected.getDrawable());
-			transitionToState(NORMAL);
 		} else if (source instanceof JButton) {
 			JButton button = (JButton) source;
 			if (button == addPhoto) {
 				transitionToState(ADD_TAG);
 			} else if (button == deletePhoto) {
-				
+				control.removePhotoFromAlbum(current.getName(), ((Photo) selected.getDrawable()).getName());
+				photoPanel.updatePhotos();
 			} else if (button == move) {
-				
+				transitionToState(MOVE);
 			} else if (button == recaption) {
 				
 			} else if (button == addTag) {
@@ -178,8 +205,6 @@ public class AlbumView extends JFrame implements ActionListener {
 				
 			}
 		}
-		repaint();
-		revalidate();
 	}
 	
 	private void instantiate() {
@@ -192,9 +217,9 @@ public class AlbumView extends JFrame implements ActionListener {
 		selected.select();
 		operationPanel = new JPanel(new GridLayout(1, 6));
 		infoPanel = new InfoPanel();
-		addPanel = new AddPanel(fileName -> addPhoto(fileName), dummy -> transitionToState(NORMAL));
+		addPanel = new AddPanel(fileName -> addPhoto(fileName), fileName -> photoDisplay.setImage(fileName), dummy -> transitionToState(NORMAL));
 		tagPanel = new JPanel(new GridBagLayout());
-		movePanel = new JPanel(new GridBagLayout());
+		movePanel = new MovePanel(albumName -> movePhoto(albumName), () -> control.getAlbums(), dummy -> transitionToState(NORMAL));
 		photoDisplay = new PhotoDisplay();
 		prev = new JButton("Previous");
 		next = new JButton("Next");
@@ -210,10 +235,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		cancelTag = new JButton("Cancel");
 		tagType = new JTextField();
 		tagValue = new JTextField();
-		
-		movePhoto = new JButton("Move");
-		cancelMove = new JButton("Cancel");
-		moveTo = new JComboBox<String>();
 	}
 	
 	private void bind() {
@@ -228,8 +249,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		deleteTag.addActionListener(this);
 		modifyTag.addActionListener(this);
 		cancelTag.addActionListener(this);
-		movePhoto.addActionListener(this);
-		cancelMove.addActionListener(this);
 	}
 	
 	private void layoutViews() {

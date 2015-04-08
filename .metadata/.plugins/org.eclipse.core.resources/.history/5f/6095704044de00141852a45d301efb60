@@ -17,9 +17,9 @@ import javax.swing.filechooser.FileFilter;
 import cs213.photoAlbum.model.Photo;
 
 public class AddPanel extends JPanel implements ActionListener {
-
+	
 	private class ImageFilter extends FileFilter {
-
+		
 		public boolean accept(File file) {
 			try {
 				String path = file.getCanonicalPath();
@@ -29,13 +29,13 @@ public class AddPanel extends JPanel implements ActionListener {
 				return false;
 			}
 		}
-
+		
 		public String getDescription() {
 			return "JPEG, PNG, BMP, GIF, and TIFF files";
 		}
-
+		
 	}
-
+	
 	private static final long serialVersionUID = 1;
 	private Photo photo;
 	private JButton selectButton, addButton, cancelButton;
@@ -45,7 +45,7 @@ public class AddPanel extends JPanel implements ActionListener {
 	private Consumer<String> updateUI;
 	private Consumer<?> cancel;
 	private File chosen;
-
+	
 	public AddPanel(Consumer<String[]> addPhoto, Consumer<String> updateUI, Consumer<?> cancel) {
 		this.addPhoto = addPhoto;
 		this.updateUI = updateUI;
@@ -54,7 +54,7 @@ public class AddPanel extends JPanel implements ActionListener {
 		setLayout(new GridBagLayout());
 		instantiate();
 		bind();
-
+		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
 		add(selectButton, gbc);
@@ -66,13 +66,13 @@ public class AddPanel extends JPanel implements ActionListener {
 		gbc.gridx = 1;
 		add(addButton, gbc);
 	}
-
+	
 	public void setPhoto(Photo photo) {
 		this.photo = photo;
-		selectButton.setEnabled(this.photo == null);
+		selectButton.setEnabled(this.photo != null);
 		caption.setText(this.photo != null ? photo.getCaption() : "");
 	}
-
+	
 	private void instantiate() {
 		selectButton = new JButton("Select Photo");
 		addButton = new JButton("Submit");
@@ -81,34 +81,27 @@ public class AddPanel extends JPanel implements ActionListener {
 		chooser = new JFileChooser();
 		chooser.setFileFilter(new ImageFilter());
 	}
-
+	
 	private void bind() {
 		selectButton.addActionListener(this);
 		addButton.addActionListener(this);
 		cancelButton.addActionListener(this);
 	}
-
+	
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
 		if (button == addButton) {
-			if (photo == null) {
-				try {
-					if (chosen != null && caption.getText() != "") {
-						File temp = chosen;
-						chosen = null;
-						addPhoto.accept(new String[] {temp.getCanonicalPath(), caption.getText()});
-					} else {
-						// TODO: Need to show an error message if this happens.
-					}
-				} catch (IOException e) {
-					// TODO: Add handling for this.
-				}
-			} else {
-				if (caption.getText() != "") {
-					addPhoto.accept(new String[] {null, caption.getText()});
+			try {
+				if (chosen != null && caption.getText() != "") {
+					File temp = chosen;
+					chosen = null;
+					photo = null;
+					addPhoto.accept(new String[] {temp.getCanonicalPath(), caption.getText()});
 				} else {
 					// TODO: Need to show an error message if this happens.
 				}
+			} catch (IOException e) {
+				// TODO: Add handling for this.
 			}
 		} else if (button == selectButton) {
 			int returnVal = chooser.showOpenDialog(this);

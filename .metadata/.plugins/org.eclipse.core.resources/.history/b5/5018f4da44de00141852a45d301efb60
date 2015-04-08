@@ -91,11 +91,12 @@ public class AddPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
 		if (button == addButton) {
-			if (photo == null) {
+			if (photo != null) {
 				try {
 					if (chosen != null && caption.getText() != "") {
 						File temp = chosen;
 						chosen = null;
+						photo = null;
 						addPhoto.accept(new String[] {temp.getCanonicalPath(), caption.getText()});
 					} else {
 						// TODO: Need to show an error message if this happens.
@@ -104,11 +105,7 @@ public class AddPanel extends JPanel implements ActionListener {
 					// TODO: Add handling for this.
 				}
 			} else {
-				if (caption.getText() != "") {
-					addPhoto.accept(new String[] {null, caption.getText()});
-				} else {
-					// TODO: Need to show an error message if this happens.
-				}
+
 			}
 		} else if (button == selectButton) {
 			int returnVal = chooser.showOpenDialog(this);
