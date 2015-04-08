@@ -1,0 +1,126 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
+
+import cs213.photoAlbum.model.Drawable;
+
+public class PhotoButton extends JButton implements Resizable {
+	
+	private static final long serialVersionUID = 1;
+	private Drawable data;
+	private BufferedImage keyPhoto, defaultPhoto;
+	private int index;
+	private boolean selected;
+	private static final int CORNER_RADIUS = 80;
+	private static final double PADDING = 0.75;
+	private static final String defaultPath = "assets/404.png";
+	
+	public PhotoButton(Integer index) {
+		setPreferredSize(new Dimension(50, 50));
+		this.index = index;
+		selected = false;
+		try {
+			defaultPhoto = ImageIO.read(new File(defaultPath));
+		} catch (IOException e) {
+			defaultPhoto = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = defaultPhoto.createGraphics();
+			g.drawString("Photo Not Found", getWidth(), getHeight());
+			g.dispose();
+		}
+	}
+	
+	public void setDrawable(Drawable data) {
+		this.data = data;
+		if (data == null) {
+			keyPhoto = defaultPhoto;
+			return;
+		}
+		
+		String path = data.getPath();
+		if (path != null) {
+			try {
+				keyPhoto = ImageIO.read(new File(path));
+			} catch (IOException e) {
+				keyPhoto = defaultPhoto;
+			}
+		} else {
+			keyPhoto = defaultPhoto;
+		}
+		repaint();
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		if (keyPhoto == null) keyPhoto = defaultPhoto;
+
+		BufferedImage cropped;
+		if ((keyPhoto.getWidth() > getWidth() || keyPhoto.getHeight() > getHeight()) && keyPhoto != defaultPhoto) {
+			int offsetX = getWidth() / 2, offsetY = getHeight() / 2;
+			int centerX = keyPhoto.getWidth() / 2, centerY = keyPhoto.getHeight() / 2;
+			cropped = keyPhoto.getSubimage(centerX - offsetX, centerY - offsetY, centerX + offsetX, centerY + offsetY);
+		} else {
+			cropped = keyPhoto;
+		}
+
+		int croppedWidth = cropped.getWidth(), croppedHeight = cropped.getHeight();
+		BufferedImage rounded = new BufferedImage(croppedWidth, croppedHeight, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = rounded.createGraphics();
+		g2.setComposite(AlphaComposite.Src);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setColor(Color.WHITE);
+		g2.fill(new RoundRectangle2D.Float(0, 0, croppedWidth, croppedHeight, CORNER_RADIUS, CORNER_RADIUS));
+		g2.setComposite(AlphaComposite.SrcAtop);
+		g2.drawImage(cropped, 0, 0, null);
+		g2.dispose();
+		
+		if (selected) {
+			Kernel kernel = new Kernel(3, 3, new float[] {
+				1f / 11f, 1f / 11f, 1f / 11f,
+				1f / 11f, 1f / 11f, 1f / 11f,
+				1f / 11f, 1f / 11f, 1f / 11f
+			});
+			BufferedImageOp op = new ConvolveOp(kernel);
+			BufferedImage blurred = op.filter(rounded, null);
+			g.drawImage(blurred, 0, 0, getWidth(), getHeight(), null);
+		} else {
+			g.drawImage(rounded, 0, 0, getWidth(), getHeight(), null);
+		}
+
+	}
+	
+	public Drawable getDrawable() {
+		return data;
+	}
+	
+	public int getIndex() {
+		return index;
+	}
+	
+	public void select() {
+		selected = !selected;
+		repaint();
+	}
+	
+	public void resized(Dimension size) {
+		double legSize = size.getHeight() > size.getWidth() ? size.getWidth() / 3 : size.getHeight() / 3;
+		legSize *= PADDING;
+		setPreferredSize(new Dimension((int) legSize, (int) legSize));
+	}
+
+}

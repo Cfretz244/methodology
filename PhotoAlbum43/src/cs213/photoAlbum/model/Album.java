@@ -15,7 +15,7 @@ import java.util.TreeSet;
  * maintains several different tables of photos allowing efficient access.
  * @author Chris Fretz
  */
-public class Album implements Serializable {
+public class Album implements Serializable, Drawable {
 	
 	private String name;
 	private Map<String, Photo> photos;
@@ -189,6 +189,15 @@ public class Album implements Serializable {
 			return null;
 		}
 		return results;
+	}
+	
+	@Override
+	public String getPath() {
+		try {
+			return photos.values().iterator().next().getName();
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 }

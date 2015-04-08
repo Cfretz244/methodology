@@ -1,0 +1,7 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JButton;
+
+public abstract class PhotoButton extends JButton {
+
+}

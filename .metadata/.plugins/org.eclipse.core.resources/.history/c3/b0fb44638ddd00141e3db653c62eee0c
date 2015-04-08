@@ -1,0 +1,49 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+public class PhotoPanel extends JPanel implements Resizable {
+
+	private static final long serialVersionUID = 1;
+	private List<PhotoButton> buttons;
+
+	public PhotoPanel(ActionListener listener) {
+		setLayout(new GridBagLayout());
+		buttons = new ArrayList<PhotoButton>();
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.weightx = 0.3;
+		constraints.weighty = 0.3;
+		constraints.insets = new Insets(10, 10, 10, 10);
+		try {
+			for (int i = 0; i < 3; i++) {
+				constraints.gridy = i;
+				for (int j = 0; j < 3; j++) {
+					constraints.gridx = j;
+					PhotoButton button = new PhotoButton((3 * i) + j);
+					button.addActionListener(listener);
+					add(button, constraints);
+				}
+			}
+		} catch (Exception e) {
+			// This should never happen.
+		}
+	}
+	
+	public PhotoButton getButton(int index) {
+		return buttons.get(index);
+	}
+	
+	public void resized(Dimension size) {
+		for (PhotoButton button : buttons) button.resized(size);
+	}
+
+}

@@ -1,0 +1,24 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JButton;
+
+public abstract class PhotoButton extends JButton implements Resizable {
+	
+	protected interface Drawable {
+		public BufferedImage getImage();
+	}
+	
+	private static final long serialVersionUID = 1;
+	
+	public PhotoButton(Integer index) {
+		
+	}
+	
+	public void resized(Dimension size) {
+		
+	}
+
+}

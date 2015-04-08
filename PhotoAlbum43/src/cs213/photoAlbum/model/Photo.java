@@ -14,7 +14,7 @@ import java.util.Set;
  * interface for viewing.
  * @author Chris Fretz
  */
-public class Photo implements Serializable, Comparable<Photo> {
+public class Photo implements Serializable, Comparable<Photo>, Drawable {
 
 	private String name, caption, userid;
 	private Calendar date;
@@ -253,6 +253,11 @@ public class Photo implements Serializable, Comparable<Photo> {
 
 		Photo another = (Photo) other;
 		return name == another.getName() && userid == another.getUserid();
+	}
+	
+	@Override
+	public String getPath() {
+		return name;
 	}
 
 }

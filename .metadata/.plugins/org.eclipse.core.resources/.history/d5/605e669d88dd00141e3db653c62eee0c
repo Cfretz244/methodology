@@ -1,0 +1,13 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JButton;
+
+public abstract class PhotoButton extends JButton implements Resizable {
+	
+	private static final long serialVersionUID = 1;
+	
+	public PhotoButton(Integer index) {
+		
+	}
+
+}
