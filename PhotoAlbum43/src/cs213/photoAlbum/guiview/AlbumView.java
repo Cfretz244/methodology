@@ -60,6 +60,15 @@ public class AlbumView extends JFrame implements ActionListener {
 			}
 			repaint();
 		}
+		
+		public void setImage(String path) {
+			try {
+				image = ImageIO.read(new File(path));
+			} catch (Exception e) {
+				image = defaultImage;
+			}
+			repaint();
+		}
 
 	}
 	
@@ -70,13 +79,14 @@ public class AlbumView extends JFrame implements ActionListener {
 	private Control control;
 	private Album current;
 	private PhotoButton selected;
+	private static final String defaultPhoto = "assets/404.png";
 	private int currentPage;
 	
 	/*----- Unconditionally Visible Components -----*/
 	private JTextField searchBar;
 	private JComboBox<String> searchType;
 	private PhotoPanel photoPanel;
-	private JPanel operationPanel, addPanel, tagPanel, movePanel;
+	private JPanel operationPanel, tagPanel, movePanel;
 	private PhotoDisplay photoDisplay;
 	private JButton prev, next, search, addPhoto, deletePhoto, move, recaption, addTag, deleteTag;
 	
@@ -84,8 +94,7 @@ public class AlbumView extends JFrame implements ActionListener {
 	private InfoPanel infoPanel;
 
 	/*----- Components Visible When Adding a Photo -----*/
-	private JButton selectPhoto, addNewPhoto, cancelAdd;
-	private JTextField caption;
+	private AddPanel addPanel;
 	
 	/*----- Components Visible When Adding or Deleting a Tag -----*/
 	private JButton modifyTag, cancelTag; /* Buttons Visible when Adding or Deleting a Tag */
@@ -131,16 +140,26 @@ public class AlbumView extends JFrame implements ActionListener {
 		remove(tagPanel);
 		remove(movePanel);
 		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 4;
+		gbc.gridy = 4;
+		gbc.gridheight = 2;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.weightx = 0.6;
+		gbc.weighty = 0.1;
 		if (state == NORMAL) {
-			gbc.gridx = 4;
-			gbc.gridy = 4;
-			gbc.gridheight = 2;
-			gbc.fill = GridBagConstraints.BOTH;
-			gbc.weightx = 0.6;
-			gbc.weighty = 0.1;
-			add(infoPanel, gbc);
 			infoPanel.setPhoto((Photo) selected.getDrawable());
+			add(infoPanel, gbc);
+		} else if (state == ADD_TAG) {
+			addPanel.setPhoto((Photo) selected.getDrawable());
+			photoDisplay.setImage(defaultPhoto);
+			add(addPanel, gbc);
 		}
+		repaint();
+		revalidate();
+	}
+	
+	private void addPhoto(String path) {
+		System.out.println(path);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
@@ -155,7 +174,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		} else if (source instanceof JButton) {
 			JButton button = (JButton) source;
 			if (button == addPhoto) {
-				
+				transitionToState(ADD_TAG);
 			} else if (button == deletePhoto) {
 				
 			} else if (button == move) {
@@ -184,7 +203,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		selected.select();
 		operationPanel = new JPanel(new GridLayout(1, 6));
 		infoPanel = new InfoPanel();
-		addPanel = new JPanel(new GridBagLayout());
+		addPanel = new AddPanel(fileName -> addPhoto(fileName), fileName -> photoDisplay.setImage(fileName), dummy -> transitionToState(NORMAL));
 		tagPanel = new JPanel(new GridBagLayout());
 		movePanel = new JPanel(new GridBagLayout());
 		photoDisplay = new PhotoDisplay();
@@ -197,11 +216,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		recaption = new JButton("Recaption Photo");
 		addTag = new JButton("Add Tag");
 		deleteTag = new JButton("Remove Tag");
-		
-		selectPhoto = new JButton("Select Photo");
-		addNewPhoto = new JButton("Submit");
-		cancelAdd = new JButton("Cancel");
-		caption = new JTextField();
 		
 		modifyTag = new JButton();
 		cancelTag = new JButton("Cancel");
@@ -223,9 +237,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		recaption.addActionListener(this);
 		addTag.addActionListener(this);
 		deleteTag.addActionListener(this);
-		selectPhoto.addActionListener(this);
-		addNewPhoto.addActionListener(this);
-		cancelAdd.addActionListener(this);
 		modifyTag.addActionListener(this);
 		cancelTag.addActionListener(this);
 		movePhoto.addActionListener(this);

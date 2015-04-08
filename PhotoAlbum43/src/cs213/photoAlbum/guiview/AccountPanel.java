@@ -155,8 +155,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			constraints.gridy = 2;
 			add(infoPanel, constraints);
 		}
-		repaint();
-		revalidate();
 	}
 	
 	public void actionPerformed(ActionEvent event) {

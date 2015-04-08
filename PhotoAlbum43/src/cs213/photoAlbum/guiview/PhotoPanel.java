@@ -52,9 +52,6 @@ public class PhotoPanel extends JPanel implements Resizable {
 			buttons.get(index).setDrawable(current);
 		}
 		for (; index < 9; index++) buttons.get(index).setDrawable(null);
-
-		repaint();
-		revalidate();
 	}
 
 	public PhotoButton getButton(int index) {
