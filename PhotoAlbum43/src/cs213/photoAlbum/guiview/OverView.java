@@ -27,15 +27,19 @@ public class OverView extends JFrame {
 		control = new Control();
 
 		windowHandler = new WindowAdapter() {
+
 			public void windowClosing(WindowEvent event) {
 				control.shutdown();
 			}
+
 		};
 
 		sizeHandler = new ComponentAdapter() {
+
 			public void componentResized(ComponentEvent event) {
 				child.resized(event.getComponent().getSize());
 			}
+
 		};
 
 		switchToLogin();

@@ -7,8 +7,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
@@ -32,6 +34,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	private JLabel name, number, startDate, endDate;
 	private PhotoButton selected;
 	private Album beingModified;
+	private List<AlbumView> windows;
 	private int currentPage;
 	
 	public AccountPanel(Consumer<Integer> leave, Control control) {
@@ -177,7 +180,8 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			beingModified = album;
 			swapPanels(album.getName());
 		} else if (source == open) {
-			
+			Album album = (Album) selected.getDrawable();
+			windows.add(new AlbumView(album, control));
 		} else if (source == cancel) {
 			beingModified = null;
 			swapPanels(null);
@@ -238,6 +242,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		number = new JLabel(" ");
 		startDate = new JLabel(" ");
 		endDate = new JLabel(" ");
+		windows = new ArrayList<AlbumView>();
 	}
 	
 	private void bind() {
