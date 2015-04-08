@@ -21,32 +21,42 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import cs213.photoAlbum.control.Control;
 import cs213.photoAlbum.model.Album;
+import cs213.photoAlbum.model.Drawable;
+import cs213.photoAlbum.model.Photo;
 
 public class AlbumView extends JFrame implements ActionListener {
 	
 	private class PhotoDisplay extends JPanel {
 		
-		private BufferedImage image;
+		private BufferedImage image, defaultImage;
 		private static final long serialVersionUID = 1;
+		private static final String defaultPath = "assets/404.png";
 		
-		public void paintComponent(Graphics g) {
-			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-		}
-		
-		public void setImage(String path) {
+		public PhotoDisplay() {
 			try {
-				image = ImageIO.read(new File(path));
+				defaultImage = ImageIO.read(new File(defaultPath));
 			} catch (IOException e) {
 				image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 				Graphics2D g = image.createGraphics();
 				g.drawString("Photo Not Found", getWidth(), getHeight());
 				g.dispose();
+			}
+		}
+		
+		public void paintComponent(Graphics g) {
+			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		}
+		
+		public void setImage(Drawable data) {
+			try {
+				image = ImageIO.read(new File(data.getPath()));
+			} catch (Exception e) {
+				image = defaultImage;
 			}
 			repaint();
 		}
@@ -54,23 +64,24 @@ public class AlbumView extends JFrame implements ActionListener {
 	}
 	
 	private static final long serialVersionUID = 1;
+	private static final int NORMAL = 0, EDIT = 1, ADD_TAG = 2, DELETE_TAG = 3, MOVE = 4;
 	private WindowAdapter windowHandler;
 	private ComponentAdapter resizeHandler;
 	private Control control;
 	private Album current;
+	private PhotoButton selected;
 	private int currentPage;
 	
 	/*----- Unconditionally Visible Components -----*/
 	private JTextField searchBar;
 	private JComboBox<String> searchType;
 	private PhotoPanel photoPanel;
-	private JPanel operationPanel, infoPanel, addPanel, tagPanel, movePanel;
+	private JPanel operationPanel, addPanel, tagPanel, movePanel;
 	private PhotoDisplay photoDisplay;
 	private JButton prev, next, search, addPhoto, deletePhoto, move, recaption, addTag, deleteTag;
 	
 	/*----- Components Visible When in Normal State -----*/
-	private JLabel photoName, photoCaption, photoDate;
-	private TagPane tags;
+	private InfoPanel infoPanel;
 
 	/*----- Components Visible When Adding a Photo -----*/
 	private JButton selectPhoto, addNewPhoto, cancelAdd;
@@ -106,14 +117,61 @@ public class AlbumView extends JFrame implements ActionListener {
 
 		};
 		
+		photoDisplay.setImage(selected.getDrawable());
+		transitionToState(NORMAL);
 		pack();
 		setVisible(true);
 		addWindowListener(windowHandler);
 		addComponentListener(resizeHandler);
 	}
 	
+	private void transitionToState(int state) {
+		remove(infoPanel);
+		remove(addPanel);
+		remove(tagPanel);
+		remove(movePanel);
+		GridBagConstraints gbc = new GridBagConstraints();
+		if (state == NORMAL) {
+			gbc.gridx = 4;
+			gbc.gridy = 4;
+			gbc.gridheight = 2;
+			gbc.fill = GridBagConstraints.BOTH;
+			gbc.weightx = 0.6;
+			gbc.weighty = 0.1;
+			add(infoPanel, gbc);
+			infoPanel.setPhoto((Photo) selected.getDrawable());
+		}
+	}
+	
 	public void actionPerformed(ActionEvent event) {
-
+		Object source = event.getSource();
+		if (source instanceof PhotoButton) {
+			PhotoButton button = (PhotoButton) source;
+			selected.select();
+			selected = button;
+			selected.select();
+			photoDisplay.setImage(selected.getDrawable());
+			transitionToState(NORMAL);
+		} else if (source instanceof JButton) {
+			JButton button = (JButton) source;
+			if (button == addPhoto) {
+				
+			} else if (button == deletePhoto) {
+				
+			} else if (button == move) {
+				
+			} else if (button == recaption) {
+				
+			} else if (button == addTag) {
+				
+			} else if (button == deleteTag) {
+				
+			} else if (button == next) {
+				
+			} else if (button == prev) {
+				
+			}
+		}
 	}
 	
 	private void instantiate() {
@@ -122,8 +180,10 @@ public class AlbumView extends JFrame implements ActionListener {
 		searchBar = new JTextField(4);
 		searchType = new JComboBox<String>(new String[] {"Date Range", "Tag"});
 		photoPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(current.getPhotos(), currentPage * 9, (currentPage + 1) * 9));
+		selected = photoPanel.getButton(0);
+		selected.select();
 		operationPanel = new JPanel(new GridLayout(1, 6));
-		infoPanel = new JPanel(new GridBagLayout());
+		infoPanel = new InfoPanel();
 		addPanel = new JPanel(new GridBagLayout());
 		tagPanel = new JPanel(new GridBagLayout());
 		movePanel = new JPanel(new GridBagLayout());
@@ -137,11 +197,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		recaption = new JButton("Recaption Photo");
 		addTag = new JButton("Add Tag");
 		deleteTag = new JButton("Remove Tag");
-		
-		photoName = new JLabel("Blah");
-		photoCaption = new JLabel("Blah");
-		photoDate = new JLabel("Blah");
-		tags = new TagPane();
 		
 		selectPhoto = new JButton("Select Photo");
 		addNewPhoto = new JButton("Submit");
@@ -217,7 +272,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.weightx = 0.6;
 		gbc.weighty = 0.6;
 		gbc.fill = GridBagConstraints.BOTH;
-		photoDisplay.setImage("assets/404.png");
 		add(photoDisplay, gbc);
 		
 		// InfoPanel Constraints.
@@ -228,17 +282,8 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 0.6;
 		gbc.weighty = 0.1;
+		gbc.insets = new Insets(10, 0, 10, 0);
 		add(infoPanel, gbc);
-		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.LINE_START;
-		infoPanel.add(photoName, gbc);
-		gbc.gridy = 1;
-		infoPanel.add(photoCaption, gbc);
-		gbc.gridy = 2;
-		infoPanel.add(photoDate, gbc);
-		gbc.gridy = 3;
-		gbc.fill = GridBagConstraints.BOTH;
-		infoPanel.add(tags, gbc);
 		
 		// OperationalPanel Constraints.
 		gbc = new GridBagConstraints();

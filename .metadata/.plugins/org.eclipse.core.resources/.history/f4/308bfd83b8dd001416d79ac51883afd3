@@ -1,0 +1,52 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.GridLayout;
+import java.util.StringJoiner;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import cs213.photoAlbum.model.Photo;
+
+public class InfoPanel extends JPanel {
+
+	private class TagPane extends JScrollPane {
+
+		private static final long serialVersionUID = 1;
+		private JTextArea tagView;
+		private Photo current;
+
+		public TagPane() {
+			tagView = new JTextArea();
+			setViewportView(tagView);
+		}
+
+		public void setPhoto(Photo photo) {
+			current = photo;
+			String[] tags = current.getTags();
+			StringJoiner joiner = new StringJoiner("\n");
+			for (String tag : tags) joiner.add(tag);
+			tagView.setText(joiner.toString());
+		}	
+
+	}
+
+	private static final long serialVersionUID = 1;
+	private JLabel photoName, photoCaption, photoDate;
+	private TagPane tags;
+	
+	public InfoPanel() {
+		setLayout(new GridLayout(4, 1));
+		instantiate();
+	}
+	
+	private void instantiate() {
+		photoName = new JLabel();
+		photoCaption = new JLabel();
+		photoDate = new JLabel();
+		tags = new TagPane();
+	}
+
+}

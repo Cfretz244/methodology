@@ -1,0 +1,13 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class InfoPanel extends JPanel {
+	
+	private static final long serialVersionUID = 1;
+	private JLabel selectPhoto, addNewPhoto, cancelAdd;
+	private JTextField caption;
+
+}

@@ -11,7 +11,6 @@
 <fullyQualifiedTypeName name="java.util.Arrays"/>
 <fullyQualifiedTypeName name="chess.Location"/>
 <fullyQualifiedTypeName name="chess.Board"/>
-<fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.awt.Component"/>
 <fullyQualifiedTypeName name="java.awt.Shape"/>
 <fullyQualifiedTypeName name="java.awt.geom.Rectangle2D"/>
@@ -23,5 +22,6 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.awt.event.WindowEvent"/>
 <fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.awt.Insets"/>
 </qualifiedTypeNameHistroy>
