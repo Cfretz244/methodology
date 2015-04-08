@@ -12,7 +12,6 @@
 <fullyQualifiedTypeName name="chess.Location"/>
 <fullyQualifiedTypeName name="chess.Board"/>
 <fullyQualifiedTypeName name="java.awt.event.WindowEvent"/>
-<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
 <fullyQualifiedTypeName name="java.util.Date"/>
 <fullyQualifiedTypeName name="java.awt.Component"/>
 <fullyQualifiedTypeName name="java.awt.Shape"/>
@@ -24,4 +23,5 @@
 <fullyQualifiedTypeName name="java.awt.Color"/>
 <fullyQualifiedTypeName name="java.awt.geom.RoundRectangle2D"/>
 <fullyQualifiedTypeName name="cs213.photoAlbum.control.Control"/>
+<fullyQualifiedTypeName name="java.awt.event.ActionEvent"/>
 </qualifiedTypeNameHistroy>

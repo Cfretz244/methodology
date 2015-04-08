@@ -1,6 +1,5 @@
-package guiview;
+package cs213.photoAlbum.guiview;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -8,7 +7,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Consumer;
 
@@ -16,22 +15,22 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.border.LineBorder;
 
 import cs213.photoAlbum.control.Control;
 import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Photo;
 
+
 public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	
 	private static final long serialVersionUID = 1;
 	private Control control;
-	private JPanel albumPanel, optionPanel, infoPanel;
+	private JPanel optionPanel, infoPanel;
+	private PhotoPanel albumPanel;
 	private JButton create, delete, rename, open, prev, next, submit, cancel;
 	private JTextField albumName;
 	private JLabel name, number, startDate, endDate;
-	private ArrayList<AlbumButton> albumBtns;
-	private AlbumButton selected;
+	private PhotoButton selected;
 	private Album beingModified;
 	private int currentPage;
 	
@@ -50,7 +49,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		constraints.fill = GridBagConstraints.BOTH;
 		constraints.insets = new Insets(10, 10, 10, 10);
 		add(albumPanel, constraints);
-		populateAlbumPanel();
 		
 		/* Optional Panel Constraints */
 		constraints = new GridBagConstraints();
@@ -111,24 +109,8 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		updateLabels();
 	}
 	
-	private void populateAlbumPanel() {
-		Album[] albums = control.getAlbums();
-		int index = 0;
-		for (int otherIndex = 9 * currentPage; index < 9 && otherIndex < albums.length; index++, otherIndex++) {
-			albumBtns.get(index).setAlbum(albums[otherIndex]);
-		}
-		while (index++ < 9) albumBtns.get(index).setAlbum(null);
-
-		if (selected == null) {
-			selected = albumBtns.get(9 * currentPage);
-			selected.select();
-		}
-		repaint();
-		revalidate();
-	}
-	
 	private void updateLabels() {
-		Album current = selected.getAlbum();
+		Album current = (Album) selected.getDrawable();
 		if (current != null) {
 			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
 			name.setText("Name: " + current.getName());
@@ -176,8 +158,8 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
-		if (source instanceof AlbumButton) {
-			AlbumButton button = (AlbumButton) source;
+		if (source instanceof PhotoButton) {
+			PhotoButton button = (PhotoButton) source;
 			selected.select();
 			selected = button;
 			selected.select();
@@ -185,11 +167,13 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		} else if (source == create) {
 			swapPanels("");
 		} else if (source == delete) {
-			control.removeAlbum(selected.getAlbum().getName());
-			selected.setAlbum(null);
-			populateAlbumPanel();
+			Album current = (Album) selected.getDrawable();
+			control.removeAlbum(current.getName());
+			selected.setDrawable(null);
+			albumPanel.updatePhotos();
+			updateLabels();
 		} else if (source == rename) {
-			Album album = selected.getAlbum();
+			Album album = (Album) selected.getDrawable();
 			beingModified = album;
 			swapPanels(album.getName());
 		} else if (source == open) {
@@ -205,7 +189,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			} else {
 				control.addAlbum(name);
 			}
-			populateAlbumPanel();
+			albumPanel.updatePhotos();
 			updateLabels();
 			swapPanels(null);
 		} else if (source == next) {
@@ -213,26 +197,31 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			if (albums.length >= 9 * (currentPage + 1)) {
 				currentPage++;
 				selected.select();
-				selected = null;
-				populateAlbumPanel();
+				selected = albumPanel.getButton(0);
+				selected.select();
+				albumPanel.updatePhotos();
+				updateLabels();
 			}
 		} else if (source == prev) {
 			if (currentPage > 0) {
 				currentPage--;
 				selected.select();
-				selected = null;
-				populateAlbumPanel();
+				selected = albumPanel.getButton(0);
+				selected.select();
+				albumPanel.updatePhotos();
+				updateLabels();
 			}
 		}
 	}
 	
 	public void resized(Dimension size) {
-		for (AlbumButton button : albumBtns) button.resized(albumPanel.getSize());
+		albumPanel.resized(size);
 	}
 
 	private void instantiate() {
-		albumPanel = new JPanel(new GridBagLayout());
-		albumPanel.setBorder(new LineBorder(Color.black, 2, true));
+		albumPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(control.getAlbums(), currentPage * 9, (currentPage + 1) * 9));
+		selected = albumPanel.getButton(0);
+		selected.select();
 		optionPanel = new JPanel(new GridBagLayout());
 		infoPanel = new JPanel(new GridBagLayout());
 		create = new JButton(" Create Album ");
@@ -248,21 +237,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		number = new JLabel(" ");
 		startDate = new JLabel(" ");
 		endDate = new JLabel(" ");
-		
-		albumBtns = new ArrayList<AlbumButton>();
-		for (int i = 0; i < 9; i++) albumBtns.add(new AlbumButton(i));
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.weightx = 0.3;
-		constraints.weighty = 0.3;
-		constraints.insets = new Insets(10, 10, 10, 10);
-		for (int i = 0; i < 3; i++) {
-			constraints.gridy = i;
-			for (int j = 0; j < 3; j++) {
-				constraints.gridx = j;
-				albumPanel.add(albumBtns.get((3 * i) + j), constraints);
-			}
-		}
-		
 		setLayout(new GridBagLayout());
 	}
 	
@@ -275,7 +249,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		next.addActionListener(this);
 		submit.addActionListener(this);
 		cancel.addActionListener(this);
-		for (AlbumButton button : albumBtns) button.addActionListener(this);
 	}
 	
 }

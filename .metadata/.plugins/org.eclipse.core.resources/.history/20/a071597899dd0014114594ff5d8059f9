@@ -1,0 +1,37 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class AlbumView extends JFrame {
+	
+	private static final long serialVersionUID = 1;
+	private Control control;
+	private Album current;
+	
+	/*----- Unconditionally Visible Components -----*/
+	private JComboBox<String> searchType;
+	private JTextField searchBar;
+	private PhotoPanel photoPanel;
+	private JPanel operationPanel, infoPanel, addPanel, tagPanel, movePanel;
+	private JButton prev, next, addPhoto, deletePhoto, move, recaption, addTag, deleteTag; /* Always Visible Buttons */
+
+	/*----- Components Visible When Adding a Photo -----*/
+	private JButton selectPhoto, addNewPhoto, cancelAdd;
+	private JTextField caption;
+	
+	/*----- Components Visible When Adding or Deleting a Tag -----*/
+	private JButton modifyTag, cancelTag; /* Buttons Visible when Adding or Deleting a Tag */
+	private JTextField tagType, tagValue;
+	
+	/*----- Components Visible When Moving a Photo -----*/
+	private JButton movePhoto, cancelMove;
+	
+	public AlbumView() {
+		
+	}
+
+}

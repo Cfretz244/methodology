@@ -219,6 +219,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	}
 
 	private void instantiate() {
+		setLayout(new GridBagLayout());
 		albumPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(control.getAlbums(), currentPage * 9, (currentPage + 1) * 9));
 		selected = albumPanel.getButton(0);
 		selected.select();
@@ -237,7 +238,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		number = new JLabel(" ");
 		startDate = new JLabel(" ");
 		endDate = new JLabel(" ");
-		setLayout(new GridBagLayout());
 	}
 	
 	private void bind() {
