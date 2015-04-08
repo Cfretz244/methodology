@@ -1,0 +1,19 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import cs213.photoAlbum.model.Photo;
+
+public class TagPane extends JScrollPane {
+	
+	private static final long serialVersionUID = 1;
+	private JTextArea tags;
+	private Photo current;
+	
+	public TagPane() {
+		tags = new JTextArea();
+		setViewportView(tags);
+	}
+
+}

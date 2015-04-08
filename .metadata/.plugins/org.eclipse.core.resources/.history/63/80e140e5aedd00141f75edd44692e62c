@@ -4,8 +4,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -23,6 +21,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import cs213.photoAlbum.control.Control;
@@ -70,7 +69,7 @@ public class AlbumView extends JFrame implements ActionListener {
 	
 	/*----- Components Visible When in Normal State -----*/
 	private JLabel photoName, photoCaption, photoDate;
-	private TagPane tags;
+	private JScrollPane tags;
 
 	/*----- Components Visible When Adding a Photo -----*/
 	private JButton selectPhoto, addNewPhoto, cancelAdd;
@@ -101,7 +100,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		resizeHandler = new ComponentAdapter() {
 
 			public void componentResized(ComponentEvent event) {
-				photoPanel.resized(event.getComponent().getSize());
+				// Send resize event to children.
 			}
 
 		};
@@ -113,16 +112,16 @@ public class AlbumView extends JFrame implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent event) {
-
+		
 	}
 	
 	private void instantiate() {
 		setLayout(new GridBagLayout());
 
-		searchBar = new JTextField(4);
+		searchBar = new JTextField();
 		searchType = new JComboBox<String>(new String[] {"Date Range", "Tag"});
 		photoPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(current.getPhotos(), currentPage * 9, (currentPage + 1) * 9));
-		operationPanel = new JPanel(new GridLayout(1, 6));
+		operationPanel = new JPanel();
 		infoPanel = new JPanel(new GridBagLayout());
 		addPanel = new JPanel(new GridBagLayout());
 		tagPanel = new JPanel(new GridBagLayout());
@@ -138,10 +137,8 @@ public class AlbumView extends JFrame implements ActionListener {
 		addTag = new JButton("Add Tag");
 		deleteTag = new JButton("Remove Tag");
 		
-		photoName = new JLabel("Blah");
-		photoCaption = new JLabel("Blah");
-		photoDate = new JLabel("Blah");
-		tags = new TagPane();
+		photoName = new JLabel("");
+		photoCaption = new JLabel("");
 		
 		selectPhoto = new JButton("Select Photo");
 		addNewPhoto = new JButton("Submit");
@@ -181,8 +178,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		// Search Bar Constraints.
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 0.5;
 		add(searchBar, gbc);
 		gbc = new GridBagConstraints();
 		gbc.gridx = 2;
@@ -198,7 +193,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.weightx = 0.5;
 		gbc.weighty = 0.5;
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.insets = new Insets(10, 10, 10, 10);
 		add(photoPanel, gbc);
 		
 		// Next and Previous Button Constraints.
@@ -214,8 +208,8 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.gridy = 1;
 		gbc.gridwidth = 3;
 		gbc.gridheight = 3;
-		gbc.weightx = 0.6;
-		gbc.weighty = 0.6;
+		gbc.weightx = 0.5;
+		gbc.weighty = 0.5;
 		gbc.fill = GridBagConstraints.BOTH;
 		photoDisplay.setImage("assets/404.png");
 		add(photoDisplay, gbc);
@@ -226,18 +220,14 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.gridy = 4;
 		gbc.gridheight = 2;
 		gbc.fill = GridBagConstraints.BOTH;
-		gbc.weightx = 0.6;
-		gbc.weighty = 0.1;
 		add(infoPanel, gbc);
 		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.LINE_START;
 		infoPanel.add(photoName, gbc);
 		gbc.gridy = 1;
 		infoPanel.add(photoCaption, gbc);
 		gbc.gridy = 2;
 		infoPanel.add(photoDate, gbc);
 		gbc.gridy = 3;
-		gbc.fill = GridBagConstraints.BOTH;
 		infoPanel.add(tags, gbc);
 		
 		// OperationalPanel Constraints.
@@ -245,14 +235,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.gridy = 7;
 		gbc.gridwidth = 7;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.weightx = 1;
 		add(operationPanel, gbc);
-		operationPanel.add(addPhoto);
-		operationPanel.add(deletePhoto);
-		operationPanel.add(move);
-		operationPanel.add(recaption);
-		operationPanel.add(addTag);
-		operationPanel.add(deleteTag);
 	}
 
 }

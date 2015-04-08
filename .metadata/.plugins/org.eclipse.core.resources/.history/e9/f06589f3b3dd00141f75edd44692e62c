@@ -101,7 +101,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		resizeHandler = new ComponentAdapter() {
 
 			public void componentResized(ComponentEvent event) {
-				photoPanel.resized(event.getComponent().getSize());
+				// Send resize event to children.
 			}
 
 		};
@@ -113,7 +113,7 @@ public class AlbumView extends JFrame implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent event) {
-
+		
 	}
 	
 	private void instantiate() {

@@ -15,7 +15,6 @@
 <fullyQualifiedTypeName name="java.awt.Component"/>
 <fullyQualifiedTypeName name="java.awt.Shape"/>
 <fullyQualifiedTypeName name="java.awt.geom.Rectangle2D"/>
-<fullyQualifiedTypeName name="java.awt.Insets"/>
 <fullyQualifiedTypeName name="java.awt.Color"/>
 <fullyQualifiedTypeName name="java.awt.geom.RoundRectangle2D"/>
 <fullyQualifiedTypeName name="cs213.photoAlbum.control.Control"/>
@@ -24,4 +23,5 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.awt.event.WindowEvent"/>
 <fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="java.awt.Insets"/>
 </qualifiedTypeNameHistroy>

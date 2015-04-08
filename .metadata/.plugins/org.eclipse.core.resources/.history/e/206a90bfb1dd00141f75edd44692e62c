@@ -1,0 +1,9 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JScrollPane;
+
+public class TagPane extends JScrollPane {
+	
+	private static final long serialVersionUID = 1;
+
+}

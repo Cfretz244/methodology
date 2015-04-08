@@ -27,7 +27,7 @@ public class PhotoButton extends JButton implements Resizable {
 	private int index;
 	private boolean selected;
 	private static final int CORNER_RADIUS = 80;
-	private static final double PADDING = 0.55;
+	private static final double PADDING = 0.6;
 	private static final String defaultPath = "assets/404.png";
 	
 	public PhotoButton(Integer index) {

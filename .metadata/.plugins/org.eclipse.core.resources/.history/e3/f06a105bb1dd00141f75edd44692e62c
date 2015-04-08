@@ -1,0 +1,7 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JScrollPane;
+
+public class TagPane extends JScrollPane {
+
+}
