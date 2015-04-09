@@ -66,7 +66,6 @@ public class PhotoButton extends JButton implements Resizable {
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
 		if (keyPhoto == null) keyPhoto = defaultPhoto;
 
 		BufferedImage cropped;

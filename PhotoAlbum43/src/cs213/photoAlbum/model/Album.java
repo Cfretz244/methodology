@@ -192,6 +192,14 @@ public class Album implements Serializable, Drawable {
 	}
 	
 	@Override
+	public String toString() {
+		Iterator<Photo> iterate = photos.values().iterator();
+		String output = new String();
+		while (iterate.hasNext()) output += iterate.next() + ", ";
+		return output.substring(0, output.length() - 2) + ")";
+	}
+	
+	@Override
 	public String getPath() {
 		try {
 			return photos.values().iterator().next().getName();

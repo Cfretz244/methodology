@@ -15,7 +15,10 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -85,6 +88,7 @@ public class AlbumView extends JFrame implements ActionListener {
 	private ComponentAdapter resizeHandler;
 	private Control control;
 	private Album current;
+	private Photo[] matches;
 	private PhotoButton selected;
 	private static final String defaultPhoto = "assets/404.png";
 	private int currentPage;
@@ -238,6 +242,31 @@ public class AlbumView extends JFrame implements ActionListener {
 					photoPanel.updatePhotos();
 					transitionToState(State.NORMAL);
 				}
+			} else if (button == search) {
+				String search = searchBar.getText().trim();
+				String type = searchType.getItemAt(searchType.getSelectedIndex());
+				if (!search.equals("")) {
+					if (type.equals("Date Range")) {
+						SimpleDateFormat parser = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ss");
+						String[] dates = search.split(" ");
+						if (dates.length == 2) {
+							try {
+								Date start = parser.parse(dates[0]), end = parser.parse(dates[1]);
+								matches = control.getPhotosByDateFromAlbum(current.getName(), start.getTime(), end.getTime());
+								currentPage = 0;
+							} catch (ParseException e) {
+								// TODO: Give an error here.
+							}
+						} else {
+							// TODO: Give an error here.
+						}
+					} else {
+						
+					}
+				} else {
+					matches = null;
+				}
+				photoPanel.updatePhotos();
 			}
 		}
 	}
@@ -247,7 +276,7 @@ public class AlbumView extends JFrame implements ActionListener {
 
 		searchBar = new JTextField(4);
 		searchType = new JComboBox<String>(new String[] {"Date Range", "Tag"});
-		photoPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(current.getPhotos(), currentPage * 9, (currentPage + 1) * 9));
+		photoPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(matches == null ? current.getPhotos() : matches, currentPage * 9, (currentPage + 1) * 9));
 		selected = photoPanel.getButton(0);
 		selected.select();
 		operationPanel = new JPanel(new GridLayout(1, 6));

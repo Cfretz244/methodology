@@ -241,6 +241,13 @@ public class Control implements PhotoSource {
 		
 		return currentUser.getPhotos(start, end);
 	}
+	
+	@Override
+	public Photo[] getPhotosByDateFromAlbum(String album, long start, long end) {
+		if (currentUser == null) return null;
+		
+		return currentUser.getPhotos(album, start, end);
+	}
 
 	@Override
 	public Photo[] getPhotosByTag(String type, String value) {

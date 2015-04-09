@@ -1,7 +1,9 @@
 package cs213.photoAlbum.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -241,6 +243,7 @@ public class Photo implements Serializable, Comparable<Photo>, Drawable {
 		return category.contains(value);
 	}
 
+	@Override
 	public int compareTo(Photo other) {
 		Long thisDate = new Long(date.getTimeInMillis());
 		Long otherDate = new Long(other.getDate());
@@ -253,6 +256,12 @@ public class Photo implements Serializable, Comparable<Photo>, Drawable {
 
 		Photo another = (Photo) other;
 		return name == another.getName() && userid == another.getUserid();
+	}
+	
+	@Override
+	public String toString() {
+		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+		return format.format(new Date(getDate()));
 	}
 	
 	@Override
