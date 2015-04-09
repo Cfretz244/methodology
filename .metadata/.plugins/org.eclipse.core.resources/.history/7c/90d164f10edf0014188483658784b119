@@ -227,10 +227,7 @@ public class AlbumView extends JFrame implements ActionListener {
 				photoPanel.updatePhotos();
 			} else if (button == saveButton) {
 				if (saveName.getText() != "") {
-					String name = saveName.getText();
-					saveName.setText("");
-					control.addAlbum(name);
-					for (Photo photo : matches) control.addPhotoToAlbum(name, photo.getName(), photo.getCaption());
+					control.addAlbum(saveName.getText());
 				} else {
 					// TODO: Report error to user here.
 				}
@@ -418,7 +415,6 @@ public class AlbumView extends JFrame implements ActionListener {
 
 	private void bind() {
 		search.addActionListener(this);
-		saveButton.addActionListener(this);
 		prev.addActionListener(this);
 		next.addActionListener(this);
 		addPhoto.addActionListener(this);

@@ -92,9 +92,9 @@ public class AlbumView extends JFrame implements ActionListener {
 			super.paintComponent(g);
 			if (getText().isEmpty() && FocusManager.getCurrentKeyboardFocusManager().getFocusOwner() != this) {
 				Graphics2D g2 = (Graphics2D) g.create();
-				g2.setBackground(Color.LIGHT_GRAY);
-				g2.setFont(getFont());
-				g2.drawString("Album Name", 10, 20);
+				g2.setBackground(Color.GRAY);
+				g2.setFont(getFont().deriveFont(Font.ITALIC));
+				g2.drawString("Album Name", 0, 0);
 				g2.dispose();
 			}
 		}
@@ -227,10 +227,7 @@ public class AlbumView extends JFrame implements ActionListener {
 				photoPanel.updatePhotos();
 			} else if (button == saveButton) {
 				if (saveName.getText() != "") {
-					String name = saveName.getText();
-					saveName.setText("");
-					control.addAlbum(name);
-					for (Photo photo : matches) control.addPhotoToAlbum(name, photo.getName(), photo.getCaption());
+					
 				} else {
 					// TODO: Report error to user here.
 				}
@@ -308,14 +305,11 @@ public class AlbumView extends JFrame implements ActionListener {
 				Date start = parser.parse(dates[0]), end = parser.parse(dates[1]);
 				matches = current.getPhotos(start.getTime(), end.getTime());
 				currentPage = 0;
-				savePanel.setVisible(true);
 			} catch (ParseException e) {
 				// TODO: Give an error here.
-				savePanel.setVisible(false);
 			}
 		} else {
 			// TODO: Give an error here.
-			savePanel.setVisible(false);
 		}
 	}
 
@@ -323,7 +317,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		String[] tags = search.split(",");
 		for (int i = 0; i < tags.length; i++) tags[i] = tags[i].trim();
 		Set<Photo> matchSet = new HashSet<Photo>();
-		boolean first = true, successful = true;
+		boolean first = true;
 		for (String tag : tags) {
 			int colonIndex = tag.indexOf(":"), quoteIndex = tag.indexOf("\"");
 			List<String> matches = new ArrayList<String>();
@@ -375,15 +369,10 @@ public class AlbumView extends JFrame implements ActionListener {
 				}
 			} catch (Exception e) {
 				// TODO: Report bad input to the user.
-				successful = false;
 				break;
 			}
 			first = false;
 		}
-
-		if (successful) savePanel.setVisible(true);
-		else savePanel.setVisible(false);
-
 		matches = new Photo[matchSet.size()];
 		matchSet.toArray(matches);
 	}
@@ -418,7 +407,6 @@ public class AlbumView extends JFrame implements ActionListener {
 
 	private void bind() {
 		search.addActionListener(this);
-		saveButton.addActionListener(this);
 		prev.addActionListener(this);
 		next.addActionListener(this);
 		addPhoto.addActionListener(this);
@@ -458,7 +446,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc = new GridBagConstraints();
 		gbc.gridx = 2;
 		savePanel.add(saveButton, gbc);
-		savePanel.setVisible(false);
 
 		// PhotoPanel Constraints.
 		gbc = new GridBagConstraints();

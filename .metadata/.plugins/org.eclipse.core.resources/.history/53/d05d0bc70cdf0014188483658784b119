@@ -1,7 +1,5 @@
 package cs213.photoAlbum.guiview;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -30,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
-import javax.swing.FocusManager;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -82,23 +79,6 @@ public class AlbumView extends JFrame implements ActionListener {
 			readImage(path);
 		}
 
-	}
-	
-	private class PlaceHolderField extends JTextField {
-		
-		private static final long serialVersionUID = 1;
-		
-		public void paintComponent(Graphics g) {
-			super.paintComponent(g);
-			if (getText().isEmpty() && FocusManager.getCurrentKeyboardFocusManager().getFocusOwner() != this) {
-				Graphics2D g2 = (Graphics2D) g.create();
-				g2.setBackground(Color.LIGHT_GRAY);
-				g2.setFont(getFont());
-				g2.drawString("Album Name", 10, 20);
-				g2.dispose();
-			}
-		}
-		
 	}
 
 	protected enum State {
@@ -225,15 +205,6 @@ public class AlbumView extends JFrame implements ActionListener {
 					matches = null;
 				}
 				photoPanel.updatePhotos();
-			} else if (button == saveButton) {
-				if (saveName.getText() != "") {
-					String name = saveName.getText();
-					saveName.setText("");
-					control.addAlbum(name);
-					for (Photo photo : matches) control.addPhotoToAlbum(name, photo.getName(), photo.getCaption());
-				} else {
-					// TODO: Report error to user here.
-				}
 			}
 		}
 	}
@@ -308,14 +279,11 @@ public class AlbumView extends JFrame implements ActionListener {
 				Date start = parser.parse(dates[0]), end = parser.parse(dates[1]);
 				matches = current.getPhotos(start.getTime(), end.getTime());
 				currentPage = 0;
-				savePanel.setVisible(true);
 			} catch (ParseException e) {
 				// TODO: Give an error here.
-				savePanel.setVisible(false);
 			}
 		} else {
 			// TODO: Give an error here.
-			savePanel.setVisible(false);
 		}
 	}
 
@@ -323,7 +291,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		String[] tags = search.split(",");
 		for (int i = 0; i < tags.length; i++) tags[i] = tags[i].trim();
 		Set<Photo> matchSet = new HashSet<Photo>();
-		boolean first = true, successful = true;
+		boolean first = true;
 		for (String tag : tags) {
 			int colonIndex = tag.indexOf(":"), quoteIndex = tag.indexOf("\"");
 			List<String> matches = new ArrayList<String>();
@@ -375,15 +343,10 @@ public class AlbumView extends JFrame implements ActionListener {
 				}
 			} catch (Exception e) {
 				// TODO: Report bad input to the user.
-				successful = false;
 				break;
 			}
 			first = false;
 		}
-
-		if (successful) savePanel.setVisible(true);
-		else savePanel.setVisible(false);
-
 		matches = new Photo[matchSet.size()];
 		matchSet.toArray(matches);
 	}
@@ -403,7 +366,8 @@ public class AlbumView extends JFrame implements ActionListener {
 		movePanel = new MovePanel(albumName -> movePhoto(albumName), () -> control.getAlbums(), dummy -> transitionToState(State.NORMAL));
 		savePanel = new JPanel(new GridBagLayout());
 		saveButton = new JButton("Save Search");
-		saveName = new PlaceHolderField();
+		saveName = new JTextField();
+		saveName.setText("Album Name");
 		photoDisplay = new PhotoDisplay();
 		prev = new JButton("Previous");
 		next = new JButton("Next");
@@ -418,7 +382,6 @@ public class AlbumView extends JFrame implements ActionListener {
 
 	private void bind() {
 		search.addActionListener(this);
-		saveButton.addActionListener(this);
 		prev.addActionListener(this);
 		next.addActionListener(this);
 		addPhoto.addActionListener(this);
@@ -435,7 +398,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 0.5;
-		gbc.insets = new Insets(0, 10, 0, 10);
 		add(searchBar, gbc);
 		gbc = new GridBagConstraints();
 		gbc.gridx = 2;
@@ -458,7 +420,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc = new GridBagConstraints();
 		gbc.gridx = 2;
 		savePanel.add(saveButton, gbc);
-		savePanel.setVisible(false);
 
 		// PhotoPanel Constraints.
 		gbc = new GridBagConstraints();
@@ -486,7 +447,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.gridheight = 3;
 		gbc.weightx = 0.6;
 		gbc.weighty = 0.6;
-		gbc.insets = new Insets(10, 0, 0, 0);
 		gbc.fill = GridBagConstraints.BOTH;
 		add(photoDisplay, gbc);
 
