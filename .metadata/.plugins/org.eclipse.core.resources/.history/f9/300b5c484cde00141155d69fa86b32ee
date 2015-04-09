@@ -1,0 +1,66 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.function.Consumer;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import cs213.photoAlbum.model.Photo;
+
+public class TagPanel extends JPanel implements ActionListener {
+	
+	private static final long serialVersionUID = 1;
+	private JButton modifyButton, cancelButton;
+	private JTextField tagType, tagValue;
+	private Consumer<String[]> modify;
+	private Consumer<?> cancel;
+	private Photo current;
+	private AlbumView.State state;
+	
+	public TagPanel(Consumer<String[]> modify, Consumer<?> cancel) {
+		this.modify = modify;
+		this.cancel = cancel;
+		
+		setLayout(new GridBagLayout());
+		instantiate();
+		bind();
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridwidth = 2;
+		add(tagType, gbc);
+		gbc.gridy = 1;
+		add(tagValue, gbc);
+		gbc = new GridBagConstraints();
+		gbc.gridy = 2;
+		add(cancelButton, gbc);
+		
+	}
+	
+	public void actionPerformed(ActionEvent event) {
+		
+	}
+	
+	public void setPhoto(Photo photo, AlbumView.State state) {
+		current = photo;
+		this.state = state;
+		modifyButton.setText(state == AlbumView.State.ADD_TAG ? "Add Tag" : "Remove Tag");
+	}
+	
+	private void instantiate() {
+		modifyButton = new JButton();
+		cancelButton = new JButton("Cancel");
+		tagType = new JTextField();
+		tagValue = new JTextField();
+	}
+	
+	private void bind() {
+		modifyTag.addActionListener(this);
+		cancelTag.addActionListener(this);
+	}
+
+}

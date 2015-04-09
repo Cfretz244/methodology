@@ -77,7 +77,7 @@ public class AddPanel extends JPanel implements ActionListener {
 		selectButton = new JButton("Select Photo");
 		addButton = new JButton("Submit");
 		cancelButton = new JButton("Cancel");
-		caption = new JTextField();
+		caption = new JTextField(8);
 		chooser = new JFileChooser();
 		chooser.setFileFilter(new ImageFilter());
 	}

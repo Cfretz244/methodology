@@ -1,0 +1,36 @@
+package cs213.photoAlbum.guiview;
+
+import java.util.function.Consumer;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class TagPanel extends JPanel {
+	
+	private static final long serialVersionUID = 1;
+	private JButton modifyTag, cancelTag;
+	private JTextField tagType, tagValue;
+	private Consumer<String[]> modify;
+	private Consumer<?> cancel;
+	
+	public TagPanel(Consumer<String[]> modify, Consumer<?> cancel) {
+		this.modify = modify;
+		this.cancel = cancel;
+		
+		instantiate();
+		bind();
+	}
+	
+	private void instantiate() {
+		modifyTag = new JButton("Submit");
+		cancelTag = new JButton("Cancel");
+		tagType = new JTextField();
+		tagValue = new JTextField();
+	}
+	
+	private void bind() {
+		
+	}
+
+}

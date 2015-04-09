@@ -71,8 +71,16 @@ public class AlbumView extends JFrame implements ActionListener {
 
 	}
 	
+	protected enum State {
+		NORMAL,
+		ADD,
+		EDIT,
+		ADD_TAG,
+		DELETE_TAG,
+		MOVE
+	}
+	
 	private static final long serialVersionUID = 1;
-	private static final int NORMAL = 0, EDIT = 1, ADD_TAG = 2, DELETE_TAG = 3, MOVE = 4;
 	private WindowAdapter windowHandler;
 	private ComponentAdapter resizeHandler;
 	private Control control;
@@ -85,21 +93,14 @@ public class AlbumView extends JFrame implements ActionListener {
 	private JTextField searchBar;
 	private JComboBox<String> searchType;
 	private PhotoPanel photoPanel;
-	private JPanel operationPanel, tagPanel;
+	private JPanel operationPanel;
 	private PhotoDisplay photoDisplay;
 	private JButton prev, next, search, addPhoto, deletePhoto, move, recaption, addTag, deleteTag;
 	
-	/*----- Components Visible When in Normal State -----*/
+	/*----- Conditionally Visible Panels -----*/
 	private InfoPanel infoPanel;
-
-	/*----- Components Visible When Adding a Photo -----*/
 	private AddPanel addPanel;
-	
-	/*----- Components Visible When Adding or Deleting a Tag -----*/
-	private JButton modifyTag, cancelTag; /* Buttons Visible when Adding or Deleting a Tag */
-	private JTextField tagType, tagValue;
-	
-	/*----- Components Visible When Moving a Photo -----*/
+	private TagPanel tagPanel;
 	private MovePanel movePanel;
 	
 	public AlbumView(Album current, Control control) {
@@ -112,7 +113,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		windowHandler = new WindowAdapter() {
 
 			public void windowClosing(WindowEvent event) {
-				// Decide what to do here.
+				// TODO: Decide what to do here.
 			}
 
 		};
@@ -125,14 +126,14 @@ public class AlbumView extends JFrame implements ActionListener {
 		};
 		
 		photoDisplay.setImage(selected.getDrawable());
-		transitionToState(NORMAL);
+		transitionToState(State.NORMAL);
 		pack();
 		setVisible(true);
 		addWindowListener(windowHandler);
 		addComponentListener(resizeHandler);
 	}
 	
-	private void transitionToState(int state) {
+	private void transitionToState(State state) {
 		remove(infoPanel);
 		remove(addPanel);
 		remove(tagPanel);
@@ -144,24 +145,28 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.weightx = 0.6;
 		gbc.weighty = 0.1;
-		if (state == NORMAL) {
+		if (state == State.NORMAL) {
 			infoPanel.setPhoto((Photo) selected.getDrawable());
 			photoPanel.enable();
 			add(infoPanel, gbc);
-		} else if (state == ADD_TAG) {
+		} else if (state == State.ADD) {
 			addPanel.setPhoto(null);
 			photoDisplay.setImage(defaultPhoto);
 			photoPanel.disable();
 			add(addPanel, gbc);
-		} else if (state == MOVE) {
+		} else if (state == State.MOVE) {
 			movePanel.update();
 			photoPanel.disable();
 			add(movePanel, gbc);
-		} else if (state == EDIT) {
+		} else if (state == State.EDIT) {
 			addPanel.setPhoto((Photo) selected.getDrawable());
 			photoDisplay.setImage(selected.getDrawable());
 			photoPanel.disable();
 			add(addPanel, gbc);
+		} else if (state == State.ADD_TAG || state == State.DELETE_TAG) {
+			tagPanel.setPhoto((Photo) selected.getDrawable(), state);
+			photoPanel.disable();
+			add(tagPanel, gbc);
 		}
 		repaint();
 		revalidate();
@@ -172,13 +177,22 @@ public class AlbumView extends JFrame implements ActionListener {
 		else control.changeCaptionForPhoto(((Photo) selected.getDrawable()).getName(), properties[1]);
 
 		photoPanel.updatePhotos();
-		transitionToState(NORMAL);
+		transitionToState(State.NORMAL);
 	}
 	
 	private void movePhoto(String toAlbum) {
 		control.movePhoto(current.getName(), toAlbum, ((Photo) selected.getDrawable()).getName());
 		photoPanel.updatePhotos();
-		transitionToState(NORMAL);
+		transitionToState(State.NORMAL);
+	}
+	
+	private void modifyTags(String[] tagInfo) {
+		if (tagInfo[2].equals("add")) {
+			control.addTagToPhoto(((Photo) selected.getDrawable()).getName(), tagInfo[0], tagInfo[1]);
+		} else {
+			control.removeTagFromPhoto(((Photo) selected.getDrawable()).getName(), tagInfo[0], tagInfo[1]);
+		}
+		transitionToState(State.NORMAL);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
@@ -189,26 +203,41 @@ public class AlbumView extends JFrame implements ActionListener {
 			selected = button;
 			selected.select();
 			photoDisplay.setImage(selected.getDrawable());
-			transitionToState(NORMAL);
+			transitionToState(State.NORMAL);
 		} else if (source instanceof JButton) {
 			JButton button = (JButton) source;
 			if (button == addPhoto) {
-				transitionToState(ADD_TAG);
+				transitionToState(State.ADD);
 			} else if (button == deletePhoto) {
 				control.removePhotoFromAlbum(current.getName(), ((Photo) selected.getDrawable()).getName());
 				photoPanel.updatePhotos();
 			} else if (button == move) {
-				transitionToState(MOVE);
+				transitionToState(State.MOVE);
 			} else if (button == recaption) {
-				transitionToState(EDIT);
+				transitionToState(State.EDIT);
 			} else if (button == addTag) {
-				
+				transitionToState(State.ADD_TAG);
 			} else if (button == deleteTag) {
-				
+				transitionToState(State.DELETE_TAG);
 			} else if (button == next) {
-				
+				Photo[] photos = current.getPhotos();
+				if (photos.length >= 9 * (currentPage + 1)) {
+					currentPage++;
+					selected.select();
+					selected = photoPanel.getButton(0);
+					selected.select();
+					photoPanel.updatePhotos();
+					transitionToState(State.NORMAL);
+				}
 			} else if (button == prev) {
-				
+				if (currentPage > 0) {
+					currentPage--;
+					selected.select();
+					selected = photoPanel.getButton(0);
+					selected.select();
+					photoPanel.updatePhotos();
+					transitionToState(State.NORMAL);
+				}
 			}
 		}
 	}
@@ -223,9 +252,9 @@ public class AlbumView extends JFrame implements ActionListener {
 		selected.select();
 		operationPanel = new JPanel(new GridLayout(1, 6));
 		infoPanel = new InfoPanel();
-		addPanel = new AddPanel(fileName -> addPhoto(fileName), fileName -> photoDisplay.setImage(fileName), dummy -> transitionToState(NORMAL));
-		tagPanel = new JPanel(new GridBagLayout());
-		movePanel = new MovePanel(albumName -> movePhoto(albumName), () -> control.getAlbums(), dummy -> transitionToState(NORMAL));
+		addPanel = new AddPanel(fileName -> addPhoto(fileName), fileName -> photoDisplay.setImage(fileName), dummy -> transitionToState(State.NORMAL));
+		tagPanel = new TagPanel(tagInfo -> modifyTags(tagInfo), dummy -> transitionToState(State.NORMAL));
+		movePanel = new MovePanel(albumName -> movePhoto(albumName), () -> control.getAlbums(), dummy -> transitionToState(State.NORMAL));
 		photoDisplay = new PhotoDisplay();
 		prev = new JButton("Previous");
 		next = new JButton("Next");
@@ -236,11 +265,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		recaption = new JButton("Recaption Photo");
 		addTag = new JButton("Add Tag");
 		deleteTag = new JButton("Remove Tag");
-		
-		modifyTag = new JButton();
-		cancelTag = new JButton("Cancel");
-		tagType = new JTextField();
-		tagValue = new JTextField();
 	}
 	
 	private void bind() {
@@ -253,8 +277,6 @@ public class AlbumView extends JFrame implements ActionListener {
 		recaption.addActionListener(this);
 		addTag.addActionListener(this);
 		deleteTag.addActionListener(this);
-		modifyTag.addActionListener(this);
-		cancelTag.addActionListener(this);
 	}
 	
 	private void layoutViews() {

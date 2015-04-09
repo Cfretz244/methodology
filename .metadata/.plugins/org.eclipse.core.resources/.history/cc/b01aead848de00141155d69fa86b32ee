@@ -1,0 +1,12 @@
+package cs213.photoAlbum.guiview;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+public class TagPanel extends JPanel {
+	
+	private static final long serialVersionUID = 1;
+	private JButton modifyTag, cancelTag;
+	private JTextField tagType, tagValue;
+
+}
