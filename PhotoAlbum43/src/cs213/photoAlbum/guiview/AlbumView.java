@@ -143,6 +143,66 @@ public class AlbumView extends JFrame implements ActionListener {
 		addWindowListener(windowHandler);
 		addComponentListener(resizeHandler);
 	}
+	
+	public void actionPerformed(ActionEvent event) {
+		Object source = event.getSource();
+		if (source instanceof PhotoButton) {
+			PhotoButton button = (PhotoButton) source;
+			selected.select();
+			selected = button;
+			selected.select();
+			photoDisplay.setImage(selected.getDrawable());
+			transitionToState(State.NORMAL);
+		} else if (source instanceof JButton) {
+			JButton button = (JButton) source;
+			if (button == addPhoto) {
+				transitionToState(State.ADD);
+			} else if (button == deletePhoto) {
+				control.removePhotoFromAlbum(current.getName(), ((Photo) selected.getDrawable()).getName());
+				photoPanel.updatePhotos();
+			} else if (button == move) {
+				transitionToState(State.MOVE);
+			} else if (button == recaption) {
+				transitionToState(State.EDIT);
+			} else if (button == addTag) {
+				transitionToState(State.ADD_TAG);
+			} else if (button == deleteTag) {
+				transitionToState(State.DELETE_TAG);
+			} else if (button == next) {
+				Photo[] photos = current.getPhotos();
+				if (photos.length >= 9 * (currentPage + 1)) {
+					currentPage++;
+					selected.select();
+					selected = photoPanel.getButton(0);
+					selected.select();
+					photoPanel.updatePhotos();
+					transitionToState(State.NORMAL);
+				}
+			} else if (button == prev) {
+				if (currentPage > 0) {
+					currentPage--;
+					selected.select();
+					selected = photoPanel.getButton(0);
+					selected.select();
+					photoPanel.updatePhotos();
+					transitionToState(State.NORMAL);
+				}
+			} else if (button == search) {
+				String search = searchBar.getText().trim();
+				String type = searchType.getItemAt(searchType.getSelectedIndex());
+				if (!search.equals("")) {
+					if (type.equals("Date Range")) {
+						searchDates(search);
+					} else {
+						searchTags(search);
+					}
+				} else {
+					matches = null;
+				}
+				photoPanel.updatePhotos();
+			}
+		}
+	}
 
 	private void transitionToState(State state) {
 		remove(infoPanel);
@@ -206,136 +266,86 @@ public class AlbumView extends JFrame implements ActionListener {
 		transitionToState(State.NORMAL);
 	}
 
-	public void actionPerformed(ActionEvent event) {
-		Object source = event.getSource();
-		if (source instanceof PhotoButton) {
-			PhotoButton button = (PhotoButton) source;
-			selected.select();
-			selected = button;
-			selected.select();
-			photoDisplay.setImage(selected.getDrawable());
-			transitionToState(State.NORMAL);
-		} else if (source instanceof JButton) {
-			JButton button = (JButton) source;
-			if (button == addPhoto) {
-				transitionToState(State.ADD);
-			} else if (button == deletePhoto) {
-				control.removePhotoFromAlbum(current.getName(), ((Photo) selected.getDrawable()).getName());
-				photoPanel.updatePhotos();
-			} else if (button == move) {
-				transitionToState(State.MOVE);
-			} else if (button == recaption) {
-				transitionToState(State.EDIT);
-			} else if (button == addTag) {
-				transitionToState(State.ADD_TAG);
-			} else if (button == deleteTag) {
-				transitionToState(State.DELETE_TAG);
-			} else if (button == next) {
-				Photo[] photos = current.getPhotos();
-				if (photos.length >= 9 * (currentPage + 1)) {
-					currentPage++;
-					selected.select();
-					selected = photoPanel.getButton(0);
-					selected.select();
-					photoPanel.updatePhotos();
-					transitionToState(State.NORMAL);
-				}
-			} else if (button == prev) {
-				if (currentPage > 0) {
-					currentPage--;
-					selected.select();
-					selected = photoPanel.getButton(0);
-					selected.select();
-					photoPanel.updatePhotos();
-					transitionToState(State.NORMAL);
-				}
-			} else if (button == search) {
-				String search = searchBar.getText().trim();
-				String type = searchType.getItemAt(searchType.getSelectedIndex());
-				if (!search.equals("")) {
-					if (type.equals("Date Range")) {
-						SimpleDateFormat parser = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ss");
-						String[] dates = search.split(" ");
-						if (dates.length == 2) {
-							try {
-								Date start = parser.parse(dates[0]), end = parser.parse(dates[1]);
-								matches = current.getPhotos(start.getTime(), end.getTime());
-								currentPage = 0;
-							} catch (ParseException e) {
-								// TODO: Give an error here.
-							}
-						} else {
-							// TODO: Give an error here.
-						}
-					} else {
-						String[] tags = search.split(",");
-						Set<Photo> matchSet = new HashSet<Photo>();
-						boolean first = true;
-						for (String tag : tags) {
-							int colonIndex = tag.indexOf(":"), quoteIndex = tag.indexOf("\"");
-							List<String> matches = new ArrayList<String>();
-							if (quoteIndex >= 0) {
-								Pattern regex = Pattern.compile("[\"]([^\"]*)[\"]");
-								Matcher quotes = regex.matcher(tag);
-								while (quotes.find()) matches.add(quotes.group(1));
-							}
-
-							try {
-								String tagType = null, tagValue = null;
-								if (colonIndex >= 0 && quoteIndex >= 0) {
-									if (matches.size() == 2) {
-										tagType = matches.get(0);
-										tagValue = matches.get(1);
-									} else {
-										tagType = quoteIndex > colonIndex ? tag.substring(0, colonIndex) : matches.get(0);
-										tagValue = quoteIndex > colonIndex ? matches.get(0) : tag.substring(colonIndex + 1, tag.length());
-									}
-								} else if (quoteIndex >= 0) {
-									tagValue = matches.get(0);
-								} else if (colonIndex >= 0) {
-									tagType = tag.substring(0, colonIndex);
-									tagValue = tag.substring(colonIndex + 1, tag.length());
-								} else {
-									tagValue = tag;
-								}
-
-								if (first) {
-									if (tagType != null) {
-										Photo[] results = current.getPhotos(tagType, tagValue);
-										for (Photo result : results) matchSet.add(result);
-									} else {
-										Photo[] results = current.getPhotos();
-										for (Photo result : results) if (result.hasTag(tagValue, false)) matchSet.add(result);
-									}
-								} else {
-									Set<Photo> intersection = new HashSet<Photo>();
-									Iterator<Photo> iterate = matchSet.iterator();
-									while (iterate.hasNext()) {
-										Photo current = iterate.next();
-										if (tagType != null && current.hasTag(tagType, tagValue)) {
-											intersection.add(current);
-										} else if (tagType == null && current.hasTag(tagValue, false)) {
-											intersection.add(current);
-										}
-									}
-									matchSet = intersection;
-								}
-							} catch (Exception e) {
-								// TODO: Report bad input to the user.
-								break;
-							}
-							first = false;
-						}
-						matches = new Photo[matchSet.size()];
-						matchSet.toArray(matches);
-					}
-				} else {
-					matches = null;
-				}
-				photoPanel.updatePhotos();
+	private void searchDates(String search) {
+		SimpleDateFormat parser = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ss");
+		String[] dates = search.split(" ");
+		if (dates.length == 2) {
+			try {
+				Date start = parser.parse(dates[0]), end = parser.parse(dates[1]);
+				matches = current.getPhotos(start.getTime(), end.getTime());
+				currentPage = 0;
+			} catch (ParseException e) {
+				// TODO: Give an error here.
 			}
+		} else {
+			// TODO: Give an error here.
 		}
 	}
+
+	private void searchTags(String search) {
+		String[] tags = search.split(",");
+		for (int i = 0; i < tags.length; i++) tags[i] = tags[i].trim();
+		Set<Photo> matchSet = new HashSet<Photo>();
+		boolean first = true;
+		for (String tag : tags) {
+			int colonIndex = tag.indexOf(":"), quoteIndex = tag.indexOf("\"");
+			List<String> matches = new ArrayList<String>();
+			if (quoteIndex >= 0) {
+				Pattern regex = Pattern.compile("[\"]([^\"]*)[\"]");
+				Matcher quotes = regex.matcher(tag);
+				while (quotes.find()) matches.add(quotes.group(1));
+			}
+
+			try {
+				String tagType = null, tagValue = null;
+				if (colonIndex >= 0 && quoteIndex >= 0) {
+					if (matches.size() == 2) {
+						tagType = matches.get(0);
+						tagValue = matches.get(1);
+					} else {
+						tagType = quoteIndex > colonIndex ? tag.substring(0, colonIndex) : matches.get(0);
+						tagValue = quoteIndex > colonIndex ? matches.get(0) : tag.substring(colonIndex + 1, tag.length());
+					}
+				} else if (quoteIndex >= 0) {
+					tagValue = matches.get(0);
+				} else if (colonIndex >= 0) {
+					tagType = tag.substring(0, colonIndex);
+					tagValue = tag.substring(colonIndex + 1, tag.length());
+				} else {
+					tagValue = tag;
+				}
+
+				if (first) {
+					if (tagType != null) {
+						Photo[] results = current.getPhotos(tagType, tagValue);
+						for (Photo result : results) matchSet.add(result);
+					} else {
+						Photo[] results = current.getPhotos();
+						for (Photo result : results) if (result.hasTag(tagValue, false)) matchSet.add(result);
+					}
+				} else {
+					Set<Photo> intersection = new HashSet<Photo>();
+					Iterator<Photo> iterate = matchSet.iterator();
+					while (iterate.hasNext()) {
+						Photo current = iterate.next();
+						if (tagType != null && current.hasTag(tagType, tagValue)) {
+							intersection.add(current);
+						} else if (tagType == null && current.hasTag(tagValue, false)) {
+							intersection.add(current);
+						}
+					}
+					matchSet = intersection;
+				}
+			} catch (Exception e) {
+				// TODO: Report bad input to the user.
+				break;
+			}
+			first = false;
+		}
+		matches = new Photo[matchSet.size()];
+		matchSet.toArray(matches);
+	}
+
 
 	private void instantiate() {
 		setLayout(new GridBagLayout());
