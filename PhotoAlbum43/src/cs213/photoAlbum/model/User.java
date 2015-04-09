@@ -374,17 +374,4 @@ public class User implements Serializable {
 		return resultsArray;
 	}
 	
-	/**
-	 * Method gets all photos within a given date range for a specific album.
-	 * @param album Name of the album.
-	 * @param startDate The start of the date range.
-	 * @param endDate The end of the date range.
-	 * @return An array of photos.
-	 */
-	public Photo[] getPhotos(String album, long startDate, long endDate) {
-		Album chosen = albums.get(album);
-		if (album == null) return null;
-		return chosen.getPhotos(startDate, endDate);
-	}
-
 }

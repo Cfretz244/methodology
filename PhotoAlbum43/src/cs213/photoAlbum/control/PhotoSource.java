@@ -218,15 +218,6 @@ public interface PhotoSource {
 	public Photo[] getPhotosByDate(long start, long end);
 	
 	/**
-	 * Method returns a sorted array of photos within a given date range for a specific album.
-	 * @param album Name of the album.
-	 * @param start Starting date for the range.
-	 * @param end Ending date for the range.
-	 * @return The array of photos.
-	 */
-	public Photo[] getPhotosByDateFromAlbum(String album, long start, long end);
-	
-	/**
 	 * Method returns an array of all photos with a given tag.
 	 * @param type The type of the tag to search for.
 	 * @param value The value of the tag to search for.
