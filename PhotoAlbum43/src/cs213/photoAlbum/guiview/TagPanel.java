@@ -1,5 +1,6 @@
 package cs213.photoAlbum.guiview;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -7,8 +8,8 @@ import java.awt.event.ActionListener;
 import java.util.function.Consumer;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import cs213.photoAlbum.model.Photo;
 
@@ -16,7 +17,8 @@ public class TagPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
 	private JButton modifyButton, cancelButton;
-	private JTextField tagType, tagValue;
+	private AlbumView.PlaceHolderField tagType, tagValue;
+	private JLabel errorMessage;
 	private Consumer<String[]> modify;
 	private Consumer<?> cancel;
 	private Photo current;
@@ -32,6 +34,7 @@ public class TagPanel extends JPanel implements ActionListener {
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		add(tagType, gbc);
 		gbc.gridy = 1;
 		add(tagValue, gbc);
@@ -40,35 +43,44 @@ public class TagPanel extends JPanel implements ActionListener {
 		add(cancelButton, gbc);
 		gbc.gridx = 1;
 		add(modifyButton, gbc);
+		gbc = new GridBagConstraints();
+		gbc.gridy = 3;
+		gbc.gridwidth = 2;
+		add(errorMessage, gbc);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
 		boolean success = false;
 		if (button == modifyButton) {
-			if (state == AlbumView.State.ADD_TAG && tagType.getText() != "" && tagValue.getText() != "") {
+			if (state == AlbumView.State.ADD_TAG && !tagType.getText().equals("") && !tagValue.getText().equals("")) {
 				if (!current.hasTag(tagType.getText(), tagValue.getText())) {
+					errorMessage.setText(" ");
 					success = true;
 					modify.accept(new String[] {tagType.getText(), tagValue.getText(), "add"});
 				} else {
-					// TODO: Need to show user an error here.
+					errorMessage.setText("The given tag already exists.");
 				}
 			} else if (state == AlbumView.State.DELETE_TAG && tagType.getText() != "" && tagValue.getText() != "") {
 				if (current.hasTag(tagType.getText(), tagValue.getText())) {
+					errorMessage.setText(" ");
 					success = true;
 					modify.accept(new String[] {tagType.getText(), tagValue.getText(), "delete"});
 				} else {
-					// TODO: Need to show user an error here.
+					errorMessage.setText("The given tag does not exist.");
 				}
 			} else {
-				// TODO: Need to show user an error here.
+				errorMessage.setText("Please enter all fields.");
 			}
 		} else {
 			success = true;
+			errorMessage.setText(" ");
 			cancel.accept(null);
 		}
-		tagType.setText("");
-		tagValue.setText("");
+		if (success) {
+			tagType.setText("");
+			tagValue.setText("");
+		}
 	}
 	
 	public void setPhoto(Photo photo, AlbumView.State state) {
@@ -80,8 +92,10 @@ public class TagPanel extends JPanel implements ActionListener {
 	private void instantiate() {
 		modifyButton = new JButton();
 		cancelButton = new JButton("Cancel");
-		tagType = new JTextField(8);
-		tagValue = new JTextField(8);
+		tagType = new AlbumView.PlaceHolderField("Tag Type");
+		tagValue = new AlbumView.PlaceHolderField("Tag Value");
+		errorMessage = new JLabel(" ");
+		errorMessage.setForeground(Color.RED);
 	}
 	
 	private void bind() {

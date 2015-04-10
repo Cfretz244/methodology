@@ -31,7 +31,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 		label = new JLabel("Please enter your username to log in:");
 		error = new JLabel(" ");
 		error.setForeground(Color.RED);
-		username = new JTextField(10);
+		username = new JTextField();
 		loginButton = new JButton("Login");
 		this.loginCall = loginCall;
 
@@ -42,6 +42,7 @@ public class LoginPanel extends JPanel implements ActionListener {
 		constraints = new GridBagConstraints();
 		constraints.insets = new Insets(0, 50, 20, 50);
 		constraints.gridy = 1;
+		constraints.fill = GridBagConstraints.HORIZONTAL;
 		add(username, constraints);
 		
 		constraints = new GridBagConstraints();

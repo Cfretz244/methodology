@@ -1,5 +1,6 @@
 package cs213.photoAlbum.guiview;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,8 +11,8 @@ import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import cs213.photoAlbum.model.Photo;
@@ -39,7 +40,8 @@ public class AddPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1;
 	private Photo photo;
 	private JButton selectButton, addButton, cancelButton;
-	private JTextField caption;
+	private AlbumView.PlaceHolderField caption;
+	private JLabel errorMessage;
 	private JFileChooser chooser;
 	private Consumer<String[]> addPhoto;
 	private Consumer<String> updateUI;
@@ -59,12 +61,17 @@ public class AddPanel extends JPanel implements ActionListener {
 		gbc.gridwidth = 2;
 		add(selectButton, gbc);
 		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		add(caption, gbc);
 		gbc = new GridBagConstraints();
 		gbc.gridy = 2;
 		add(cancelButton, gbc);
 		gbc.gridx = 1;
 		add(addButton, gbc);
+		gbc = new GridBagConstraints();
+		gbc.gridy = 3;
+		gbc.gridwidth = 2;
+		add(errorMessage, gbc);
 	}
 
 	public void setPhoto(Photo photo) {
@@ -77,7 +84,9 @@ public class AddPanel extends JPanel implements ActionListener {
 		selectButton = new JButton("Select Photo");
 		addButton = new JButton("Submit");
 		cancelButton = new JButton("Cancel");
-		caption = new JTextField(8);
+		caption = new AlbumView.PlaceHolderField("Caption");
+		errorMessage = new JLabel(" ");
+		errorMessage.setForeground(Color.RED);
 		chooser = new JFileChooser();
 		chooser.setFileFilter(new ImageFilter());
 	}
@@ -96,18 +105,21 @@ public class AddPanel extends JPanel implements ActionListener {
 					if (chosen != null && caption.getText() != "") {
 						File temp = chosen;
 						chosen = null;
+						errorMessage.setText(" ");
 						addPhoto.accept(new String[] {temp.getCanonicalPath(), caption.getText()});
 					} else {
-						// TODO: Need to show an error message if this happens.
+						errorMessage.setText("Please fill all fields.");
 					}
 				} catch (IOException e) {
-					// TODO: Add handling for this.
+					errorMessage.setText("An error occured while loading the path to the photo.");
 				}
 			} else {
 				if (caption.getText() != "") {
+					errorMessage.setText(" ");
 					addPhoto.accept(new String[] {null, caption.getText()});
 				} else {
-					// TODO: Need to show an error message if this happens.
+					errorMessage.setText("Please enter a caption.");
+					errorMessage.setVisible(true);
 				}
 			}
 		} else if (button == selectButton) {
@@ -117,10 +129,12 @@ public class AddPanel extends JPanel implements ActionListener {
 				try {
 					updateUI.accept(chosen.getCanonicalPath());
 				} catch (IOException e) {
-					// Should never happen.
+					errorMessage.setText("An error occured while loading the path to the photo.");
+					errorMessage.setVisible(true);
 				}
 			}
 		} else {
+			errorMessage.setText(" ");
 			photo = null;
 			chosen = null;
 			cancel.accept(null);

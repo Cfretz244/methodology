@@ -118,6 +118,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 			if (album != null) windows.add(new AlbumView(album, control, dummy -> albumPanel.updatePhotos()));
 		} else if (source == cancel) {
 			beingModified = null;
+			errorLabel.setVisible(false);
 			swapPanels(null);
 		} else if (source == submit) {
 			String name = albumName.getText();
