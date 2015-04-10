@@ -60,7 +60,6 @@ public class AlbumView extends JFrame implements ActionListener {
 				g.drawString("Photo Not Found", getWidth(), getHeight());
 				g.dispose();
 			}
-			setPreferredSize(new Dimension(50, 50));
 		}
 
 		public void paintComponent(Graphics g) {
@@ -69,7 +68,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		
 		public void resized(Dimension size) {
 			double legSize = size.getHeight() > size.getWidth() ? size.getWidth() : size.getHeight();
-			legSize *= 0.9;
+			legSize *= 0.8;
 			setPreferredSize(new Dimension((int) legSize, (int) legSize));
 		}
 

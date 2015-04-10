@@ -1,6 +1,5 @@
 package cs213.photoAlbum.guiview;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -24,19 +23,19 @@ import cs213.photoAlbum.model.Photo;
 
 
 public class AccountPanel extends JPanel implements ActionListener {
-
+	
 	private static final long serialVersionUID = 1;
 	private Control control;
 	private JPanel optionPanel, infoPanel;
 	private PhotoPanel albumPanel;
 	private JButton create, delete, rename, open, prev, next, submit, cancel;
 	private JTextField albumName;
-	private JLabel name, number, startDate, endDate, infoName, errorLabel;
+	private JLabel name, number, startDate, endDate, infoName;
 	private PhotoButton selected;
 	private Album beingModified;
 	private List<AlbumView> windows;
 	private int currentPage;
-
+	
 	public AccountPanel(Consumer<Integer> leave, Control control) {
 		this.control = control;
 		currentPage = 0;
@@ -45,7 +44,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 		layoutViews();
 		updateLabels();
 	}
-
+	
 	private void updateLabels() {
 		Album current = (Album) selected.getDrawable();
 		if (current != null) {
@@ -73,7 +72,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 			endDate.setText("(N/A)");
 		}
 	}
-
+	
 	private void swapPanels(String name) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 4;
@@ -92,7 +91,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 		repaint();
 		revalidate();
 	}
-
+	
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
 		if (source instanceof PhotoButton) {
@@ -121,20 +120,15 @@ public class AccountPanel extends JPanel implements ActionListener {
 			swapPanels(null);
 		} else if (source == submit) {
 			String name = albumName.getText();
-			if (!name.equals("")) {
-				if (beingModified != null) {
-					control.changeAlbumName(beingModified.getName(), name);
-					beingModified = null;
-				} else {
-					control.addAlbum(name);
-				}
-				albumPanel.updatePhotos();
-				errorLabel.setVisible(false);
-				updateLabels();
-				swapPanels(null);
+			if (beingModified != null) {
+				control.changeAlbumName(beingModified.getName(), name);
+				beingModified = null;
 			} else {
-				errorLabel.setVisible(true);
+				control.addAlbum(name);
 			}
+			albumPanel.updatePhotos();
+			updateLabels();
+			swapPanels(null);
 		} else if (source == next) {
 			Album[] albums = control.getAlbums();
 			if (albums.length >= 9 * (currentPage + 1)) {
@@ -156,7 +150,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-
+	
 	private void instantiate() {
 		setLayout(new GridBagLayout());
 		albumPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(control.getAlbums(), currentPage * 9, (currentPage + 1) * 9));
@@ -178,12 +172,9 @@ public class AccountPanel extends JPanel implements ActionListener {
 		startDate = new JLabel(" ");
 		endDate = new JLabel(" ");
 		infoName = new JLabel("Album Name");
-		errorLabel = new JLabel("Enter a valid album name");
-		errorLabel.setForeground(Color.RED);
-		errorLabel.setVisible(false);
 		windows = new ArrayList<AlbumView>();
 	}
-
+	
 	private void bind() {
 		create.addActionListener(this);
 		delete.addActionListener(this);
@@ -194,7 +185,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 		submit.addActionListener(this);
 		cancel.addActionListener(this);
 	}
-
+	
 	private void layoutViews() {
 		/* Album Panel Constraints */
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -205,68 +196,63 @@ public class AccountPanel extends JPanel implements ActionListener {
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		add(albumPanel, gbc);
-
+		
 		/* Optional Panel Constraints */
 		gbc = new GridBagConstraints();
 		gbc.gridx = 4;
 		gbc.gridheight = 4;
 		gbc.fill = GridBagConstraints.BOTH;
 		add(optionPanel, gbc);
-
+		
 		gbc = new GridBagConstraints();
 		optionPanel.add(create, gbc);
 
 		gbc.gridy = 1;
 		optionPanel.add(delete, gbc);
-
+		
 		gbc.gridy = 2;
 		optionPanel.add(rename, gbc);
-
+		
 		gbc.gridy = 3;
 		optionPanel.add(open, gbc);
-
+		
 		/* Info Panel Constraints */
 		gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		infoPanel.add(infoName, gbc);
-		gbc.gridy = 1;
 		infoPanel.add(albumName, gbc);
-		gbc = new GridBagConstraints();
-		gbc.gridy = 2;
+		
+		gbc.gridwidth = 1;
+		gbc.gridy = 1;
 		infoPanel.add(cancel, gbc);
+		
 		gbc.gridx = 1;
 		infoPanel.add(submit, gbc);
-		gbc = new GridBagConstraints();
-		gbc.gridy = 3;
-		gbc.gridwidth = 2;
-		infoPanel.add(errorLabel, gbc);
-
-
+		
 		/* Previous and Next Button Constraints */
 		gbc = new GridBagConstraints();
 		gbc.insets = new Insets(0, 0, 10, 0);
 		gbc.gridy = 4;
 		add(prev, gbc);
-
+		
 		gbc.gridx = 3;
 		add(next, gbc);
-
+		
 		/* Label Constraints */
 		gbc = new GridBagConstraints();
 		gbc.gridy = 5;
 		gbc.weightx = 0.25;
 		gbc.ipadx = 10;
 		add(name, gbc);
-
+		
 		gbc.gridx = 1;
 		add(number, gbc);
-
+		
 		gbc.gridx = 2;
 		add(startDate, gbc);
-
+		
 		gbc.gridx = 3;
 		add(endDate, gbc);
 	}
-
+	
 }

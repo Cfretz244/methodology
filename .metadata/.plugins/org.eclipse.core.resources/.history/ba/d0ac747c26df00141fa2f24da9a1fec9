@@ -129,9 +129,9 @@ public class AccountPanel extends JPanel implements ActionListener {
 					control.addAlbum(name);
 				}
 				albumPanel.updatePhotos();
-				errorLabel.setVisible(false);
 				updateLabels();
 				swapPanels(null);
+				errorLabel.setVisible(false);
 			} else {
 				errorLabel.setVisible(true);
 			}
@@ -178,8 +178,8 @@ public class AccountPanel extends JPanel implements ActionListener {
 		startDate = new JLabel(" ");
 		endDate = new JLabel(" ");
 		infoName = new JLabel("Album Name");
-		errorLabel = new JLabel("Enter a valid album name");
-		errorLabel.setForeground(Color.RED);
+		errorLabel = new JLabel("You must enter a valid album name");
+		errorLabel.setBackground(Color.RED);
 		errorLabel.setVisible(false);
 		windows = new ArrayList<AlbumView>();
 	}

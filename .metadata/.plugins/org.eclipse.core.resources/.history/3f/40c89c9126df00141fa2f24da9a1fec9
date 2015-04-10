@@ -178,7 +178,7 @@ public class AccountPanel extends JPanel implements ActionListener {
 		startDate = new JLabel(" ");
 		endDate = new JLabel(" ");
 		infoName = new JLabel("Album Name");
-		errorLabel = new JLabel("Enter a valid album name");
+		errorLabel = new JLabel("You must enter a valid album name");
 		errorLabel.setForeground(Color.RED);
 		errorLabel.setVisible(false);
 		windows = new ArrayList<AlbumView>();
