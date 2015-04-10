@@ -1,5 +1,6 @@
 package cs213.photoAlbum.guiview;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,22 +10,21 @@ import java.util.StringJoiner;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import cs213.photoAlbum.model.Photo;
 
 public class InfoPanel extends JPanel {
 
-	private class TagPane extends JScrollPane {
+	private class TagPane extends JTextArea {
 
 		private static final long serialVersionUID = 1;
-		private JTextArea tagView;
 		private Photo current;
 
 		public TagPane() {
-			tagView = new JTextArea();
-			setViewportView(tagView);
+			setPhoto(null);
+			setBackground(new Color(238, 238, 238));
+			setEditable(false);
 		}
 
 		public void setPhoto(Photo photo) {
@@ -33,13 +33,14 @@ public class InfoPanel extends JPanel {
 				String[] tags = current.getTags();
 				if (tags.length > 0) {
 					StringJoiner joiner = new StringJoiner("\n");
+					joiner.add("Tags:");
 					for (String tag : tags) joiner.add(tag);
-					tagView.setText(joiner.toString());
+					setText(joiner.toString());
 				} else {
-					tagView.setText("Photo currently has no tags.");
+					setText("Photo currently has no tags.");
 				}
 			} else {
-				tagView.setText("(N/A)");
+				setText("(N/A)");
 			}
 		}	
 

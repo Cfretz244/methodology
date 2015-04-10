@@ -26,5 +26,8 @@
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="java.util.Iterator"/>
 <fullyQualifiedTypeName name="java.awt.Font"/>
+<fullyQualifiedTypeName name="java.awt.TextArea"/>
 <fullyQualifiedTypeName name="java.awt.Color"/>
+<fullyQualifiedTypeName name="com.sun.javafx.tk.Toolkit"/>
+<fullyQualifiedTypeName name="java.awt.Toolkit"/>
 </qualifiedTypeNameHistroy>

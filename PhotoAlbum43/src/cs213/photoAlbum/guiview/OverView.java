@@ -1,5 +1,6 @@
 package cs213.photoAlbum.guiview;
 
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -17,6 +18,8 @@ public class OverView extends JFrame {
 	private Control control;
 	private WindowAdapter windowHandler;
 	private ComponentAdapter sizeHandler;
+	private static final int LOGIN = 0, ADMIN = 1, ACCOUNT = 2;
+	private int state;
 	
 	public OverView() {
 		username = new String();
@@ -25,20 +28,29 @@ public class OverView extends JFrame {
 		windowHandler = new WindowAdapter() {
 
 			public void windowClosing(WindowEvent event) {
-				control.shutdown();
+				if (state == LOGIN) {
+					control.shutdown();
+					System.exit(0);
+				} else {
+					switchToLogin();
+				}
 			}
 
 		};
 
 		switchToLogin();
-		pack();
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		int xSize = ((int) tk.getScreenSize().getWidth());
+		int ySize = ((int) tk.getScreenSize().getHeight());
+		setSize(xSize,ySize);
 		setVisible(true);
 		addWindowListener(windowHandler);
 		addComponentListener(sizeHandler);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	}
 	
 	private void switchToLogin() {
+		state = LOGIN;
 		setTitle("Login");
 		if (base != null) remove(base);
 		base = new LoginPanel(username -> {
@@ -51,10 +63,10 @@ public class OverView extends JFrame {
 		add(base);
 		revalidate();
 		repaint();
-		pack();
 	}
 	
 	private void switchToAdmin() {
+		state = ADMIN;
 		setTitle("Administration");
 		remove(base);
 		base = new AdminPanel(dummy -> switchToLogin(), control);
@@ -64,13 +76,13 @@ public class OverView extends JFrame {
 	}
 	
 	private void switchToAccount() {
+		state = ACCOUNT;
 		setTitle(username + " Photo Albums");
 		remove(base);
 		base = new AccountPanel(dummy -> switchToLogin(), control);
 		add(base);
 		revalidate();
 		repaint();
-		pack();
 	}
 	
 	public static void main(String[] args) {

@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -70,7 +71,9 @@ public class AlbumView extends JFrame implements ActionListener {
 		public void resized(Dimension size) {
 			double legSize = size.getHeight() > size.getWidth() ? size.getWidth() : size.getHeight();
 			legSize *= 0.9;
+			double minimum = legSize * 0.8;
 			setPreferredSize(new Dimension((int) legSize, (int) legSize));
+			setMinimumSize(new Dimension((int) minimum, (int) minimum));
 		}
 
 		private void readImage(String path) {
@@ -174,7 +177,6 @@ public class AlbumView extends JFrame implements ActionListener {
 
 		photoDisplay.setImage(selected.getDrawable());
 		transitionToState(State.NORMAL);
-		pack();
 		setVisible(true);
 		addWindowListener(windowHandler);
 		photoHolder.addComponentListener(resizeHandler);
@@ -196,6 +198,7 @@ public class AlbumView extends JFrame implements ActionListener {
 			} else if (button == deletePhoto) {
 				control.removePhotoFromAlbum(current.getName(), ((Photo) selected.getDrawable()).getName());
 				photoPanel.updatePhotos();
+				photoDisplay.setImage((Photo) selected.getDrawable());
 			} else if (button == move) {
 				transitionToState(State.MOVE);
 			} else if (button == recaption) {
@@ -243,8 +246,6 @@ public class AlbumView extends JFrame implements ActionListener {
 					saveName.setText("");
 					control.addAlbum(name);
 					for (Photo photo : matches) control.addPhotoToAlbum(name, photo.getName(), photo.getCaption());
-				} else {
-					// TODO: Report error to user here.
 				}
 			}
 		}
@@ -274,6 +275,7 @@ public class AlbumView extends JFrame implements ActionListener {
 			infoPanel.setPhoto((Photo) selected.getDrawable());
 			photoPanel.enable();
 			add(infoPanel, gbc);
+			photoDisplay.setImage((Photo) selected.getDrawable());
 		} else {
 			addPhoto.setEnabled(false);
 			deletePhoto.setEnabled(false);
@@ -340,11 +342,9 @@ public class AlbumView extends JFrame implements ActionListener {
 				currentPage = 0;
 				savePanel.setVisible(true);
 			} catch (ParseException e) {
-				// TODO: Give an error here.
 				savePanel.setVisible(false);
 			}
 		} else {
-			// TODO: Give an error here.
 			savePanel.setVisible(false);
 		}
 	}
@@ -404,7 +404,6 @@ public class AlbumView extends JFrame implements ActionListener {
 					matchSet = intersection;
 				}
 			} catch (Exception e) {
-				// TODO: Report bad input to the user.
 				successful = false;
 				break;
 			}
@@ -461,6 +460,12 @@ public class AlbumView extends JFrame implements ActionListener {
 	}
 
 	private void layoutViews() {
+		// Set size of frame.
+		Toolkit tk = Toolkit.getDefaultToolkit();
+		int xSize = ((int) tk.getScreenSize().getWidth());
+		int ySize = ((int) tk.getScreenSize().getHeight());
+		setSize(xSize,ySize);
+		
 		// Search Bar Constraints.
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;

@@ -33,7 +33,8 @@ public class MovePanel extends JPanel implements ActionListener {
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
-		add(moveTo);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		add(moveTo, gbc);
 		gbc = new GridBagConstraints();
 		gbc.gridy = 1;
 		add(cancelButton, gbc);

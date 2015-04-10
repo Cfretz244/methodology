@@ -119,7 +119,9 @@ public class PhotoButton extends JButton {
 	public void resized(Dimension size) {
 		double legSize = size.getHeight() > size.getWidth() ? size.getWidth() / 3 : size.getHeight() / 3;
 		legSize *= PADDING;
+		double minimum = legSize * 0.8;
 		setPreferredSize(new Dimension((int) legSize, (int) legSize));
+		setMinimumSize(new Dimension((int) minimum, (int) minimum));
 	}
 
 }

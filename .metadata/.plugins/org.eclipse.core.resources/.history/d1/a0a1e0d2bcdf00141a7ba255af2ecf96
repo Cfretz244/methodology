@@ -1,0 +1,89 @@
+package cs213.photoAlbum.guiview;
+
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.StringJoiner;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import cs213.photoAlbum.model.Photo;
+
+public class InfoPanel extends JPanel {
+
+	private class TagPane extends JTextArea {
+
+		private static final long serialVersionUID = 1;
+		private Photo current;
+
+		public TagPane() {
+			setPhoto(null);
+			setBackground(Color.GRAY);
+		}
+
+		public void setPhoto(Photo photo) {
+			current = photo;
+			if (current != null) {
+				String[] tags = current.getTags();
+				if (tags.length > 0) {
+					StringJoiner joiner = new StringJoiner("\n");
+					for (String tag : tags) joiner.add(tag);
+					setText(joiner.toString());
+				} else {
+					setText("Photo currently has no tags.");
+				}
+			} else {
+				setText("(N/A)");
+			}
+		}	
+
+	}
+
+	private static final long serialVersionUID = 1;
+	private JLabel photoName, photoCaption, photoDate;
+	private TagPane tags;
+
+	public InfoPanel() {
+		setLayout(new GridBagLayout());
+		instantiate();
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(10, 0, 10, 0);
+		add(photoName, gbc);
+		gbc.gridy = 1;
+		add(photoCaption, gbc);
+		gbc.gridy = 2;
+		add(photoDate, gbc);
+		gbc.gridy = 3;
+		gbc.gridheight = 2;
+		gbc.weighty = 0.5;
+		add(tags, gbc);
+	}
+
+	public void setPhoto(Photo photo) {
+		if (photo != null) {
+			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+			photoName.setText("Name: " + photo.getName());
+			photoCaption.setText("Caption: " + photo.getCaption());
+			photoDate.setText("Date: " + format.format(new Date(photo.getDate())));
+		} else {
+			photoName.setText("Name: (N/A)");
+			photoCaption.setText("Caption: (N/A)");
+			photoDate.setText("Date: (N/A)");
+		}
+		tags.setPhoto(photo);
+	}
+
+	private void instantiate() {
+		photoName = new JLabel();
+		photoCaption = new JLabel();
+		photoDate = new JLabel();
+		tags = new TagPane();
+	}
+
+}
