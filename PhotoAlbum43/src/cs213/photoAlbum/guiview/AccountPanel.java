@@ -1,6 +1,5 @@
 package cs213.photoAlbum.guiview;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -23,7 +22,7 @@ import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Photo;
 
 
-public class AccountPanel extends JPanel implements ActionListener, Resizable {
+public class AccountPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
 	private Control control;
@@ -42,73 +41,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		currentPage = 0;
 		instantiate();
 		bind();
-		
-		/* Album Panel Constraints */
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.weightx = 0.6;
-		constraints.weighty = 0.9;
-		constraints.gridwidth = 4;
-		constraints.gridheight = 4;
-		constraints.fill = GridBagConstraints.BOTH;
-		constraints.insets = new Insets(10, 10, 10, 10);
-		add(albumPanel, constraints);
-		
-		/* Optional Panel Constraints */
-		constraints = new GridBagConstraints();
-		constraints.gridx = 4;
-		constraints.gridheight = 4;
-		constraints.fill = GridBagConstraints.BOTH;
-		add(optionPanel, constraints);
-		
-		constraints = new GridBagConstraints();
-		optionPanel.add(create, constraints);
-
-		constraints.gridy = 1;
-		optionPanel.add(delete, constraints);
-		
-		constraints.gridy = 2;
-		optionPanel.add(rename, constraints);
-		
-		constraints.gridy = 3;
-		optionPanel.add(open, constraints);
-		
-		/* Info Panel Constraints */
-		constraints = new GridBagConstraints();
-		constraints.gridwidth = 2;
-		infoPanel.add(albumName, constraints);
-		
-		constraints.gridwidth = 1;
-		constraints.gridy = 1;
-		infoPanel.add(cancel, constraints);
-		
-		constraints.gridx = 1;
-		infoPanel.add(submit, constraints);
-		
-		/* Previous and Next Button Constraints */
-		constraints = new GridBagConstraints();
-		constraints.insets = new Insets(0, 0, 10, 0);
-		constraints.gridy = 4;
-		add(prev, constraints);
-		
-		constraints.gridx = 3;
-		add(next, constraints);
-		
-		/* Label Constraints */
-		constraints = new GridBagConstraints();
-		constraints.gridy = 5;
-		constraints.weightx = 0.25;
-		constraints.ipadx = 10;
-		add(name, constraints);
-		
-		constraints.gridx = 1;
-		add(number, constraints);
-		
-		constraints.gridx = 2;
-		add(startDate, constraints);
-		
-		constraints.gridx = 3;
-		add(endDate, constraints);
-		
+		layoutViews();
 		updateLabels();
 	}
 	
@@ -141,19 +74,19 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 	}
 	
 	private void swapPanels(String name) {
-		GridBagConstraints constraints = new GridBagConstraints();
-		constraints.gridx = 4;
-		constraints.fill = GridBagConstraints.BOTH;
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 4;
+		gbc.fill = GridBagConstraints.BOTH;
 		if (name == null) {
 			remove(infoPanel);
-			constraints.gridheight = 4;
-			add(optionPanel, constraints);
+			gbc.gridheight = 4;
+			add(optionPanel, gbc);
 		} else {
 			remove(optionPanel);
 			albumName.setText(name);
-			constraints.gridheight = 2;
-			constraints.gridy = 2;
-			add(infoPanel, constraints);
+			gbc.gridheight = 2;
+			gbc.gridy = 2;
+			add(infoPanel, gbc);
 		}
 		repaint();
 		revalidate();
@@ -181,7 +114,7 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 			swapPanels(album.getName());
 		} else if (source == open) {
 			Album album = (Album) selected.getDrawable();
-			windows.add(new AlbumView(album, control));
+			if (album != null) windows.add(new AlbumView(album, control, dummy -> albumPanel.updatePhotos()));
 		} else if (source == cancel) {
 			beingModified = null;
 			swapPanels(null);
@@ -218,10 +151,6 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		}
 	}
 	
-	public void resized(Dimension size) {
-		albumPanel.resized(size);
-	}
-
 	private void instantiate() {
 		setLayout(new GridBagLayout());
 		albumPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(control.getAlbums(), currentPage * 9, (currentPage + 1) * 9));
@@ -254,6 +183,74 @@ public class AccountPanel extends JPanel implements ActionListener, Resizable {
 		next.addActionListener(this);
 		submit.addActionListener(this);
 		cancel.addActionListener(this);
+	}
+	
+	private void layoutViews() {
+		/* Album Panel Constraints */
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.weightx = 0.6;
+		gbc.weighty = 0.9;
+		gbc.gridwidth = 4;
+		gbc.gridheight = 4;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		add(albumPanel, gbc);
+		
+		/* Optional Panel Constraints */
+		gbc = new GridBagConstraints();
+		gbc.gridx = 4;
+		gbc.gridheight = 4;
+		gbc.fill = GridBagConstraints.BOTH;
+		add(optionPanel, gbc);
+		
+		gbc = new GridBagConstraints();
+		optionPanel.add(create, gbc);
+
+		gbc.gridy = 1;
+		optionPanel.add(delete, gbc);
+		
+		gbc.gridy = 2;
+		optionPanel.add(rename, gbc);
+		
+		gbc.gridy = 3;
+		optionPanel.add(open, gbc);
+		
+		/* Info Panel Constraints */
+		gbc = new GridBagConstraints();
+		gbc.gridwidth = 2;
+		infoPanel.add(albumName, gbc);
+		
+		gbc.gridwidth = 1;
+		gbc.gridy = 1;
+		infoPanel.add(cancel, gbc);
+		
+		gbc.gridx = 1;
+		infoPanel.add(submit, gbc);
+		
+		/* Previous and Next Button Constraints */
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0, 0, 10, 0);
+		gbc.gridy = 4;
+		add(prev, gbc);
+		
+		gbc.gridx = 3;
+		add(next, gbc);
+		
+		/* Label Constraints */
+		gbc = new GridBagConstraints();
+		gbc.gridy = 5;
+		gbc.weightx = 0.25;
+		gbc.ipadx = 10;
+		add(name, gbc);
+		
+		gbc.gridx = 1;
+		add(number, gbc);
+		
+		gbc.gridx = 2;
+		add(startDate, gbc);
+		
+		gbc.gridx = 3;
+		add(endDate, gbc);
 	}
 	
 }

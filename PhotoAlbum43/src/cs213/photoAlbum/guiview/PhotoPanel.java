@@ -1,11 +1,12 @@
 package cs213.photoAlbum.guiview;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -15,19 +16,25 @@ import javax.swing.border.LineBorder;
 
 import cs213.photoAlbum.model.Drawable;
 
-public class PhotoPanel extends JPanel implements Resizable {
+public class PhotoPanel extends JPanel {
 
 	private static final long serialVersionUID = 1;
 	private List<PhotoButton> buttons;
 	private Supplier<Drawable[]> updater;
-	private boolean enabled;
 
 	public PhotoPanel(ActionListener listener, Supplier<Drawable[]> updater) {
 		this.updater = updater;
 		setLayout(new GridBagLayout());
 		setBorder(new LineBorder(Color.black, 2, true));
 		buttons = new ArrayList<PhotoButton>();
-		enabled = false;
+		ComponentAdapter resizeHandler = new ComponentAdapter() {
+
+			public void componentResized(ComponentEvent event) {
+				for (PhotoButton button : buttons) button.resized(event.getComponent().getSize());
+			}
+
+		};
+		addComponentListener(resizeHandler);
 
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.weightx = 0.3;
@@ -67,10 +74,6 @@ public class PhotoPanel extends JPanel implements Resizable {
 
 	public PhotoButton getButton(int index) {
 		return buttons.get(index);
-	}
-
-	public void resized(Dimension size) {
-		for (PhotoButton button : buttons) button.resized(size);
 	}
 
 }

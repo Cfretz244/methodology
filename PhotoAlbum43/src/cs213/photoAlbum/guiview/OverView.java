@@ -16,7 +16,6 @@ public class OverView extends JFrame {
 	private static final int LOGIN = 0, ADMIN = 1, ACCOUNT = 2;
 	private String username;
 	private JPanel base;
-	private Resizable child;
 	private Control control;
 	private WindowAdapter windowHandler;
 	private ComponentAdapter sizeHandler;
@@ -30,14 +29,6 @@ public class OverView extends JFrame {
 
 			public void windowClosing(WindowEvent event) {
 				control.shutdown();
-			}
-
-		};
-
-		sizeHandler = new ComponentAdapter() {
-
-			public void componentResized(ComponentEvent event) {
-				child.resized(event.getComponent().getSize());
 			}
 
 		};
@@ -61,7 +52,6 @@ public class OverView extends JFrame {
 				switchToAccount();
 			}
 		}, control);
-		child = (Resizable) base;
 		add(base);
 		revalidate();
 		repaint();
@@ -73,7 +63,6 @@ public class OverView extends JFrame {
 		setTitle("Administration");
 		remove(base);
 		base = new AdminPanel(dummy -> switchToLogin(), control);
-		child = (Resizable) base;
 		add(base);
 		revalidate();
 		repaint();
@@ -84,7 +73,6 @@ public class OverView extends JFrame {
 		setTitle(username + " Photo Albums");
 		remove(base);
 		base = new AccountPanel(dummy -> switchToLogin(), control);
-		child = (Resizable) base;
 		add(base);
 		revalidate();
 		repaint();

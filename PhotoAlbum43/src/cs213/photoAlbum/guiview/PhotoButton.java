@@ -19,7 +19,7 @@ import javax.swing.JButton;
 
 import cs213.photoAlbum.model.Drawable;
 
-public class PhotoButton extends JButton implements Resizable {
+public class PhotoButton extends JButton {
 	
 	private static final long serialVersionUID = 1;
 	private Drawable data;
@@ -27,7 +27,7 @@ public class PhotoButton extends JButton implements Resizable {
 	private int index;
 	private boolean selected;
 	private static final int CORNER_RADIUS = 80;
-	private static final double PADDING = 0.55;
+	private static final double PADDING = 0.75;
 	private static final String defaultPath = "assets/404.png";
 	
 	public PhotoButton(Integer index) {

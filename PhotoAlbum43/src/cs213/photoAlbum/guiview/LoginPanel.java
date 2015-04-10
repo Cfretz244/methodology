@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 import cs213.photoAlbum.control.Control;
 
-public class LoginPanel extends JPanel implements ActionListener, Resizable {
+public class LoginPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
 	private Control control;
@@ -66,10 +66,6 @@ public class LoginPanel extends JPanel implements ActionListener, Resizable {
 			if (control.loadUserData()) loginCall.accept(user);
 			else error.setText("Invalid username. Please enter another");
 		}
-	}
-	
-	public void resized(Dimension size) {
-		
 	}
 
 }

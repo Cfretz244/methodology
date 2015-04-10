@@ -1,7 +1,7 @@
 package cs213.photoAlbum.guiview;
 
 import java.awt.Color;
-import java.awt.Font;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +63,13 @@ public class AlbumView extends JFrame implements ActionListener {
 		}
 
 		public void paintComponent(Graphics g) {
-			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+				g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		}
+		
+		public void resized(Dimension size) {
+			double legSize = size.getHeight() > size.getWidth() ? size.getWidth() : size.getHeight();
+			legSize *= 0.8;
+			setPreferredSize(new Dimension((int) legSize, (int) legSize));
 		}
 
 		private void readImage(String path) {
@@ -111,8 +118,6 @@ public class AlbumView extends JFrame implements ActionListener {
 	}
 
 	private static final long serialVersionUID = 1;
-	private WindowAdapter windowHandler;
-	private ComponentAdapter resizeHandler;
 	private Control control;
 	private Album current;
 	private Photo[] matches;
@@ -124,7 +129,7 @@ public class AlbumView extends JFrame implements ActionListener {
 	private JTextField searchBar;
 	private JComboBox<String> searchType;
 	private PhotoPanel photoPanel;
-	private JPanel operationPanel;
+	private JPanel operationPanel, photoHolder;
 	private PhotoDisplay photoDisplay;
 	private JButton prev, next, search, addPhoto, deletePhoto, move, recaption, addTag, deleteTag;
 
@@ -139,26 +144,26 @@ public class AlbumView extends JFrame implements ActionListener {
 	private JButton saveButton;
 	private JTextField saveName;
 
-	public AlbumView(Album current, Control control) {
+	public AlbumView(Album current, Control control, Consumer<?> updateParent) {
 		this.current = current;
 		this.control = control;
 		instantiate();
 		bind();
 		layoutViews();
 
-		windowHandler = new WindowAdapter() {
+		WindowAdapter windowHandler = new WindowAdapter() {
 
 			public void windowClosing(WindowEvent event) {
-				// TODO: Decide what to do here.
+				updateParent.accept(null);
 			}
 
 		};
-		resizeHandler = new ComponentAdapter() {
-
+		ComponentAdapter resizeHandler = new ComponentAdapter() {
+			
 			public void componentResized(ComponentEvent event) {
-				photoPanel.resized(event.getComponent().getSize());
+				photoDisplay.resized(event.getComponent().getSize());
 			}
-
+			
 		};
 
 		photoDisplay.setImage(selected.getDrawable());
@@ -166,7 +171,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		pack();
 		setVisible(true);
 		addWindowListener(windowHandler);
-		addComponentListener(resizeHandler);
+		photoHolder.addComponentListener(resizeHandler);
 	}
 	
 	public void actionPerformed(ActionEvent event) {
@@ -223,6 +228,7 @@ public class AlbumView extends JFrame implements ActionListener {
 					}
 				} else {
 					matches = null;
+					savePanel.setVisible(false);
 				}
 				photoPanel.updatePhotos();
 			} else if (button == saveButton) {
@@ -404,6 +410,7 @@ public class AlbumView extends JFrame implements ActionListener {
 		savePanel = new JPanel(new GridBagLayout());
 		saveButton = new JButton("Save Search");
 		saveName = new PlaceHolderField();
+		photoHolder = new JPanel(new GridBagLayout());
 		photoDisplay = new PhotoDisplay();
 		prev = new JButton("Previous");
 		next = new JButton("Next");
@@ -484,11 +491,12 @@ public class AlbumView extends JFrame implements ActionListener {
 		gbc.gridy = 1;
 		gbc.gridwidth = 3;
 		gbc.gridheight = 3;
-		gbc.weightx = 0.6;
-		gbc.weighty = 0.6;
-		gbc.insets = new Insets(10, 0, 0, 0);
+		gbc.weightx = 0.9;
+		gbc.weighty = 0.9;
 		gbc.fill = GridBagConstraints.BOTH;
-		add(photoDisplay, gbc);
+		gbc.insets = new Insets(10, 0, 0, 0);
+		add(photoHolder, gbc);
+		photoHolder.add(photoDisplay, new GridBagConstraints());
 
 		// InfoPanel Constraints.
 		gbc = new GridBagConstraints();
