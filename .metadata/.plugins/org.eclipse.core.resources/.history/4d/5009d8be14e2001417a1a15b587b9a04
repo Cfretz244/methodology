@@ -1,5 +1,6 @@
 package cs213.photoAlbum.guiview;
 
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -10,16 +11,16 @@ import java.util.function.Consumer;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
 import cs213.photoAlbum.model.Photo;
 
 public class AddPanel extends JPanel implements ActionListener {
-	
+
 	private class ImageFilter extends FileFilter {
-		
+
 		public boolean accept(File file) {
 			try {
 				String path = file.getCanonicalPath();
@@ -29,24 +30,25 @@ public class AddPanel extends JPanel implements ActionListener {
 				return false;
 			}
 		}
-		
+
 		public String getDescription() {
 			return "JPEG, PNG, BMP, GIF, and TIFF files";
 		}
-		
+
 	}
-	
+
 	private static final long serialVersionUID = 1;
 	private Photo photo;
-	private JButton selectPhoto, addNewPhoto, cancelAdd;
-	private JTextField caption;
+	private JButton selectButton, addButton, cancelButton;
+	private AlbumView.PlaceHolderField caption;
+	private JLabel errorMessage;
 	private JFileChooser chooser;
-	private Consumer<Photo> addPhoto;
+	private Consumer<String[]> addPhoto;
 	private Consumer<String> updateUI;
 	private Consumer<?> cancel;
 	private File chosen;
-	
-	public AddPanel(Consumer<Photo> addPhoto, Consumer<String> updateUI, Consumer<?> cancel) {
+
+	public AddPanel(Consumer<String[]> addPhoto, Consumer<String> updateUI, Consumer<?> cancel) {
 		this.addPhoto = addPhoto;
 		this.updateUI = updateUI;
 		this.cancel = cancel;
@@ -54,66 +56,85 @@ public class AddPanel extends JPanel implements ActionListener {
 		setLayout(new GridBagLayout());
 		instantiate();
 		bind();
-		
+
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridwidth = 2;
-		add(selectPhoto, gbc);
+		add(selectButton, gbc);
 		gbc.gridy = 1;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		add(caption, gbc);
 		gbc = new GridBagConstraints();
 		gbc.gridy = 2;
-		add(cancelAdd, gbc);
+		add(cancelButton, gbc);
 		gbc.gridx = 1;
-		add(addNewPhoto, gbc);
+		add(addButton, gbc);
+		gbc = new GridBagConstraints();
+		gbc.gridy = 3;
+		gbc.gridwidth = 2;
+		add(errorMessage, gbc);
 	}
-	
+
 	public void setPhoto(Photo photo) {
 		this.photo = photo;
-		selectPhoto.setEnabled(this.photo != null);
+		selectButton.setEnabled(this.photo == null);
 		caption.setText(this.photo != null ? photo.getCaption() : "");
 	}
-	
+
 	private void instantiate() {
-		selectPhoto = new JButton("Select Photo");
-		addNewPhoto = new JButton("Submit");
-		cancelAdd = new JButton("Cancel");
-		caption = new JTextField();
+		selectButton = new JButton("Select Photo");
+		addButton = new JButton("Submit");
+		cancelButton = new JButton("Cancel");
+		caption = new AlbumView.PlaceHolderField("Caption");
+		errorMessage = new JLabel(" ");
+		errorMessage.setForeground(Color.RED);
 		chooser = new JFileChooser();
 		chooser.setFileFilter(new ImageFilter());
 	}
-	
+
 	private void bind() {
-		selectPhoto.addActionListener(this);
-		addNewPhoto.addActionListener(this);
-		cancelAdd.addActionListener(this);
+		selectButton.addActionListener(this);
+		addButton.addActionListener(this);
+		cancelButton.addActionListener(this);
 	}
-	
+
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
-		if (button == addNewPhoto) {
-			try {
-				if (chosen != null && caption.getText() != "") {
-					File temp = chosen;
-					chosen = null;
-					photo = null;
-					addPhoto.accept(temp.getCanonicalPath());
-				} else {
-					// TODO: Need to show an error message if this happens.
+		if (button == addButton) {
+			if (photo == null) {
+				try {
+					if (chosen != null && caption.getText() != "") {
+						File temp = chosen;
+						chosen = null;
+						errorMessage.setText(" ");
+						addPhoto.accept(new String[] {temp.getCanonicalPath(), caption.getText()});
+					} else {
+						errorMessage.setText("Please fill all fields.");
+					}
+				} catch (IOException e) {
+					errorMessage.setText("An error occured while loading the path to the photo.");
 				}
-			} catch (IOException e) {
-				// TODO: Add handling for this.
+			} else {
+				if (caption.getText() != "") {
+					errorMessage.setText(" ");
+					addPhoto.accept(new String[] {null, caption.getText()});
+				} else {
+					errorMessage.setText("Please enter a caption.");
+					errorMessage.setVisible(true);
+				}
 			}
-		} else if (button == selectPhoto) {
+		} else if (button == selectButton) {
 			int returnVal = chooser.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				chosen = chooser.getSelectedFile();
 				try {
 					updateUI.accept(chosen.getCanonicalPath());
 				} catch (IOException e) {
-					// Should never happen.
+					errorMessage.setText("An error occured while loading the path to the photo.");
+					errorMessage.setVisible(true);
 				}
 			}
 		} else {
+			errorMessage.setText(" ");
 			photo = null;
 			chosen = null;
 			cancel.accept(null);

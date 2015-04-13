@@ -25,7 +25,7 @@ public class AddPanel extends JPanel implements ActionListener {
 			try {
 				String path = file.getCanonicalPath();
 				String ext = path.substring(path.lastIndexOf(".") + 1, path.length()).toLowerCase();
-				return ext.equals("jpg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif") || ext.equals("jpeg") || ext.equals("tiff");
+				return ext.equals("jpg") || ext.equals("png") || ext.equals("bmp") || ext.equals("gif") || ext.equals("jpeg") || file.isDirectory();
 			} catch (Exception e) {
 				return false;
 			}
