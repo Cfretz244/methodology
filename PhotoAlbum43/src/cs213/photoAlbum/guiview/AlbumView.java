@@ -61,7 +61,7 @@ public class AlbumView extends JFrame implements ActionListener {
 				g.drawString("Photo Not Found", getWidth(), getHeight());
 				g.dispose();
 			}
-			setPreferredSize(new Dimension(50, 50));
+			setPreferredSize(new Dimension(500, 500));
 		}
 
 		public void paintComponent(Graphics g) {
