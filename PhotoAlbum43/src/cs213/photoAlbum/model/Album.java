@@ -68,7 +68,7 @@ public class Album implements Serializable, Drawable {
 	
 	/**
 	 * Method removes a photo from the album.
-	 * @param photo Name of photo to be removed.
+	 * @param name Name of photo to be removed.
 	 * @return The photo that was removed.
 	 */
 	protected Photo removePhoto(String name) {

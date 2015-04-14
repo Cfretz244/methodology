@@ -10,6 +10,10 @@ import javax.swing.JPanel;
 
 import cs213.photoAlbum.control.Control;
 
+/**
+ * Class is the base frame for entire project.
+ * @author cfretz
+ */
 public class OverView extends JFrame {
 
 	private static final long serialVersionUID = 1;
@@ -49,6 +53,9 @@ public class OverView extends JFrame {
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	}
 	
+	/**
+	 * Method switches to login panel.
+	 */
 	private void switchToLogin() {
 		state = LOGIN;
 		setTitle("Login");
@@ -65,6 +72,9 @@ public class OverView extends JFrame {
 		repaint();
 	}
 	
+	/**
+	 * Method switches to admin panel.
+	 */
 	private void switchToAdmin() {
 		state = ADMIN;
 		setTitle("Administration");
@@ -75,6 +85,9 @@ public class OverView extends JFrame {
 		repaint();
 	}
 	
+	/**
+	 * Method switches to account panel.
+	 */
 	private void switchToAccount() {
 		state = ACCOUNT;
 		setTitle(username + " Photo Albums");
@@ -85,6 +98,10 @@ public class OverView extends JFrame {
 		repaint();
 	}
 	
+	/**
+	 * Entry vector of the entire program.
+	 * @param args Ignored.
+	 */
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
 		OverView view = new OverView();

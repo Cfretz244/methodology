@@ -23,6 +23,10 @@ import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Photo;
 
 
+/**
+ * Class is responsible for displaying all albums and related information for a specific account.
+ * @author cfretz
+ */
 public class AccountPanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1;
@@ -46,6 +50,10 @@ public class AccountPanel extends JPanel implements ActionListener {
 		updateLabels();
 	}
 
+	/**
+	 * Method is responsible for updating the information labels when a user clicks
+	 * on an album.
+	 */
 	private void updateLabels() {
 		Album current = (Album) selected.getDrawable();
 		if (current != null) {
@@ -74,6 +82,10 @@ public class AccountPanel extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method is responsible for swapping the controls when required.
+	 * @param name Name of the panel to swap to.
+	 */
 	private void swapPanels(String name) {
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 4;
@@ -93,6 +105,9 @@ public class AccountPanel extends JPanel implements ActionListener {
 		revalidate();
 	}
 
+	/**
+	 * Method handles all events.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
 		if (source instanceof PhotoButton) {
@@ -158,6 +173,9 @@ public class AccountPanel extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method handles all instantiations necessary for the class to run.
+	 */
 	private void instantiate() {
 		setLayout(new GridBagLayout());
 		albumPanel = new PhotoPanel(this, () -> Arrays.copyOfRange(control.getAlbums(), currentPage * 9, (currentPage + 1) * 9));
@@ -185,6 +203,9 @@ public class AccountPanel extends JPanel implements ActionListener {
 		windows = new ArrayList<AlbumView>();
 	}
 
+	/**
+	 * Method adds all necessary event listeners.
+	 */
 	private void bind() {
 		create.addActionListener(this);
 		delete.addActionListener(this);
@@ -196,6 +217,9 @@ public class AccountPanel extends JPanel implements ActionListener {
 		cancel.addActionListener(this);
 	}
 
+	/**
+	 * Method handles setting up all necessary constraints to organize the views.
+	 */
 	private void layoutViews() {
 		/* Album Panel Constraints */
 		GridBagConstraints gbc = new GridBagConstraints();

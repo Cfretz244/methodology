@@ -13,6 +13,10 @@ import javax.swing.JPanel;
 
 import cs213.photoAlbum.model.Album;
 
+/**
+ * Class handles displaying the UI necessary to move a photo from one album to another.
+ * @author cfretz
+ */
 public class MovePanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
@@ -42,12 +46,18 @@ public class MovePanel extends JPanel implements ActionListener {
 		add(moveButton, gbc);
 	}
 	
+	/**
+	 * Method is called by the superview when the total list of albums changes.
+	 */
 	public void update() {
 		moveTo.removeAllItems();
 		Album[] albums = supplier.get();
 		for (Album album : albums) moveTo.addItem(album.getName());
 	}
 	
+	/**
+	 * Handles all events.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
 		
@@ -58,12 +68,18 @@ public class MovePanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Handles all instantiations necessary to make the class run.
+	 */
 	private void instantiate() {
 		moveButton = new JButton("Move");
 		cancelButton = new JButton("Cancel");
 		moveTo = new JComboBox<String>();
 	}
 	
+	/**
+	 * Sets all event listeners.
+	 */
 	private void bind() {
 		moveButton.addActionListener(this);
 		cancelButton.addActionListener(this);

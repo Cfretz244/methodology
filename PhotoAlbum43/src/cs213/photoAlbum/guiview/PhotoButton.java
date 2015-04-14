@@ -19,6 +19,11 @@ import javax.swing.JButton;
 
 import cs213.photoAlbum.model.Drawable;
 
+/**
+ * Class handles all custom drawing necessary to display a photo or album as a clickable option in
+ * a larger view.
+ * @author cfretz
+ */
 public class PhotoButton extends JButton {
 	
 	private static final long serialVersionUID = 1;
@@ -44,6 +49,10 @@ public class PhotoButton extends JButton {
 		}
 	}
 	
+	/**
+	 * Sets the photo or album to draw.
+	 * @param data The photo or album.
+	 */
 	public void setDrawable(Drawable data) {
 		this.data = data;
 		if (data == null) {
@@ -103,19 +112,34 @@ public class PhotoButton extends JButton {
 
 	}
 	
+	/**
+	 * Gets the current photo or album.
+	 * @return The drawable.
+	 */
 	public Drawable getDrawable() {
 		return data;
 	}
 	
+	/**
+	 * Returns the current index.
+	 * @return The current index.
+	 */
 	public int getIndex() {
 		return index;
 	}
 	
+	/**
+	 * Toggles the selected state.
+	 */
 	public void select() {
 		selected = !selected;
 		repaint();
 	}
 	
+	/**
+	 * Updates the preferred and minimum sizes when the parent view changes size.
+	 * @param size The new size.
+	 */
 	public void resized(Dimension size) {
 		double legSize = size.getHeight() > size.getWidth() ? size.getWidth() / 3 : size.getHeight() / 3;
 		legSize *= PADDING;

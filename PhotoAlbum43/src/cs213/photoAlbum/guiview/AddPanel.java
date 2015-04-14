@@ -17,8 +17,16 @@ import javax.swing.filechooser.FileFilter;
 
 import cs213.photoAlbum.model.Photo;
 
+/**
+ * Class handles adding photos to a specific album.
+ * @author cfretz
+ */
 public class AddPanel extends JPanel implements ActionListener {
 
+	/**
+	 * Class is responsible for limiting what types of files the user can request to add.
+	 * @author cfretz
+	 */
 	private class ImageFilter extends FileFilter {
 
 		public boolean accept(File file) {
@@ -74,12 +82,19 @@ public class AddPanel extends JPanel implements ActionListener {
 		add(errorMessage, gbc);
 	}
 
+	/**
+	 * Method sets the photo for the add panel when we're renaming an existing photo.
+	 * @param photo Sets the current photo.
+	 */
 	public void setPhoto(Photo photo) {
 		this.photo = photo;
 		selectButton.setEnabled(this.photo == null);
 		caption.setText(this.photo != null ? photo.getCaption() : "");
 	}
 
+	/**
+	 * Method handles all instantiations necessary for the class.
+	 */
 	private void instantiate() {
 		selectButton = new JButton("Select Photo");
 		addButton = new JButton("Submit");
@@ -91,12 +106,18 @@ public class AddPanel extends JPanel implements ActionListener {
 		chooser.setFileFilter(new ImageFilter());
 	}
 
+	/**
+	 * Method handles adding all necessary event listeners.
+	 */
 	private void bind() {
 		selectButton.addActionListener(this);
 		addButton.addActionListener(this);
 		cancelButton.addActionListener(this);
 	}
 
+	/**
+	 * Method handles all events.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
 		if (button == addButton) {

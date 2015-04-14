@@ -44,8 +44,16 @@ import cs213.photoAlbum.model.Album;
 import cs213.photoAlbum.model.Drawable;
 import cs213.photoAlbum.model.Photo;
 
+/**
+ * Class handles displaying a specific album.
+ * @author cfretz
+ */
 public class AlbumView extends JFrame implements ActionListener {
 
+	/**
+	 * Class is responsible for drawing the currently selected photo.
+	 * @author cfretz
+	 */
 	private class PhotoDisplay extends JPanel {
 
 		private BufferedImage image, defaultImage;
@@ -68,6 +76,10 @@ public class AlbumView extends JFrame implements ActionListener {
 			g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		}
 
+		/**
+		 * Method updates the preferred and minimum sizes when the parent view changes.
+		 * @param size The new size.
+		 */
 		public void resized(Dimension size) {
 			double legSize = size.getHeight() > size.getWidth() ? size.getWidth() : size.getHeight();
 			legSize *= 0.9;
@@ -76,6 +88,10 @@ public class AlbumView extends JFrame implements ActionListener {
 			setMinimumSize(new Dimension((int) minimum, (int) minimum));
 		}
 
+		/**
+		 * Method reads in the selected image as a BufferedImage.
+		 * @param path The path of the image to be loaded.
+		 */
 		private void readImage(String path) {
 			try {
 				image = ImageIO.read(new File(path));
@@ -85,6 +101,10 @@ public class AlbumView extends JFrame implements ActionListener {
 			repaint();
 		}
 
+		/**
+		 * Method sets the current image.
+		 * @param data The image.
+		 */
 		public void setImage(Drawable data) {
 			readImage(data != null ? data.getPath() : defaultPath);
 		}
@@ -95,6 +115,12 @@ public class AlbumView extends JFrame implements ActionListener {
 
 	}
 
+	/**
+	 * Method handles drawing a textfield with placeholder text. Don't know why this isn't a
+	 * default swing feature.
+	 * @author cfretz
+	 *
+	 */
 	protected static class PlaceHolderField extends JTextField {
 
 		private static final long serialVersionUID = 1;
@@ -117,6 +143,10 @@ public class AlbumView extends JFrame implements ActionListener {
 
 	}
 
+	/**
+	 * Enum represents the current state of the albumview.
+	 * @author cfretz
+	 */
 	protected enum State {
 		NORMAL,
 		ADD,
@@ -182,6 +212,9 @@ public class AlbumView extends JFrame implements ActionListener {
 		photoHolder.addComponentListener(resizeHandler);
 	}
 
+	/**
+	 * Handles all events.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		Object source = event.getSource();
 		if (source instanceof PhotoButton) {
@@ -251,6 +284,10 @@ public class AlbumView extends JFrame implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method handles all nastiness necessary to switch from one state to another.
+	 * @param state The state to switch to.
+	 */
 	private void transitionToState(State state) {
 		remove(infoPanel);
 		remove(addPanel);
@@ -309,6 +346,10 @@ public class AlbumView extends JFrame implements ActionListener {
 		revalidate();
 	}
 
+	/**
+	 * Method adds a new photo using the control object.
+	 * @param properties Information on the new photo.
+	 */
 	private void addPhoto(String[] properties) {
 		if (properties[0] != null) control.addPhotoToAlbum(current.getName(), properties[0], properties[1]);
 		else control.changeCaptionForPhoto(((Photo) selected.getDrawable()).getName(), properties[1]);
@@ -317,12 +358,20 @@ public class AlbumView extends JFrame implements ActionListener {
 		transitionToState(State.NORMAL);
 	}
 
+	/**
+	 * Method moves a photo using the control object.
+	 * @param toAlbum Album to mvoe current photo to.
+	 */
 	private void movePhoto(String toAlbum) {
 		control.movePhoto(current.getName(), toAlbum, ((Photo) selected.getDrawable()).getName());
 		photoPanel.updatePhotos();
 		transitionToState(State.NORMAL);
 	}
 
+	/**
+	 * Method modifies tags using the control object.
+	 * @param tagInfo The tag type and value
+	 */
 	private void modifyTags(String[] tagInfo) {
 		if (tagInfo[2].equals("add")) {
 			control.addTagToPhoto(((Photo) selected.getDrawable()).getName(), tagInfo[0], tagInfo[1]);
@@ -332,6 +381,10 @@ public class AlbumView extends JFrame implements ActionListener {
 		transitionToState(State.NORMAL);
 	}
 
+	/**
+	 * Method handles everything related to searching for a specific date range.
+	 * @param search The string to be searched for.
+	 */
 	private void searchDates(String search) {
 		SimpleDateFormat parser = new SimpleDateFormat("MM/dd/yyyy-HH:mm:ss");
 		String[] dates = search.split(" ");
@@ -349,6 +402,10 @@ public class AlbumView extends JFrame implements ActionListener {
 		}
 	}
 
+	/**
+	 * Method handles everything related to searching for a specific tag set.
+	 * @param search The search string.
+	 */
 	private void searchTags(String search) {
 		String[] tags = search.split(",");
 		for (int i = 0; i < tags.length; i++) tags[i] = tags[i].trim();
@@ -418,6 +475,9 @@ public class AlbumView extends JFrame implements ActionListener {
 	}
 
 
+	/**
+	 * Method makes all instantiations necessary to run the class.
+	 */
 	private void instantiate() {
 		setLayout(new GridBagLayout());
 		searchBar = new PlaceHolderField("Search Query");
@@ -446,6 +506,9 @@ public class AlbumView extends JFrame implements ActionListener {
 		deleteTag = new JButton("Remove Tag");
 	}
 
+	/**
+	 * Method adds all necessary event listeners.
+	 */
 	private void bind() {
 		search.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -459,6 +522,9 @@ public class AlbumView extends JFrame implements ActionListener {
 		deleteTag.addActionListener(this);
 	}
 
+	/**
+	 * Method handles all of the nastiness related to setting constraints on subviews.
+	 */
 	private void layoutViews() {
 		// Set size of frame.
 		Toolkit tk = Toolkit.getDefaultToolkit();

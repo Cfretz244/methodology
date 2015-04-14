@@ -4,6 +4,10 @@ import javax.swing.AbstractListModel;
 
 import cs213.photoAlbum.control.PhotoSource;
 
+/**
+ * Class works as a ListModel for the JList in the admin panel.
+ * @author cfretz
+ */
 public class UserList extends AbstractListModel<String> {
 	
 	private static final long serialVersionUID = 1;
@@ -16,6 +20,12 @@ public class UserList extends AbstractListModel<String> {
 		users = control.listUsers();
 	}
 	
+	/**
+	 * Adds a user to the list.
+	 * @param name The name of the user.
+	 * @param id The id of the user.
+	 * @return Whether it succeeded.
+	 */
 	public boolean addUser(String name, String id) {
 		if (control.addUser(id, name)) {
 			String[] newUsers = control.listUsers();
@@ -39,6 +49,11 @@ public class UserList extends AbstractListModel<String> {
 		}
 	}
 	
+	/**
+	 * Removes a user from the JList.
+	 * @param id The id of the user.
+	 * @return Whether it succeeded.
+	 */
 	public boolean deleteUser(String id) {
 		if (control.removeUser(id)) {
 			String[] newUsers = control.listUsers();
@@ -62,6 +77,7 @@ public class UserList extends AbstractListModel<String> {
 		}
 	}
 	
+	@Override
 	public String getElementAt(int index) {
 		if (index < 0 || index >= users.length) {
 			return "";
@@ -70,6 +86,7 @@ public class UserList extends AbstractListModel<String> {
 		}
 	}
 	
+	@Override
 	public int getSize() {
 		return users.length;
 	}

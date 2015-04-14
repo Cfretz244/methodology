@@ -15,6 +15,10 @@ import javax.swing.JTextField;
 
 import cs213.photoAlbum.control.Control;
 
+/**
+ * Class handles the login frame.
+ * @author cfretz
+ */
 public class LoginPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
@@ -57,6 +61,9 @@ public class LoginPanel extends JPanel implements ActionListener {
 		loginButton.addActionListener(this);
 	}
 	
+	/**
+	 * Handles all events.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		if (username.getText().equals("admin")) {
 			loginCall.accept("admin");

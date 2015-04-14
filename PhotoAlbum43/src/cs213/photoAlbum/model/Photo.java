@@ -183,7 +183,7 @@ public class Photo implements Serializable, Comparable<Photo>, Drawable {
 
 	/**
 	 * Method returns all tags for the current photo.
-	 * @return Array of tags in the form "<type>:<value>"
+	 * @return Array of tags in the form "type:value"
 	 */
 	public String[] getTags() {
 		Set<String> allTags = new HashSet<String>();

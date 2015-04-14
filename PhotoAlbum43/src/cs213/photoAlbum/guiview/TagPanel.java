@@ -13,6 +13,10 @@ import javax.swing.JPanel;
 
 import cs213.photoAlbum.model.Photo;
 
+/**
+ * Class handles the UI to add or remove a tag from a specific photo.
+ * @author cfretz
+ */
 public class TagPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
@@ -49,6 +53,9 @@ public class TagPanel extends JPanel implements ActionListener {
 		add(errorMessage, gbc);
 	}
 	
+	/**
+	 * Handles all events.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		JButton button = (JButton) event.getSource();
 		boolean success = false;
@@ -83,12 +90,20 @@ public class TagPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Sets the photo we're modifying tags for.
+	 * @param photo The photo.
+	 * @param state The current state.
+	 */
 	public void setPhoto(Photo photo, AlbumView.State state) {
 		current = photo;
 		this.state = state;
 		modifyButton.setText(state == AlbumView.State.ADD_TAG ? "Add Tag" : "Remove Tag");
 	}
 	
+	/**
+	 * Handles all instantiations to make the class work.
+	 */
 	private void instantiate() {
 		modifyButton = new JButton();
 		cancelButton = new JButton("Cancel");
@@ -98,6 +113,9 @@ public class TagPanel extends JPanel implements ActionListener {
 		errorMessage.setForeground(Color.RED);
 	}
 	
+	/**
+	 * Adds all necessary event listeners.
+	 */
 	private void bind() {
 		modifyButton.addActionListener(this);
 		cancelButton.addActionListener(this);

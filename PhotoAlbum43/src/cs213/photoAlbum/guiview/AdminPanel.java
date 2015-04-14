@@ -16,6 +16,10 @@ import javax.swing.JTextField;
 
 import cs213.photoAlbum.control.Control;
 
+/**
+ * Class handles the administration page.
+ * @author cfretz
+ */
 public class AdminPanel extends JPanel implements ActionListener {
 	
 	private static final long serialVersionUID = 1;
@@ -92,6 +96,9 @@ public class AdminPanel extends JPanel implements ActionListener {
 		switchControlPanel();
 	}
 	
+	/**
+	 * Method handles all instantiations necessary to run the class.
+	 */
 	private void instantiate() {
 		model = new UserList(control);
 		userList = new JList<String>(model);
@@ -110,6 +117,9 @@ public class AdminPanel extends JPanel implements ActionListener {
 		setLayout(new GridBagLayout());
 	}
 	
+	/**
+	 * Method handles adding all necessary event listeners.
+	 */
 	private void bind() {
 		addButton.addActionListener(this);
 		deleteButton.addActionListener(this);
@@ -117,6 +127,9 @@ public class AdminPanel extends JPanel implements ActionListener {
 		cancelButton.addActionListener(this);
 	}
 	
+	/**
+	 * Method handles switching panels to add a new user.
+	 */
 	private void switchControlPanel() {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = 1;
@@ -128,6 +141,9 @@ public class AdminPanel extends JPanel implements ActionListener {
 		repaint();
 	}
 	
+	/**
+	 * Method handles switching panels to show details for an existing user.
+	 */
 	private void switchDetailPanel() {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.gridx = 1;
@@ -139,6 +155,9 @@ public class AdminPanel extends JPanel implements ActionListener {
 		repaint();
 	}
 	
+	/**
+	 * Method handles all events for admin page.
+	 */
 	public void actionPerformed(ActionEvent event) {
 		JButton clicked = (JButton) event.getSource();
 		

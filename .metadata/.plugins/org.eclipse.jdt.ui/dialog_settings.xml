@@ -49,8 +49,9 @@
 		<item value="400" key="height"/>
 	</section>
 	<section name="javadoc">
-		<item value="public" key="access"/>
+		<item value="private" key="access"/>
 		<item value="false" key="noindex"/>
+		<item value="/Users/cfretz/git/methodology/PhotoAlbum43/javadoc.xml" key="antpath"/>
 		<item value="false" key="nodeprecatedlist"/>
 		<item value="true" key="use"/>
 		<item value="true" key="author"/>
@@ -67,8 +68,13 @@
 		<item value="/Users/cfretz/git/methodology/PhotoAlbum43/docs" key="destdir"/>
 		<item value="false" key="openinbrowser"/>
 		<section name="projects">
+			<section name="Chess43">
+				<item value="/Users/cfretz/git/methodology/Chess43/javadoc.xml" key="antpath"/>
+				<item value="/Users/cfretz/git/methodology/Chess43/doc" key="destdir"/>
+				<item value="" key="href"/>
+			</section>
 			<section name="PhotoAlbum43">
-				<item value="" key="antpath"/>
+				<item value="/Users/cfretz/git/methodology/PhotoAlbum43/javadoc.xml" key="antpath"/>
 				<item value="/Users/cfretz/git/methodology/PhotoAlbum43/docs" key="destdir"/>
 				<item value="" key="href"/>
 			</section>

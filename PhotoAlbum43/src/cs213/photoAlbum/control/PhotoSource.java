@@ -228,7 +228,7 @@ public interface PhotoSource {
 	/**
 	 * Method returns an array of tags for a given photo.
 	 * @param name The name of the photo to get tags from.
-	 * @return An array of tags in the format "<type>:<value>"
+	 * @return An array of tags in the format "type:value"
 	 */
 	public String[] getTagsForPhoto(String name);
 

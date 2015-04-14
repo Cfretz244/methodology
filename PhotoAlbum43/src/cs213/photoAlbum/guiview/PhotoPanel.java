@@ -16,6 +16,10 @@ import javax.swing.border.LineBorder;
 
 import cs213.photoAlbum.model.Drawable;
 
+/**
+ * Class handles displaying a collection of photobuttons.
+ * @author cfretz
+ */
 public class PhotoPanel extends JPanel {
 
 	private static final long serialVersionUID = 1;
@@ -53,6 +57,9 @@ public class PhotoPanel extends JPanel {
 		updatePhotos();
 	}
 	
+	/**
+	 * Method upates the photos displayed in the panel.
+	 */
 	public void updatePhotos() {
 		Drawable[] data = updater.get();
 		int index = 0;
@@ -64,14 +71,25 @@ public class PhotoPanel extends JPanel {
 		repaint();
 	}
 	
+	/**
+	 * Enables all buttons.
+	 */
 	public void enable() {
 		for (PhotoButton button : buttons) button.setEnabled(true);
 	}
 	
+	/**
+	 * Disables all buttons.
+	 */
 	public void disable() {
 		for (PhotoButton button : buttons) button.setEnabled(false);
 	}
 
+	/**
+	 * Gets the button at the specified index.
+	 * @param index The index.
+	 * @return The button.
+	 */
 	public PhotoButton getButton(int index) {
 		return buttons.get(index);
 	}

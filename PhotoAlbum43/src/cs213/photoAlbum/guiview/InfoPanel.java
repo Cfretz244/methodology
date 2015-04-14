@@ -14,8 +14,16 @@ import javax.swing.JTextArea;
 
 import cs213.photoAlbum.model.Photo;
 
+/**
+ * Class handles displaying information for the currently selected photo in the albumview.
+ * @author cfretz
+ */
 public class InfoPanel extends JPanel {
 
+	/**
+	 * Class displays any number of tags in a textarea.
+	 * @author cfretz
+	 */
 	private class TagPane extends JTextArea {
 
 		private static final long serialVersionUID = 1;
@@ -67,6 +75,10 @@ public class InfoPanel extends JPanel {
 		add(tags, gbc);
 	}
 
+	/**
+	 * Sets the current photo to show information for.
+	 * @param photo The photo.
+	 */
 	public void setPhoto(Photo photo) {
 		if (photo != null) {
 			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
@@ -81,6 +93,9 @@ public class InfoPanel extends JPanel {
 		tags.setPhoto(photo);
 	}
 
+	/**
+	 * Method handles all instantiations necessary to run the class.
+	 */
 	private void instantiate() {
 		photoName = new JLabel();
 		photoCaption = new JLabel();
